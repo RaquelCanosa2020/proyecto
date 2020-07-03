@@ -2,13 +2,18 @@ const { getConnection } = require("../../db");
 const { getHours, parseISO } = require("date-fns");
 const { formatDateToDB, setZero } = require("../../helpers");
 
-async function newReservation(req, res, next) {
+//Se podrán modificar las reservas antes de ser pagadas.
+
+async function editReservation(req, res, next) {
   let connection;
 
   try {
     connection = await getConnection();
 
+    //PTE comprobación de que la reserva no ha sido pagada y usuario.
+
     const { visit, places, id_beach, id_user } = req.body;
+    const { id } = req.params;
 
     //⏩ comprobar que no falta info en el body:
 
@@ -128,30 +133,23 @@ async function newReservation(req, res, next) {
       `Hay ${freeCapacity} plazas disponibles en la playa y horario indicados`
     );
 
-    //⏩si todo ok, grabamos la reserva
+    //⏩si todo ok, grabamos los nuevos datos de la reserva
 
-    const visitFormat = formatDateToDB(visit);
-
-    const [finalResult] = await connection.query(
+    await connection.query(
       `
-      INSERT INTO reservations(date, visit, places, id_beach, id_user, lastUpdate)
-      VALUES(NOW(), ?, ?, ?, ?, NOW())
-    `,
-      [visitFormat, places, id_beach, id_user]
+      UPDATE reservations SET visit=?, places=?, id_beach=?, id_user=?, lastUpdate=UTC_TIMESTAMP()
+      WHERE id=?
+      `,
+      [formatDateToDB(visit), places, id_beach, id_user, id]
     );
 
-    const reservationNumber = finalResult.insertId;
-
+    // Devolver resultados
     res.send({
       status: "ok",
       message: `Se guardó la reserva para el usuario ${id_user}, en la playa ${id_beach}
-      para la fecha y hora ${visit} para ${places} personas. Nº reserva: ${reservationNumber}.
+      para la fecha y hora ${visit} para ${places} personas.Nº reserva: ${id}.
       Debes pagar una fianza de 3 euros para confirmar la reserva.`,
     });
-
-    //pendiente "humanizar" visit en mensaje.
-
-    //Falta: alguna comprobación más (época año, reservas y plazas máx; el pago y envío de correo)
   } catch (error) {
     next(error);
   } finally {
@@ -159,4 +157,4 @@ async function newReservation(req, res, next) {
   }
 }
 
-module.exports = newReservation;
+module.exports = editReservation;

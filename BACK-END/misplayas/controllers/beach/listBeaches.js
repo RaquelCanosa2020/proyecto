@@ -41,18 +41,25 @@ async function listBeaches(req, res, next) {
         (SELECT AVG(ratings.value) FROM beaches, ratings, reservations WHERE ratings.id_reservation = reservations.id AND
         reservations.id_beach = beaches.id) AS voteAverage
         FROM beaches 
-        WHERE name LIKE ? OR municipality LIKE ? OR 
+        WHERE name LIKE ? OR municipality LIKE ?
         ORDER BY ${orderBy} ${orderDirection}
         `,
         [`%${search}%`, `%${search}%`] //PTE BUSCAR POR ESPACIO A RESERVAR U HORARIO.
       );
+
+      if (queryResults[0].length === 0) {
+        const error = new Error(`No hay resultados para la búsqueda`);
+        error.httpStatus = 400;
+        throw error;
+      }
     } else {
       queryResults = await connection.query(
         `
         SELECT beaches.id, beaches.name, beaches.municipality,
-        (SELECT AVG(ratings.value) FROM beaches, ratings, reservations WHERE ratings.id_reservation = reservations.id AND
-        reservations.id_beach = beaches.id) AS voteAverage
-        FROM beaches 
+        (SELECT AVG(value) FROM beaches, reservations, ratings WHERE
+        beaches.id = reservations.id_beach AND reservations.id = ratings.id_reservation) AS voteAverage
+        FROM beaches, reservations, ratings
+       
         ORDER BY ${orderBy} ${orderDirection}`
       );
     }

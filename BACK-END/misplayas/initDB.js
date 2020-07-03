@@ -72,25 +72,12 @@ async function main() {
         places INT NOT NULL,
         id_beach INT UNSIGNED,
         id_user INT UNSIGNED,
+        user_name VARCHAR(50),
+        total_euros DECIMAL(2,1),
+        cc_number VARCHAR(50),
         lastUpdate DATETIME NOT NULL,
         FOREIGN KEY (id_beach) REFERENCES beaches (id),
         FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE SET NULL
-      );
-    `);
-
-    await connection.query(`
-      CREATE TABLE payments (
-        id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-        code VARCHAR (50) UNIQUE NOT NULL,
-        payment_datetime DATETIME NOT NULL,
-        entity VARCHAR(50),
-        user_name VARCHAR(50),
-        concept TINYTEXT,
-        total_euros DECIMAL(2,1),
-        cc_number VARCHAR(50),
-        id_reservation INT UNSIGNED,
-        lastUpdate DATETIME NOT NULL,
-        FOREIGN KEY (id_reservation) REFERENCES reservations (id)
       );
     `);
 
@@ -102,7 +89,7 @@ async function main() {
         comment TEXT,
         id_reservation INT UNSIGNED,
         lastUpdate DATETIME NOT NULL,
-        FOREIGN KEY (id_reservation) REFERENCES reservations (id)
+        FOREIGN KEY (id_reservation) REFERENCES reservations (id) ON DELETE CASCADE
       )
     `);
 
@@ -206,31 +193,9 @@ async function main() {
     //Añadimos el user_id, referencia al usuario que introduce la entrada. Como número aleatorio entre 2(ya que el 1 es el addor
     //y users+1, si tenemos 10 usuarios en realidad tenemos 11, por la misma razón, el addor es el 1.
 
-    console.log("Metiendo datos de prueba en payments");
-
-    const numberOfPayments = 15;
-
-    for (let index = 0; index < numberOfPayments; index++) {
-      const cc = faker.finance.iban();
-      const date = formatDateToDB(faker.date.recent());
-      await connection.query(`
-        INSERT INTO payments(code, payment_datetime, entity, total_euros, cc_number, id_reservation, lastUpdate)
-        VALUES (
-          "${uuid.v4()}",
-          "${date}",
-          "Playas de Galicia",
-          "3.0", 
-          "${cc}",
-          "${random(1, 20)}", 
-          NOW())
-      `);
-    }
-
     console.log("Metiendo datos de prueba en ratings");
 
-    const numberOfRatings = 15;
-
-    for (let index = 0; index < numberOfRatings; index++) {
+    for (let index = 0; index < numberOfReservations; index++) {
       const date = formatDateToDB(faker.date.recent());
 
       await connection.query(`
@@ -239,7 +204,7 @@ async function main() {
           "${random(1, 5)}",
           "${date}",
           "${faker.lorem.paragraph()}",
-          "${random(1, 20)}", 
+          "${index + 1}", 
           NOW())
       `);
     }
@@ -253,8 +218,8 @@ async function main() {
       await connection.query(`
         INSERT INTO photos(link, description, date, id_beach, id_user, lastUpdate)
         VALUES (
-          "${faker.lorem.sentence(5)}",
-          "${faker.lorem.paragraph(1)}",
+          "${faker.lorem.sentence(1)}",
+          "${faker.lorem.sentence(1)}",
           "${date}",
           "${random(1, 5)}",
           "${random(1, 10)}", 

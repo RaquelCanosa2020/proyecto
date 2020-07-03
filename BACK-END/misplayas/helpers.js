@@ -86,7 +86,7 @@ async function sendMail({ email, title, content }) {
   await sendgrid.send(message);
 }
 
-function setZero(anything) {
+function setZero() {
   return 0;
 }
 

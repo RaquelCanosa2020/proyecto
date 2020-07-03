@@ -6,13 +6,16 @@ async function reservationExists(req, res, next) {
     connection = await getConnection();
     const { id } = req.params;
 
-    console.log("comprobando que en la tabla de playas hay una entrada id", id);
+    console.log(
+      "comprobando que en la tabla de reservas hay una entrada id",
+      id
+    );
 
     // Comprobar que la entrada que queremos editar exista en la base de datos
     const [current] = await connection.query(
       `
     SELECT id
-    FROM beaches
+    FROM reservations
     WHERE id=?
   `,
       [id]
@@ -20,7 +23,7 @@ async function reservationExists(req, res, next) {
 
     if (current.length === 0) {
       const error = new Error(
-        `La playa con id ${id} no existe en la base de datos`
+        `La reserva con id ${id} no existe en la base de datos`
       );
       error.httpStatus = 404;
       throw error;
@@ -34,4 +37,4 @@ async function reservationExists(req, res, next) {
   }
 }
 
-module.exports = beachExists;
+module.exports = reservationExists;
