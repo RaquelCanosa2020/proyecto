@@ -11,7 +11,7 @@ async function getBeachVotes(req, res, next) {
     // Ejecutar query para sacar lista de votos
     const [votes] = await connection.query(
       `
-      SELECT ratings.value, ratings.date, users.name
+      SELECT ratings.value, ratings.date, comment, users.name
       FROM ratings, reservations, users
       WHERE reservations.id_beach=? AND reservations.id = ratings.id_reservation
       AND reservations.id_user = users.id

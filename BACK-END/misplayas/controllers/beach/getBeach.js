@@ -1,4 +1,6 @@
 const { getConnection } = require("../../db");
+const { getHours, parseISO, setMinutes, setSeconds } = require("date-fns");
+const { formatDateToDB } = require("../../helpers");
 
 async function getBeach(req, res, next) {
   let connection;
@@ -19,17 +21,20 @@ async function getBeach(req, res, next) {
       [id]
     );
 
+    const now = new Date(); //actual en UTC
+    const nowZeroMinutes = setMinutes(now, 0);
+    const nowZero = setSeconds(nowZeroMinutes, 0); //paso la hora actual a 0 minutos y 0 segundos, para poder comparar con las horas de reserva
+    console.log(nowZero);
+
     const [ocupation] = await connection.query(
       `
         SELECT SUM(places) AS ocupation
         FROM reservations
-        WHERE id_beach = ? AND reservations.visit = "2020-07-16 22:10:00" AND reservations.cc_number <> 'null'
+        WHERE id_beach = ? AND reservations.visit = ? AND reservations.cc_number <> 'null'
       `,
-      [id]
+      [id, formatDateToDB(nowZero)]
     );
     const free = Number(result[0].capacity) - Number(ocupation[0].ocupation);
-
-    //funciona pero tengo que hacerlo sólo con horas en punto.
 
     res.send({
       status: "ok",

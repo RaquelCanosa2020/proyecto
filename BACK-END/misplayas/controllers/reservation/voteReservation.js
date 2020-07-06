@@ -19,7 +19,23 @@ async function voteReservation(req, res, next) {
       throw error;
     }
     //comprobar que el usuario es el que hizo la reserva (PTE)
-    // Comprobar que la reserva existe y si no dar un 404
+    // Comprobar que existe el registro de voto (pq la reserva está pagada)
+
+    const [existingRow] = await connection.query(
+      `
+      SELECT ratings.value
+      FROM reservations, ratings
+      WHERE ratings.id_reservation = reservations.id
+      AND ratings.id_reservation = ?`,
+      [id] //user en vez de req.auth.id antes de control de aut.
+    );
+
+    if (existingRow.length === 0) {
+      const error = new Error(`La reserva ${id} aún no está confirmada`);
+      error.httpStatus = 403;
+      throw error;
+    }
+
     //comprobar que ha pasado ya la fecha de visit
     /*const [reservation] = await connection.query(
       `
@@ -35,9 +51,8 @@ async function voteReservation(req, res, next) {
     const [existingVote] = await connection.query(
       `
       SELECT ratings.value
-      FROM reservations, ratings
-      WHERE ratings.id_reservation = reservations.id
-      AND ratings.value <> 'null' AND reservations.id = ?`,
+      FROM ratings
+      WHERE ratings.value <> 'null' AND ratings.id_reservation = ?`,
       [id] //user en vez de req.auth.id antes de control de aut.
     );
     console.log(existingVote);
@@ -53,8 +68,8 @@ async function voteReservation(req, res, next) {
     await connection.query(
       `
       UPDATE ratings
-      SET value = ?, comment = ?, lastUpdate = NOW()
-      WHERE id = ?
+      SET value = ?, comment = ?, lastUpdate = UTC_TIMESTAMP
+      WHERE id_reservation = ?
     `,
       [Number(userVote), comment, id]
     );

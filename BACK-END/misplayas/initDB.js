@@ -6,7 +6,7 @@ require("dotenv").config(); //llamamos al .env
 const faker = require("faker/locale/es"); //para introducir datos de prueba
 const { getConnection } = require("./db");
 const { formatDateToDB } = require("./helpers");
-const { random } = require("lodash");
+const { random, sample } = require("lodash");
 const uuid = require("uuid");
 const { add, startOfHour } = require("date-fns");
 
@@ -46,7 +46,9 @@ async function main() {
         image TINYTEXT,
         active BOOLEAN DEFAULT false,
         registration_code TINYTEXT,
-        lastUpdate DATETIME NOT NULL
+        passwordUpdateCode TINYTEXT,
+        lastUpdate DATETIME NOT NULL,
+        lastAuthUpdate DATETIME NOT NULL
       );
     `);
 
@@ -54,12 +56,15 @@ async function main() {
       CREATE TABLE beaches (
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         creation_date DATETIME NOT NULL,
+        type ENUM ('urban', 'not urban', 'isolated'),
         name VARCHAR(50),
         municipality VARCHAR(50),
         description TEXT,
         start_time TIME,
         end_time TIME,
         capacity INT,
+        lifesaving BOOLEAN DEFAULT false,
+        bar_restaurant BOOLEAN DEFAULT false,
         lastUpdate DATETIME NOT NULL
       );
     `);
@@ -113,15 +118,15 @@ async function main() {
 
     // Meter datos de prueba en las tablas
 
-    //el usuario addor lo metemos manualmente, sin faker, ya q debemos controlar sus datos
+    //el usuario addor lo metemos manualmente, sin faker, yamunicipality q debemos controlar sus datos
     //y, en especial la contraseña:
 
     console.log("Creando usuario administrador");
 
     await connection.query(
       `
-      INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate)
-      VALUES(NOW(), "denebolaleo1@gmail.com", SHA2("${process.env.DEFAULT_ADMIN_PASSWORD}", 512), "admin", "Raquel", true, NOW())
+      INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate, lastAuthUpdate)
+      VALUES(UTC_TIMESTAMP(), "denebolaleo1@gmail.com", SHA2("${process.env.DEFAULT_ADMIN_PASSWORD}", 512), "admin", "Raquel", true, UTC_TIMESTAMP(), UTC_TIMESTAMP())
     `
     );
 
@@ -134,8 +139,8 @@ async function main() {
 
       await connection.query(
         `
-        INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate)
-        VALUES(NOW(), "${email}", SHA2("${faker.internet.password()}",512), "normal", "${name}", false, NOW())
+        INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate, lastAuthUpdate)
+        VALUES(UTC_TIMESTAMP(), "${email}", SHA2("${faker.internet.password()}",512), "normal", "${name}", false, UTC_TIMESTAMP(), UTC_TIMESTAMP())
       `
       );
     }
@@ -154,11 +159,21 @@ async function main() {
       ];
       const name = playas[index];
       const municipality = municipios[index];
-
-      await connection.query(
+      const type = ["urban", "not urban", "isolated"];
+      const typeBeach = sample(type);
+      const truefalse = sample([1, 0]); //no funciona ninguno de los 2 métodos con true/false, dice que tengo que meter INT
+      /*const boole = (number) => { //pero si meto yo directamente en values true o false si me lo acepta¿?
+        number = Math.random();
+        if (number < 0.5) {
+          return true;
+        }
+        {
+          return false;
+        }
+      }; */ await connection.query(
         `
-        INSERT INTO beaches(creation_date, name, municipality, description, start_time, end_time, capacity, lastUpdate)
-        VALUES(NOW(), "${name}", "${municipality}", "${faker.lorem.paragraph()}", "09:00:00", "22:00:00", 20, NOW())
+        INSERT INTO beaches(creation_date, name, type, municipality, description, start_time, end_time, capacity, lifesaving, bar_restaurant, lastUpdate)
+        VALUES(UTC_TIMESTAMP(), "${name}", "${typeBeach}", "${municipality}", "${faker.lorem.paragraph()}", "09:00:00", "21:00:00", 20, "${truefalse}", "${truefalse}", UTC_TIMESTAMP())
       `
       );
     }
@@ -170,8 +185,9 @@ async function main() {
 
     for (let index = 0; index < numberOfReservations; index++) {
       const date = faker.date.recent();
+
       const visitDate = add(date, { days: 3 });
-      const visitHour = startOfHour(visitDate);
+      const visitHour = startOfHour(visitDate); //para obtener horas en punto.
 
       const formatDate = formatDateToDB(date);
       const formatVisitDate = formatDateToDB(visitHour);
@@ -184,7 +200,7 @@ async function main() {
           "${random(1, 5)}",
           "${random(1, 5)}",
           "${random(2, users + 1)}",
-          NOW())
+          UTC_TIMESTAMP())
 
           
       `);
@@ -205,7 +221,7 @@ async function main() {
           "${date}",
           "${faker.lorem.paragraph()}",
           "${index + 1}", 
-          NOW())
+          UTC_TIMESTAMP())
       `);
     }
 
@@ -223,7 +239,7 @@ async function main() {
           "${date}",
           "${random(1, 5)}",
           "${random(1, 10)}", 
-          NOW())
+          UTC_TIMESTAMP())
       `);
     }
   } catch (error) {

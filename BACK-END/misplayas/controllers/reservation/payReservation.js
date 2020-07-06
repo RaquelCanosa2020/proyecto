@@ -6,7 +6,7 @@ const {
   setMinutes,
   setSeconds,
 } = require("date-fns");
-const { sendMail } = require("../../helpers");
+const { formatDateToUser, sendMail } = require("../../helpers");
 
 //Las reservas una vez pagadas no pueden modificarse.
 
@@ -66,7 +66,7 @@ async function payReservation(req, res, next) {
     await connection.query(
       `
       UPDATE reservations
-      SET user_name = ?, total_euros = 3, cc_number = ?, lastUpdate = NOW()
+      SET user_name = ?, total_euros = 3, cc_number = ?, lastUpdate = UTC_TIMESTAMP
       WHERE id = ?
       
     `,
@@ -90,13 +90,16 @@ async function payReservation(req, res, next) {
       await connection.query(
         `
       INSERT INTO ratings(date, id_reservation, lastUpdate)
-      VALUES(NOW(), ?, NOW())
+      VALUES(UTC_TIMESTAMP, ?, UTC_TIMESTAMP)
     `,
         [id]
       );
     }
 
     //⏩ envío de correo confirmando la reserva:
+
+    const dateToUser = formatDateToUser(new Date(reservVisitDate));
+    const nowDateUser = formatDateToUser(new Date());
 
     try {
       await sendMail({
@@ -105,11 +108,11 @@ async function payReservation(req, res, next) {
         content: `Se confirma la reserva realizada con los siguientes datos:
           Reserva realizada por: ${reservUserName} 
           Playa: ${reservBeach}
-          Fecha y hora reservada (1 hora): ${reservVisitDate} 
+          Fecha y hora reservada (1 hora): ${dateToUser} 
           Nº plazas: ${reservNumberOfPlaces} personas.
           Fianza: 3 euros.
           Nº reserva: ${id}
-          Reserva confirmada y pagada el ${new Date()}
+          Reserva confirmada y pagada el ${nowDateUser}
           
           Sólo se permiten anulaciones hasta 24 horas antes de la fecha/hora reservada. `,
       });
@@ -121,8 +124,8 @@ async function payReservation(req, res, next) {
     res.send({
       status: "ok",
       message: `Se confirma la reserva para el usuario ${reservUserName}, en la playa ${reservBeach}
-      para la fecha y hora ${reservVisitDate} para ${reservNumberOfPlaces} personas. Nº reserva: ${id}.
-      Reserva pagada el ${new Date()}. Se ha enviado correo de confirmación al correo ${userEmail}.`,
+      para la fecha y hora ${dateToUser} para ${reservNumberOfPlaces} personas. Nº reserva: ${id}.
+      Reserva pagada el ${nowDateUser}. Se ha enviado correo de confirmación al correo ${userEmail}.`,
     });
   } catch (error) {
     next(error);

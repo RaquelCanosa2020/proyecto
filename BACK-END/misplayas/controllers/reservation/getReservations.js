@@ -10,10 +10,11 @@ async function getReservations(req, res, next) {
 
     const [result] = await connection.query(
       `
-      SELECT reservations.*
-      FROM reservations
-      WHERE reservations.id_user = ?
-      ORDER BY reservations.date DESC
+      SELECT R.id, R.date, R.visit, R.places, R.id_beach, R.total_euros, ratings.value
+      FROM reservations R
+      LEFT JOIN ratings ON R.id=ratings.id_reservation
+      WHERE R.id_user = ?
+      ORDER BY R.date DESC
     `,
       [id]
     );

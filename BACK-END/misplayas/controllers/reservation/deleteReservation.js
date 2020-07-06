@@ -1,5 +1,5 @@
 const { getConnection } = require("../../db");
-const { sendMail } = require("../../helpers");
+const { formatDateToUser, sendMail } = require("../../helpers");
 
 async function deleteReservation(req, res, next) {
   let connection;
@@ -52,9 +52,11 @@ async function deleteReservation(req, res, next) {
           title: "Anulación de reserva de espacio en playa.",
           content: `Se confirma la ANULACIÓN de la reserva realizada con los siguientes datos:
           Reserva realizada por: ${reservUserName} 
-          Realizada en fecha: ${reservDate}
+          Realizada en fecha: ${formatDateToUser(reservDate)}
           Nº reserva: ${id}
-          Reserva anulada el ${new Date()} Se ha procedido al reintegro del importe a la misma tarjeta que hizo el pago.
+          Reserva anulada el ${formatDateToUser(
+            new Date()
+          )} Se ha procedido al reintegro del importe a la misma tarjeta que hizo el pago.
          `,
         });
       } catch (error) {

@@ -8,7 +8,7 @@ async function getBeachPhotos(req, res, next) {
 
     const { id } = req.params;
 
-    // Ejecutar query para sacar lista de votos
+    // Ejecutar query para sacar lista de fotos
     const [photos] = await connection.query(
       `
       SELECT description, link, date, id_user
@@ -18,6 +18,7 @@ async function getBeachPhotos(req, res, next) {
       `,
       [id]
     );
+    console.log(photos);
 
     res.send({
       status: "ok",

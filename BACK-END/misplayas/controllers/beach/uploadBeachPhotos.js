@@ -36,7 +36,7 @@ async function uploadBeachPhotos(req, res, next) {
       `
 
             INSERT INTO photos (link, date, description, id_beach, lastUpdate, id_user)
-      VALUES(?,?,?,?,NOW(),?)
+      VALUES(?,?,?,?,UTC_TIMESTAMP,?)
     `,
       [savedImageFileName, formatDateToDB(date), description, id, id_user]
     );

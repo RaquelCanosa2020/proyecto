@@ -1,6 +1,6 @@
 const { getConnection } = require("../../db");
 const { getHours, parseISO } = require("date-fns");
-const { formatDateToDB, setZero } = require("../../helpers");
+const { formatUtc, setZero } = require("../../helpers");
 
 //Se podrán modificar las reservas antes de ser pagadas.
 
@@ -12,12 +12,12 @@ async function editReservation(req, res, next) {
 
     //PTE comprobación de que la reserva no ha sido pagada y usuario.
 
-    const { visit, places, id_beach, id_user } = req.body;
+    const { visit_date, visit_hour, places, id_beach, id_user } = req.body;
     const { id } = req.params;
 
     //⏩ comprobar que no falta info en el body:
 
-    if (!visit || !places || !id_user || !id_beach) {
+    if (!visit_date || !visit_hour || !places || !id_user || !id_beach) {
       //pte control que es usuario registrado
       const error = new Error(
         `Faltan datos en la petición. Debes cubrir
@@ -29,6 +29,12 @@ async function editReservation(req, res, next) {
       error.httpStatus = 400;
       throw error;
     }
+
+    //procesamos día y hora
+
+    const visit = formatUtc(visit_date, visit_hour);
+
+    //pte comprobar usuario, fecha no pasada, que no hay otra reserva ese mismo día
 
     //⏩comprobar que la hora está incluida en el horario de la playa:
     //necesito la info de horarios de la playa:
@@ -47,24 +53,16 @@ async function editReservation(req, res, next) {
     const start = schedule[0].start_time;
     const startHour = Number(start.split(":")[0]);
 
-    console.log(startHour);
-
     const end = schedule[0].end_time;
     const endHour = Number(end.split(":")[0]);
 
-    //saco la hora de visit
+    //comparo hora con el horario:
 
-    const visitDateHour = parseISO(visit); //pq visit es un string
-    const localVisitHour = getHours(visitDateHour) - 2; //parseISO da UTC, pte arreglar.
-    console.log(localVisitHour);
-
-    //comparo visit con el horario:
-
-    if (localVisitHour < startHour || localVisitHour >= endHour) {
+    if (Number(visit_hour) < startHour || Number(visit_hour) >= endHour) {
       {
         const error = new Error(
           `Horario no válido, Debe estar entre las ${start} horas y
-           las ${end} horas`
+           las ${endHour - 1}:00 horas`
         );
         error.httpStatus = 404;
         throw error;
@@ -80,7 +78,7 @@ async function editReservation(req, res, next) {
     //aforo de la playa:
     const [result1] = await connection.query(
       `
-          SELECT capacity
+          SELECT capacity, name
           FROM beaches
           WHERE id=?
           `,
@@ -88,6 +86,7 @@ async function editReservation(req, res, next) {
     );
 
     const capacity = Number(result1[0].capacity);
+    const beachName = result1[0].name;
     console.log(result1[0].capacity); //20
 
     //ocupación en la hora indicada
@@ -137,17 +136,17 @@ async function editReservation(req, res, next) {
 
     await connection.query(
       `
-      UPDATE reservations SET visit=?, places=?, id_beach=?, id_user=?, lastUpdate=UTC_TIMESTAMP()
+      UPDATE reservations SET visit=?, places=?, id_beach=?, id_user=?, lastUpdate=UTC_TIMESTAMP
       WHERE id=?
       `,
-      [formatDateToDB(visit), places, id_beach, id_user, id]
+      [visit, places, id_beach, id_user, id]
     );
 
     // Devolver resultados
     res.send({
       status: "ok",
-      message: `Se guardó la reserva para el usuario ${id_user}, en la playa ${id_beach}
-      para la fecha y hora ${visit} para ${places} personas.Nº reserva: ${id}.
+      message: `Se guardó la reserva para el usuario ${id_user}, en la playa ${id_beach}: (${beachName})
+      para la fecha ${visit_date} y hora ${visit_hour} para ${places} personas.Nº reserva: ${id}.
       Debes pagar una fianza de 3 euros para confirmar la reserva.`,
     });
   } catch (error) {
