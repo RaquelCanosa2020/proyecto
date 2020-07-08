@@ -8,7 +8,7 @@ const crypto = require("crypto"); //módulo nativo. Para crear códigos únicos 
 
 const sendgrid = require("@sendgrid/mail"); // instalamos esto para enviar mails a usuarios
 
-const { format } = require("date-fns");
+const { format, addMinutes } = require("date-fns");
 const { es } = require("date-fns/locale");
 
 // Definimos directorio de subida de imágenes
@@ -17,29 +17,23 @@ const imageUploadPath = path.join(__dirname, process.env.UPLOADS_DIR);
 //1.A usamos date-fns para dar formato válido para la Base de Datos a la fecha:
 
 function formatDateToDB(date) {
-  return format(new Date(date), "yyyy-MM-dd HH:mm:ss");
+  let internal_date;
+
+  if (typeof date === "string") {
+    internal_date = new Date(date);
+  } else {
+    internal_date = date;
+  }
+
+  const adjusted_date = addMinutes(
+    internal_date,
+    internal_date.getTimezoneOffset()
+  );
+
+  return format(adjusted_date, "yyyy-MM-dd HH:mm:ss");
 }
 
-//1.B con lo anterior me lo da en local, necesito meter en la BD la hora local del usuario en utc
-
-function formatUtc(visit_date, visit_hour) {
-  const d = visit_date.split("-");
-  const [day, month, year] = d;
-  const h = visit_hour.split(":");
-  const [hour] = h;
-
-  const visit = new Date(year, month - 1, day, hour, 0);
-
-  const dateString = visit.toISOString();
-  const splitPointArray = dateString.split(".");
-  const splitPointArraySlice = splitPointArray.slice(0, 1);
-  const split = splitPointArraySlice[0].split("T");
-
-  const dateUtcToDB = split.join(" ");
-  return dateUtcToDB;
-}
-
-//1.C usamos date-fns para dar transformar fechas UTC de la BD en locales y formato amigable a mostrar al usuario:
+//1.B usamos date-fns para dar transformar fechas UTC de la BD en locales y formato amigable a mostrar al usuario:
 
 function formatDateToUser(date) {
   let dateToUser = `${format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", {
@@ -127,7 +121,6 @@ function generateError(message, code = 500) {
 
 module.exports = {
   formatDateToDB,
-  formatUtc,
   formatDateToUser,
   processAndSaveImage,
   deleteUpload,

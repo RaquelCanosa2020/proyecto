@@ -93,7 +93,7 @@ app.post("/beaches/:id/photos", isUser, beachExists, uploadBeachPhotos); //PTE M
 // Sólo usuarios registrados, el autor o admin--PENDIENTE
 app.get("/reservations/:id", isUser, getReservations); //
 
-// Crear una nueva reserva 🔧
+// Crear una nueva reserva 👣
 // POST - /reservations
 // Sólo usuarios registrados --PENDIENTE
 app.post("/reservations", isUser, newReservation); //pte isUser
@@ -101,9 +101,9 @@ app.post("/reservations", isUser, newReservation); //pte isUser
 // Confirmar y pagar una reserva 🔧
 // POST - /reservations/:id
 // Sólo usuarios registrados autor --PENDIENTE
-app.post("/reservations/:id", isUser, payReservation); //pte isUser
+app.post("/reservations/:id", isUser, reservationExists, payReservation); //pte isUser
 
-// Cambiar una reserva (id reserva)
+// Cambiar una reserva (id reserva) 👣
 // PUT - /reservations/:id
 // Sólo usuarios registrados, el autor o admin --PENDIENTE
 app.put("/reservations/:id", isUser, reservationExists, editReservation); //pte isUser

@@ -55,11 +55,21 @@ async function listBeaches(req, res, next) {
       }
     } else {
       queryResults = await connection.query(
+        /*
         `
         SELECT beaches.id, beaches.name, beaches.municipality, AVG(ratings.value) AS voteAverage
         FROM beaches, ratings, reservations
         WHERE ratings.id_reservation = reservations.id 
         AND reservations.id_beach = beaches.id
+        GROUP BY beaches.id
+       
+        ORDER BY ${orderBy} ${orderDirection}
+      );*/
+
+        `
+        SELECT beaches.id, beaches.name, beaches.municipality, AVG(ratings.value) AS voteAverage
+        FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
+                    LEFT JOIN ratings ON reservations.id = ratings.id_reservation
         GROUP BY beaches.id
        
         ORDER BY ${orderBy} ${orderDirection}`

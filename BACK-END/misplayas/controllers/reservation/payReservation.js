@@ -6,7 +6,10 @@ const {
   setMinutes,
   setSeconds,
 } = require("date-fns");
-const { formatDateToUser, sendMail } = require("../../helpers");
+const { formatDateToUser, sendMail, generateError } = require("../../helpers");
+const {
+  payReservationSchema,
+} = require("../../validators/reservationValidators");
 
 //Las reservas una vez pagadas no pueden modificarse.
 
@@ -16,6 +19,8 @@ async function payReservation(req, res, next) {
   try {
     connection = await getConnection();
 
+    await payReservationSchema.validateAsync(req.body);
+
     const { id } = req.params;
 
     const { cc_number } = req.body;
@@ -24,27 +29,12 @@ async function payReservation(req, res, next) {
 
     console.log(cc_number);
 
-    //⏩ comprobar que no falta info en el body:
-
-    if (!cc_number) {
-      //pte control que es usuario registrado
-      const error = new Error(
-        `Faltan datos en la petición. Debes cubrir
-        cc_number: nº de tarjeta de débito o crédito
-        `
-      );
-      error.httpStatus = 400;
-      throw error;
-    }
-
-    //⏩ccomprobaciones PTES :
-
     //⏩obtenemos la información de la reserva:
 
     const [reservInformation] = await connection.query(
       `
         
-        SELECT date, visit, places, id_beach, id_user, name, email
+        SELECT date, visit, places, id_beach, id_user, cc_number, name, email
       FROM reservations, users
       WHERE reservations.id = ? AND reservations.id_user = users.id
       
@@ -52,14 +42,58 @@ async function payReservation(req, res, next) {
       [id]
     );
 
+    console.log(reservInformation);
+
     const reservVisitDate = reservInformation[0].visit;
     const reservNumberOfPlaces = reservInformation[0].places;
     const reservBeach = reservInformation[0].id_beach;
     const reservUserName = reservInformation[0].name;
+    const userId = reservInformation[0].id_user;
     const userEmail = reservInformation[0].email;
+
+    //⏩comprobar que el usuario hizo esa reserva:
+
+    if (userId !== req.auth.id) {
+      {
+        throw generateError(
+          `No tienes acceso a esa reserva
+        `,
+          403
+        );
+      }
+    }
+
+    //⏩comprobar que la reserva no está ya pagada:
+
+    const currentNumber = reservInformation[0].cc_number;
 
     console.log(reservNumberOfPlaces);
     console.log(reservBeach);
+
+    //⏩comprobar que la reserva no está ya pagada:
+
+    if (currentNumber !== null) {
+      {
+        throw generateError(
+          `La reserva ${id} ya está pagada
+        `,
+          403
+        );
+      }
+    }
+
+    //⏩ comprobar que no falta info en el body:
+
+    if (!cc_number) {
+      {
+        throw generateError(
+          `Faltan datos en la petición. Debes cubrir
+        cc_number: nº de tarjeta de débito o crédito
+        `,
+          400
+        );
+      }
+    }
 
     //⏩incluimos en la reserva la info del pago:
 
@@ -102,6 +136,7 @@ async function payReservation(req, res, next) {
     const nowDateUser = formatDateToUser(new Date());
 
     try {
+      console.log(reservUserName);
       await sendMail({
         email: userEmail,
         title: "Reserva de espacio en playa.",

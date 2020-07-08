@@ -1,13 +1,11 @@
 const { getConnection } = require("../../db");
+const { addDays } = require("date-fns");
 const {
-  formatISO,
-  getHours,
-  getDays,
-  parseISO,
-  setMinutes,
-  setSeconds,
-} = require("date-fns");
-const { formatUtc, setZero, generateError } = require("../../helpers");
+  formatDateToDB,
+  formatDateToUser,
+  setZero,
+  generateError,
+} = require("../../helpers");
 const {
   newReservationSchema,
 } = require("../../validators/reservationValidators");
@@ -18,16 +16,15 @@ async function newReservation(req, res, next) {
   try {
     connection = await getConnection();
 
-    const id_user = req.auth.id;
-
     await newReservationSchema.validateAsync(req.body);
 
-    const { visit_date, visit_hour, places, id_beach } = req.body;
+    const id_user = req.auth.id;
+
+    const { visit, places, id_beach } = req.body;
 
     //⏩ comprobar que no falta info en el body:
 
-    if (!visit_date || !visit_hour || !places || !id_beach) {
-      //pte control que es usuario registrado
+    if (!visit || !places || !id_beach) {
       {
         throw generateError(
           `Faltan datos en la petición. Debes cubrir
@@ -41,22 +38,24 @@ async function newReservation(req, res, next) {
 
     //procesamos día y hora
 
-    const visit = formatUtc(visit_date, visit_hour);
-    const dateISO = formatISO(new Date(visit));
+    const visitUtc = new Date(visit);
+    const visitHour = visitUtc.getHours();
+    console.log(visitUtc);
+    console.log(visitHour);
 
-    if (dateISO.getDays < new Date().getDay) {
+    if (visitUtc <= new Date() || visitUtc > addDays(new Date(), 5)) {
       {
         throw generateError("La fecha no es válida", 403);
       }
     }
 
-    //comprobamos fecha no pasada (en validación), que no hay otra reserva ese mismo día
+    //comprobamos fecha no pasada (en validación), que no hay otra reserva ese mismo día/fecha
 
     const [existingReservation] = await connection.query(
       `SELECT id
       FROM reservations
       WHERE id_user = ? AND visit = ?`,
-      [id_user, visit]
+      [id_user, formatDateToDB(visit)]
     );
 
     if (existingReservation.length !== 0) {
@@ -90,7 +89,7 @@ async function newReservation(req, res, next) {
 
     //comparo visit con el horario (en local ambos):
 
-    if (Number(visit_hour) < startHour || Number(visit_hour) >= endHour) {
+    if (Number(visitHour) < startHour || Number(visitHour) >= endHour) {
       throw generateError(
         `Ya has realizado una reserva (número ${existingReservation[0].id}) para esa fecha y hora`,
         404
@@ -118,15 +117,15 @@ async function newReservation(req, res, next) {
     //console.log(result1[0].capacity); //20
 
     //ocupación en la hora indicada
-    //console.log("comprobando ocupacion");
+    console.log("comprobando ocupacion");
 
     const [result] = await connection.query(
       `
         SELECT SUM(places) AS ocupation
         FROM reservations
-        WHERE id_beach = ? AND reservations.visit = ? AND reservations.cc_number <> 'null'
+        WHERE id_beach = ? AND visit = ? AND cc_number IS NOT NULL
       `,
-      [id_beach, visit]
+      [id_beach, formatDateToDB(visit)]
     );
     const ocupation = Number(result[0].ocupation);
     console.log(ocupation + places); //8Es
@@ -138,6 +137,7 @@ async function newReservation(req, res, next) {
     if (ocupation === null) {
       setZero(ocupation);
     }
+
     console.log(ocupation);
 
     //comprobamos que haya sitio libre
@@ -164,7 +164,7 @@ async function newReservation(req, res, next) {
       INSERT INTO reservations(date, visit, places, id_beach, id_user, lastUpdate)
       VALUES(UTC_TIMESTAMP, ?, ?, ?, ?, UTC_TIMESTAMP)
     `,
-      [visit, places, id_beach, id_user]
+      [formatDateToDB(visit), places, id_beach, id_user]
     );
 
     const reservationNumber = finalResult.insertId;
@@ -172,7 +172,9 @@ async function newReservation(req, res, next) {
     res.send({
       status: "ok",
       message: `Se guardó la reserva para el usuario ${id_user}, en la playa nº ${id_beach}: (${beachName})
-      para la fecha ${visit_date} y hora ${visit_hour} para ${places} personas. Nº reserva: ${reservationNumber}.
+      para la fecha ${formatDateToUser(
+        visit
+      )} para ${places} personas. Nº reserva: ${reservationNumber}.
       Debes pagar una fianza de 3 euros para confirmar la reserva.`,
     });
 

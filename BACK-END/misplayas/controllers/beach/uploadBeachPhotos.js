@@ -8,8 +8,10 @@ async function uploadBeachPhotos(req, res, next) {
     connection = await getConnection();
 
     // Sacamos los datos
-    const { date, description, id_user } = req.body;
+    const { date, description } = req.body;
     const { id } = req.params;
+    const id_user = req.auth.id;
+    console.log(id);
 
     let savedImageFileName;
 
@@ -35,8 +37,8 @@ async function uploadBeachPhotos(req, res, next) {
     await connection.query(
       `
 
-            INSERT INTO photos (link, date, description, id_beach, lastUpdate, id_user)
-      VALUES(?,?,?,?,UTC_TIMESTAMP,?)
+            INSERT INTO photos (link, date, description, id_beach, id_user, lastUpdate)
+      VALUES(? ,? ,? ,? ,? , UTC_TIMESTAMP)
     `,
       [savedImageFileName, formatDateToDB(date), description, id, id_user]
     );
@@ -46,6 +48,7 @@ async function uploadBeachPhotos(req, res, next) {
       status: "ok",
       data: {
         id,
+        id_user,
         date,
         description,
       },

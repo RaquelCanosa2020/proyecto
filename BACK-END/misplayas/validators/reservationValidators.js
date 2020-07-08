@@ -1,16 +1,10 @@
 const Joi = require("@hapi/joi");
 const { generateError } = require("../helpers");
 
-// Valida nueva entrada en el diario
+// Valida nueva reserva
 const newReservationSchema = Joi.object().keys({
-  //Joi.date().greater("now"),
-  visit_date: Joi.any(),
+  visit: Joi.any().error(generateError("La fecha es obligatoria", 400)),
 
-  visit_hour: Joi.number()
-    .integer()
-    .min(0)
-    .max(23)
-    .error(generateError("El campo hour debe ser una hora entre 0 y 23", 400)),
   places: Joi.number()
     .integer()
     .min(1)
@@ -21,34 +15,16 @@ const newReservationSchema = Joi.object().keys({
     .error(generateError("El campo id_beach debe ser un número entero", 400)),
 });
 
-/*
-const editEntrySchema = Joi.object().keys({
-  place: Joi.string()
-    .min(3)
-    .max(100)
-    .required()
-    .error(
-      generateError(
-        "El campo place debe existir y ser mayor de 2 caracteres",
-        400
-      )
-    ),
-  description: Joi.string()
-    .max(10000)
-    .required()
-    .error(
-      generateError(
-        "El campo description debe existir y ser menos de 10000 caracteres",
-        400
-      )
-    ),
-  date: Joi.string()
-    .required()
-    .error(generateError("El campo date debe existir", 400)),
+//edit es lo mismo, uso el mismo.
+
+const payReservationSchema = Joi.object().keys({
+  cc_number: Joi.string()
+    .creditCard()
+    .error(generateError("El número de tarjeta no es válido", 400)),
 });
 
-const voteEntrySchema = Joi.object().keys({
-  vote: Joi.number()
+const voteReservationSchema = Joi.object().keys({
+  value: Joi.number()
     .min(1)
     .max(5)
     .required()
@@ -58,10 +34,10 @@ const voteEntrySchema = Joi.object().keys({
         400
       )
     ),
-});*/
+});
 
 module.exports = {
   newReservationSchema,
-  //editEntrySchema,
-  //voteEntrySchema,
+  payReservationSchema,
+  voteReservationSchema,
 };

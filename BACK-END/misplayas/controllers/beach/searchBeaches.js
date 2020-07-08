@@ -47,15 +47,11 @@ async function searchBeaches(req, res, next) {
         params.push(`1`);
       }
 
-      if (visit) {
-        conditions.push("visit=?");
-        const dateVisit = parseISO(visit).toISOString;
-        params.push(`${dateVisit}`);
-      }
-
-      if (places) {
-        conditions.push("places=?");
-      }
+      /*if (visit) {
+        conditions.push("");
+        
+        params.push(`${visit}`);
+      }*/
 
       query = `${query} WHERE ${conditions.join(` AND `)}`;
     }
