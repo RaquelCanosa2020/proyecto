@@ -79,7 +79,7 @@ async function main() {
         id_user INT UNSIGNED,
         user_name VARCHAR(50),
         total_euros DECIMAL(2,1),
-        cc_number VARCHAR(50),
+        cc_number TINYTEXT NOT NULL,
         lastUpdate DATETIME NOT NULL,
         FOREIGN KEY (id_beach) REFERENCES beaches (id),
         FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE SET NULL
@@ -127,6 +127,15 @@ async function main() {
       `
       INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate, lastAuthUpdate)
       VALUES(UTC_TIMESTAMP(), "denebolaleo1@gmail.com", SHA2("${process.env.DEFAULT_ADMIN_PASSWORD}", 512), "admin", "Raquel", true, UTC_TIMESTAMP(), UTC_TIMESTAMP())
+    `
+    );
+
+    console.log("Creando usuario anónimo");
+
+    await connection.query(
+      `
+      INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate, lastAuthUpdate)
+      VALUES(UTC_TIMESTAMP(), ${process.env.ANONYMUS_USER_EMAIL}, SHA2("${process.env.DEFAULT_ANONYMUS_PASSWORD}", 512), "normal", "Anónimo", true, UTC_TIMESTAMP(), UTC_TIMESTAMP())
     `
     );
 

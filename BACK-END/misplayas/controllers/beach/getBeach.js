@@ -1,6 +1,6 @@
 const { getConnection } = require("../../db");
 const { getHours, parseISO, setMinutes, setSeconds } = require("date-fns");
-const { formatDateToDB } = require("../../helpers");
+const { formatDateToDB, formatDateToUser, setZero } = require("../../helpers");
 
 async function getBeach(req, res, next) {
   let connection;
@@ -9,6 +9,8 @@ async function getBeach(req, res, next) {
     connection = await getConnection();
 
     const { id } = req.params;
+
+    console.log("buscando info");
 
     const [result] = await connection.query(
       `
@@ -21,26 +23,43 @@ async function getBeach(req, res, next) {
       [id]
     );
 
-    const now = new Date(); //actual en UTC
-    const nowZeroMinutes = setMinutes(now, 0);
-    const nowZero = setSeconds(nowZeroMinutes, 0); //paso la hora actual a 0 minutos y 0 segundos, para poder comparar con las horas de reserva
-    console.log(nowZero);
+    let visitUser;
+    let visitDate;
 
-    const [ocupation] = await connection.query(
+    if (req.body.visit) {
+      const { visit } = req.body;
+      visitDate = formatDateToDB(visit);
+      visitUser = formatDateToUser(visit);
+    } else {
+      const now = new Date(); //actual en UTC
+      const nowZeroMinutes = setMinutes(now, 0);
+      const nowZero = setSeconds(nowZeroMinutes, 0); //paso la hora actual a 0 minutos y 0 segundos, para poder comparar con las horas de reserva
+      console.log(nowZero);
+      visitDate = formatDateToDB(nowZero);
+      visitUser = formatDateToUser(now);
+    }
+    console.log(`buscando datos de disponibilidad a fecha utc  ${visitDate}`);
+
+    const [occupation] = await connection.query(
       `
-        SELECT SUM(places) AS ocupation
+        SELECT SUM(places) AS occupation
         FROM reservations
-        WHERE id_beach = ? AND reservations.visit = ? AND reservations.cc_number <> 'null'
+        WHERE id_beach = ? AND reservations.visit = ?
       `,
-      [id, formatDateToDB(nowZero)]
+      [id, visitDate]
     );
-    const free = Number(result[0].capacity) - Number(ocupation[0].ocupation);
+
+    if (occupation[0].occupation === null) {
+      setZero(occupation[0].occupation);
+    }
+
+    const free = Number(result[0].capacity) - Number(occupation[0].occupation);
 
     res.send({
       status: "ok",
       data: {
         información: result[0],
-        "plazas disponibles": free,
+        disponibilidad: `plazas disponibles actualmente en fecha ${visitUser}: ${free}`,
       },
     });
   } catch (error) {

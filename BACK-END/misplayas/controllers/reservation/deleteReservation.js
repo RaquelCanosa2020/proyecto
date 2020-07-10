@@ -1,18 +1,21 @@
+const { addDays } = require("date-fns");
 const { getConnection } = require("../../db");
-const { formatDateToUser, sendMail } = require("../../helpers");
+const { formatDateToUser, sendMail, generateError } = require("../../helpers");
 
 async function deleteReservation(req, res, next) {
   let connection;
 
-  //Anulación de reservas pagadas y borrado de reservas en general
+  //Anulación de reservas antes de 24 h de visita.
 
   try {
     connection = await getConnection();
     const { id } = req.params; //id de la reserva
+    const id_user = req.auth.id;
+    const id_role = req.auth.role;
 
-    //obtenemos info que necesitaremos de la reserva:
+    //obtenemos info que necesitaremos de la reserva y comprobamos que es el usuario autor:
 
-    const [reservInformation] = await connection.query(
+    const [current] = await connection.query(
       `
         
         SELECT date, visit, places, id_beach, id_user, cc_number, name, email
@@ -23,46 +26,51 @@ async function deleteReservation(req, res, next) {
       [id]
     );
 
-    const reservDate = reservInformation[0].date; //para info
-    const reservIdUser = reservInformation[0].id_user; //necesitaré para comprobar user
-    const cc_number = reservInformation[0].cc_number; //necesario para el abono
-    const reservUserName = reservInformation[0].name; //para info
-    const userEmail = reservInformation[0].email; //si le mandamos email
+    const [currentReserv] = current;
+    console.log(current);
+    console.log(currentReserv);
 
-    //PTE comprobaciones usuario
+    //Comprobación de usuario autorizado
 
-    //comprobar si la reserva está pagada y recoger dato de la tarjeta para abono
+    if (currentReserv.id_user !== id_user && id_role !== "admin") {
+      throw generateError("No tienes permisos para anular esta reserva", 403);
+    }
 
-    const [paidReservation] = await connection.query(
-      `
-      SELECT reservations.cc_number
-      FROM reservations
-      WHERE reservations.cc_number <> 'null' AND reservations.id = ?`,
-      [id]
-    );
+    const reservDate = currentReserv.date; //para info
+    const cc_number = currentReserv.cc_number; //se necesitaría para el abono
+    const reservUserName = currentReserv.name; //para info
+    const userEmail = currentReserv.email; //si le mandamos email
 
-    //PTE COMPROBACIÓN FECHA (sólo se pueden anular hasta 24 horas antes  )
+    //Comprobamos que en el momento no faltan 1 día o menos para visit
 
+    const currentVisit = new Date(currentReserv.visit);
+
+    if (currentVisit < addDays(new Date(), 1)) {
+      {
+        throw generateError(
+          "No puedes cambiar la reserva, faltan menos 24 horas para la fecha reservada",
+          403
+        );
+      }
+    }
     //y le enviaremos correo de confirmación de la anulación
 
-    if (paidReservation.length !== 0) {
-      try {
-        await sendMail({
-          email: userEmail,
-          title: "Anulación de reserva de espacio en playa.",
-          content: `Se confirma la ANULACIÓN de la reserva realizada con los siguientes datos:
+    try {
+      await sendMail({
+        email: userEmail,
+        title: "Anulación de reserva de espacio en playa.",
+        content: `Se confirma la ANULACIÓN de la reserva realizada con los siguientes datos:
           Reserva realizada por: ${reservUserName} 
-          Realizada en fecha: ${formatDateToUser(reservDate)}
+          Realizada en fecha: /*${formatDateToUser(reservDate)}
           Nº reserva: ${id}
           Reserva anulada el ${formatDateToUser(
             new Date()
           )} Se ha procedido al reintegro del importe a la misma tarjeta que hizo el pago.
          `,
-        });
-      } catch (error) {
-        const emailError = new Error("Error de envío de mail");
-        throw emailError;
-      }
+      });
+    } catch (error) {
+      const emailError = new Error("Error de envío de mail");
+      throw emailError;
     }
 
     // Borrar la entrada de la tabla (sería mejor anular..)
@@ -80,7 +88,7 @@ async function deleteReservation(req, res, next) {
     res.send({
       status: "ok",
       message: `La reserva ${id} ha sido eliminada. 
-      En caso de reserva pagada, se ha enviado correo de anulación y abono a  ${userEmail} `,
+      Se ha enviado correo de anulación y abono a  ${userEmail} `,
     });
   } catch (error) {
     next(error);

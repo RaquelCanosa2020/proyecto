@@ -17,7 +17,7 @@ const isAdmin = require("./middlewares/isAdmin");
 
 const listBeaches = require("./controllers/beach/listBeaches");
 const getBeach = require("./controllers/beach/getBeach");
-const searchBeaches = require("./controllers/beach/searchBeaches");
+const searchBeaches = require("./controllers/beach/searchBeaches copy");
 const getBeachVotes = require("./controllers/beach/getBeachVotes");
 const getBeachPhotos = require("./controllers/beach/getBeachPhotos");
 const uploadBeachPhotos = require("./controllers/beach/uploadBeachPhotos");
@@ -26,7 +26,8 @@ const uploadBeachPhotos = require("./controllers/beach/uploadBeachPhotos");
 
 const getReservations = require("./controllers/reservation/getReservations");
 const newReservation = require("./controllers/reservation/newReservation");
-const payReservation = require("./controllers/reservation/payReservation");
+//const payReservation = require("./controllers/reservation/payReservation");
+//quito esto y lo incluyo en el anterior.
 const voteReservation = require("./controllers/reservation/voteReservation");
 const editReservation = require("./controllers/reservation/editReservation");
 const deleteReservation = require("./controllers/reservation/deleteReservation");
@@ -101,7 +102,7 @@ app.post("/reservations", isUser, newReservation); //pte isUser
 // Confirmar y pagar una reserva 🔧
 // POST - /reservations/:id
 // Sólo usuarios registrados autor --PENDIENTE
-app.post("/reservations/:id", isUser, reservationExists, payReservation); //pte isUser
+////app.post("/reservations/:id", isUser, reservationExists, payReservation); //pte isUser
 
 // Cambiar una reserva (id reserva) 👣
 // PUT - /reservations/:id

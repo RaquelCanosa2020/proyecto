@@ -81,7 +81,7 @@ console.log(
 console.log(new Date(96, 11, 1, 0, 0, 0).toISOString())*/
 //KKKKKK, lo estaba haciendo mal, la fecha que meto en postman ya es la que se recibe del cliente pasada a UTC
 
-const { format, addMinutes } = require("date-fns");
+/*const { format, addMinutes } = require("date-fns");
 
 function formatDateToDB(date) {
   let internal_date;
@@ -104,4 +104,4 @@ const fecha_recibida = new Date("2020-07-08T10:42:00.000Z");
 const fecha_final = addMinutes(fecha_recibida, 30);
 
 console.log(formatDateToDB(fecha_recibida));
-console.log(formatDateToDB(fecha_final));
+console.log(formatDateToDB(fecha_final));*/
