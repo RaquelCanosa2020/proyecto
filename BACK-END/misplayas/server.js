@@ -17,10 +17,11 @@ const isAdmin = require("./middlewares/isAdmin");
 
 const listBeaches = require("./controllers/beach/listBeaches");
 const getBeach = require("./controllers/beach/getBeach");
-const searchBeaches = require("./controllers/beach/searchBeaches copy");
+const searchBeaches = require("./controllers/beach/searchBeaches");
 const getBeachVotes = require("./controllers/beach/getBeachVotes");
 const getBeachPhotos = require("./controllers/beach/getBeachPhotos");
 const uploadBeachPhotos = require("./controllers/beach/uploadBeachPhotos");
+const editBeach = require("./controllers/beach/editBeach");
 
 //Reservations controllers:
 
@@ -61,21 +62,24 @@ app.use(fileUpload());
 
 /** 🌅ENDPOINTS DE PLAYAS🌅 (obvio DE MOMENTO las del admin: crear o modificar / borrar playas)*/
 
-// Listar playas, incluidas búsquedas 🔧//PTE incluir alguna foto?
+// Listar playas, incluidas búsquedas por nombre de playa o municipio 🔧//PTE incluir alguna foto?
 // Público
 app.get("/beaches", listBeaches);
-app.get("/beachessearch", searchBeaches); //🏮pte incluir búsqueda disponibilidad 🏮
+
+// Buscar playas, buscador avanzado por fecha, plazas y/o opciones 🔧
+// Público
+app.get("/beaches/search", searchBeaches);
 
 // Mostrar una sola playa 🔧
 // GET - /beaches/:id
 // Público
 app.get("/beaches/:id", beachExists, getBeach);
-//la media de votos sólo tiene en cuenta la última RESERVA de cada usuario. PENDIENTE (ahora hace media)
+//Incluye la disponibilidad en este momento o en la fecha que indique el usuario en el body
 
 // Ver votos de una playa 🔧
 // GET - /beaches/:id/votes
 // Público
-app.get("/beaches/:id/votes", beachExists, getBeachVotes); //PTE sólo última RESERVA de cada usuario
+app.get("/beaches/:id/votes", beachExists, getBeachVotes);
 
 // Ver fotos de una playa 🔧
 // GET - /beaches/:id/photos
@@ -86,6 +90,11 @@ app.get("/beaches/:id/photos", beachExists, getBeachPhotos);
 // POST - /beaches/:id/photos
 // Sólo usuarios registrados
 app.post("/beaches/:id/photos", isUser, beachExists, uploadBeachPhotos); //PTE MULTIUPLOADS
+
+// Modificar datos de una playa 🔧
+// PUT - /beaches
+// Sólo administrador
+app.put("/beaches", isUser, isAdmin, editBeach);
 
 /** ⌚ENDPOINTS DE RESERVAS⌚*/
 
@@ -99,10 +108,10 @@ app.get("/reservations/:id", isUser, getReservations); //
 // Sólo usuarios registrados --PENDIENTE
 app.post("/reservations", isUser, newReservation); //pte isUser
 
-// Confirmar y pagar una reserva 🔧
+// Confirmar y pagar una reserva 🔧 NO LO VOY A HACER. El usuario paga al hacer reserva
 // POST - /reservations/:id
 // Sólo usuarios registrados autor --PENDIENTE
-////app.post("/reservations/:id", isUser, reservationExists, payReservation); //pte isUser
+////app.post("/reservations/:id", isUser, reservationExists, payReservation);
 
 // Cambiar una reserva (id reserva) 👣
 // PUT - /reservations/:id

@@ -9,6 +9,7 @@ const { formatDateToDB } = require("./helpers");
 const { random, sample } = require("lodash");
 const uuid = require("uuid");
 const { add, startOfHour } = require("date-fns");
+const axios = require("axios");
 
 let connection;
 
@@ -60,11 +61,14 @@ async function main() {
         name VARCHAR(50),
         municipality VARCHAR(50),
         description TEXT,
-        start_time TIME,
-        end_time TIME,
-        capacity INT,
+        start_time INT UNSIGNED,
+        end_time INT UNSIGNED,
+        start_month INT UNSIGNED,
+        end_month INT UNSIGNED,
+        capacity INT UNSIGNED,
         lifesaving BOOLEAN DEFAULT false,
         bar_restaurant BOOLEAN DEFAULT false,
+        image TINYTEXT,
         lastUpdate DATETIME NOT NULL
       );
     `);
@@ -79,10 +83,10 @@ async function main() {
         id_user INT UNSIGNED,
         user_name VARCHAR(50),
         total_euros DECIMAL(2,1),
-        cc_number TINYTEXT NOT NULL,
+        cc_number TINYTEXT,
         lastUpdate DATETIME NOT NULL,
         FOREIGN KEY (id_beach) REFERENCES beaches (id),
-        FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE SET NULL
+        FOREIGN KEY (id_user) REFERENCES users (id)
       );
     `);
 
@@ -108,7 +112,7 @@ async function main() {
         id_beach INT UNSIGNED,
         lastUpdate DATETIME NOT NULL,
         FOREIGN KEY (id_beach) REFERENCES beaches (id),
-        FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE SET NULL
+        FOREIGN KEY (id_user) REFERENCES users (id)
       )
       
     `);
@@ -135,7 +139,7 @@ async function main() {
     await connection.query(
       `
       INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate, lastAuthUpdate)
-      VALUES(UTC_TIMESTAMP(), ${process.env.ANONYMUS_USER_EMAIL}, SHA2("${process.env.DEFAULT_ANONYMUS_PASSWORD}", 512), "normal", "Anónimo", true, UTC_TIMESTAMP(), UTC_TIMESTAMP())
+      VALUES(UTC_TIMESTAMP(), "${process.env.ANONYMUS_USER_EMAIL}", SHA2("${process.env.DEFAULT_ANONYMUS_PASSWORD}", 512), "normal", "Anónimo", true, UTC_TIMESTAMP(), UTC_TIMESTAMP())
     `
     );
 
@@ -155,37 +159,65 @@ async function main() {
     }
 
     console.log("Metiendo datos de prueba en beaches");
-    const beaches = 5;
 
-    for (let index = 0; index < beaches; index++) {
-      const playas = ["Barrañán", "Pedra do Sal", "Caión", "Baldaio", "Ares"];
-      const municipios = [
-        "Carballo",
-        "Carballo",
-        "A Laracha",
-        "Arteixo",
-        "Ares",
-      ];
-      const name = playas[index];
-      const municipality = municipios[index];
-      const type = ["urban", "not urban", "isolated"];
-      const typeBeach = sample(type);
-      const truefalse = sample([1, 0]); //no funciona ninguno de los 2 métodos con true/false, dice que tengo que meter INT
-      /*const boole = (number) => { //pero si meto yo directamente en values true o false si me lo acepta¿?
-        number = Math.random();
-        if (number < 0.5) {
-          return true;
-        }
-        {
-          return false;
-        }
-      }; */ await connection.query(
+    const playas = [
+      "Arealonga",
+      "Pedra do Sal",
+      "Baldaio",
+      "Ares",
+      "A Lanzada",
+    ];
+
+    for (const playa of playas) {
+      const response = await axios.get(
+        "https://opendata.arcgis.com/datasets/84ddbc8cf4104a579d579f6441fcaa8a_0.geojson"
+      );
+      const dataKeys = response.data.features;
+
+      const dataPlaya = dataKeys.filter(
+        (element) => element.properties.Nombre === playa
+      );
+
+      const data = dataPlaya[0].properties;
+      const datos = { nombre: data.Nombre, municipio: data.Término_Mu };
+
+      /* for (let index = 0; index < beaches; index++) {
+        const playas = ["Barrañán", "Pedra do Sal", "Caión", "Baldaio", "Ares"];
+        const municipios = [
+          "Carballo",
+          "Carballo",
+          "A Laracha",
+          "Arteixo",
+          "Ares",
+        ];
+        const name = playas[index];
+        const municipality = municipios[index];
+        const type = ["urban", "not urban", "isolated"];
+        const typeBeach = sample(type);
+        const truefalse = sample([1, 0]); //no funciona ninguno de los 2 métodos con true/false, dice que tengo que meter INT
+        /*const boole = (number) => { //pero si meto yo directamente en values true o false si me lo acepta¿?
+          number = Math.random();
+          if (number < 0.5) {
+            return true;
+          }
+          {
+            return false;
+          }
+        }; 
+        const start_time = sample([8, 9]);
+        const end_time = sample([21, 22]);
+        const start_month = sample([5, 6]);
+        const end_month = sample([9, 10]);
+        const capacity = sample([200, 300, 20]);*/
+      await connection.query(
         `
-        INSERT INTO beaches(creation_date, name, type, municipality, description, start_time, end_time, capacity, lifesaving, bar_restaurant, lastUpdate)
-        VALUES(UTC_TIMESTAMP(), "${name}", "${typeBeach}", "${municipality}", "${faker.lorem.paragraph()}", "09:00:00", "21:00:00", 20, "${truefalse}", "${truefalse}", UTC_TIMESTAMP())
-      `
+        INSERT INTO beaches(creation_date, name, type, municipality, description, start_time, end_time, start_month, end_month, capacity, lifesaving, bar_restaurant, lastUpdate)
+        VALUES(UTC_TIMESTAMP(), ?, "urban", ?, "${faker.lorem.paragraph()}", 9, 21, 7, 9, 20, true, false, UTC_TIMESTAMP())
+      `,
+        [datos.nombre, datos.municipio]
       );
     }
+
     //en capacity indico un aforo general de 20 a todas, para hacer pruebas.
 
     console.log("Metiendo datos de prueba en reservations");

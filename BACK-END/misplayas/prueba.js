@@ -105,3 +105,13 @@ const fecha_final = addMinutes(fecha_recibida, 30);
 
 console.log(formatDateToDB(fecha_recibida));
 console.log(formatDateToDB(fecha_final));*/
+
+let numeros = [2, 7, 75, 8, 1, 9, 4, 7];
+
+for (let i = 0; i <= numeros.length; i++) {
+  if (Number(numeros[i]) > 6) {
+    numeros.splice(i, 1);
+  }
+}
+
+console.log(numeros);

@@ -37,15 +37,14 @@ async function listBeaches(req, res, next) {
     if (search) {
       queryResults = await connection.query(
         `
-        SELECT beaches.id, beaches.name, beaches.municipality, AVG(ratings.value) AS voteAverage
-        FROM beaches, ratings, reservations
-        WHERE ratings.id_reservation = reservations.id 
-        AND reservations.id_beach = beaches.id
+        SELECT beaches.*, ROUND(AVG(ratings.value),1) AS voteAverage
+        FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
+                    LEFT JOIN ratings ON reservations.id = ratings.id_reservation
         GROUP BY beaches.id
         WHERE name LIKE ? OR municipality LIKE ?
         ORDER BY ${orderBy} ${orderDirection}
         `,
-        [`%${search}%`, `%${search}%`] //PTE BUSCAR POR ESPACIO A RESERVAR U HORARIO.
+        [`%${search}%`, `%${search}%`]
       );
 
       if (queryResults[0].length === 0) {
@@ -67,9 +66,9 @@ async function listBeaches(req, res, next) {
       );*/
 
         `
-        SELECT beaches.id, beaches.name, beaches.municipality, AVG(ratings.value) AS voteAverage
+        SELECT beaches.*, ROUND(AVG(ratings.value),1) AS voteAverage
         FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
-                    LEFT JOIN ratings ON reservations.id = ratings.id_reservation
+        LEFT JOIN ratings ON reservations.id = ratings.id_reservation
         GROUP BY beaches.id
        
         ORDER BY ${orderBy} ${orderDirection}`

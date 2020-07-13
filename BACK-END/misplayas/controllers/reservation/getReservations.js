@@ -19,13 +19,13 @@ async function getReservations(req, res, next) {
       [id]
     );
 
-    /*if (result.length === 0) {
+    if (result.length === 0) {
       const error = new Error(
         `Aún no constan reservas a tu nombre en la base de datos`
       );
       error.httpStatus = 404;
       throw error;
-    }*/
+    }
 
     res.send({
       status: "ok",
