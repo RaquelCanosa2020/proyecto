@@ -48,7 +48,7 @@ async function deleteReservation(req, res, next) {
     if (currentVisit < addDays(new Date(), 1)) {
       {
         throw generateError(
-          "No puedes cambiar la reserva, faltan menos 24 horas para la fecha reservada",
+          "No puedes anular la reserva, faltan menos 24 horas para la fecha reservada",
           403
         );
       }
@@ -61,7 +61,7 @@ async function deleteReservation(req, res, next) {
         title: "Anulación de reserva de espacio en playa.",
         content: `Se confirma la ANULACIÓN de la reserva realizada con los siguientes datos:
           Reserva realizada por: ${reservUserName} 
-          Realizada en fecha: /*${formatDateToUser(reservDate)}
+          Realizada en fecha: ${formatDateToUser(reservDate)}
           Nº reserva: ${id}
           Reserva anulada el ${formatDateToUser(
             new Date()

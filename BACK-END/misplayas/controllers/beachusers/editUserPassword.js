@@ -12,7 +12,7 @@ async function editUserPassword(req, res, next) {
 
     await editUserPasswordSchema.validateAsync(req.body);
 
-    const { id } = req.params; //Importante: esto va a ser un string
+    const { id } = req.params; //
     const { oldPassword, newPassword } = req.body;
 
     // Comprobar que el usuario que hace la petición es el mismo que quiere cambiar la pass

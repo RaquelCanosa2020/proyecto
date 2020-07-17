@@ -21,6 +21,8 @@ async function voteReservation(req, res, next) {
 
     console.log(id_user);
 
+    //comprobar que la reserva existe: en reservationExists.js
+
     //comprobar que el usuario es el que hizo la reserva
 
     const [current] = await connection.query(
@@ -34,9 +36,10 @@ async function voteReservation(req, res, next) {
     const [currentReserv] = current;
 
     if (currentReserv.id_user !== id_user && id_role !== "admin") {
-      throw generateError("No tienes permisos para editar esta entrada", 403);
+      throw generateError("No tienes permisos para votar esta reserva", 403);
     }
-    // Comprobar que existe el registro de voto (pq la reserva está pagada)
+    // Comprobar que existe el registro de voto y no hubo ningún error al generarlo
+    //hubo que crearlo con la reserva pq si no da fallo las FK
 
     const [existingRow] = await connection.query(
       `
@@ -49,16 +52,26 @@ async function voteReservation(req, res, next) {
 
     if (existingRow.length === 0) {
       {
-        throw generateError(`La reserva ${id} aún no está confirmada`, 403);
+        throw generateError(
+          `Ha habido un error al generar el registro de voto de la reserva ${id}`,
+          403
+        );
       }
     }
     console.log(existingRow[0].visit);
 
     //comprobar que ha pasado ya la fecha de visit
 
-    const visitDate = currentReserv.visit;
-    console.log(visitDate);
-    //pendiente tuto Berto
+    const visitDate = new Date(existingRow[0].visit);
+
+    if (visitDate > new Date()) {
+      {
+        throw generateError(
+          "No se puede votar una reserva antes de la fecha de visita",
+          403
+        );
+      }
+    }
 
     // Comprobar que no se ha votado ya
     const [existingVote] = await connection.query(

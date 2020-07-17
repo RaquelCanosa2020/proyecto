@@ -15,10 +15,14 @@ async function searchBeaches(req, res, next) {
       const {
         type,
         municipality,
+        province,
         lifesaving,
         bar_restaurant,
         visit,
         places,
+        disabled_access,
+        parking,
+        toilet,
       } = req.body;
 
       const visitDate = formatDateToDB(visit);
@@ -32,10 +36,18 @@ async function searchBeaches(req, res, next) {
         "buscando disponibilidad para la fecha y nº plazas indicadas"
       );
 
-      if (!type && !municipality && !lifesaving && !bar_restaurant) {
+      if (
+        !type &&
+        !municipality &&
+        !province &&
+        !lifesaving &&
+        !bar_restaurant &&
+        !disabled_access &&
+        !parking &&
+        !toilet
+      ) {
         //Por fecha/hora y no se elige ninguna otra condición:
 
-        console.log("no se han seleccionado opciones");
         params.push(`${places}`);
         /*query = `SELECT beaches.id, beaches.name, beaches.capacity, SUM(reservations.places) AS occupation
         FROM beaches
@@ -43,17 +55,25 @@ async function searchBeaches(req, res, next) {
         GROUP BY beaches.id
         HAVING (capacity + ?) > occupation OR occupation IS NULL`;*/
 
-        query = `SELECT beaches.id, beaches.name, beaches.capacity, beaches.start_time, beaches.start_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free
+        query = `SELECT beaches.id, beaches.name, beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free
         FROM beaches
         LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
-        WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month)
+        WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month) AND active=1
         GROUP BY beaches.id
-        HAVING (capacity > occupation OR occupation IS NULL);`;
+        HAVING (capacity + ? > occupation OR occupation IS NULL);`;
       }
 
       //Por fecha/hora y se elige una o varias condiciones:
-      if (type || municipality || lifesaving || bar_restaurant) {
-        console.log("seleccionando las opciones indicadas");
+      if (
+        type ||
+        municipality ||
+        province ||
+        lifesaving ||
+        bar_restaurant ||
+        disabled_access ||
+        parking ||
+        toilet
+      ) {
         if (type) {
           conditions.push("type=?");
           params.push(`${type}`);
@@ -64,30 +84,78 @@ async function searchBeaches(req, res, next) {
           params.push(`${municipality}`);
         }
 
+        if (province) {
+          conditions.push("province=?");
+          params.push(`${province}`);
+        }
+
         if (lifesaving) {
           conditions.push("lifesaving=?");
-          params.push(`1`);
+          params.push(true);
         }
 
         if (bar_restaurant) {
           conditions.push("bar_restaurant=?");
-          params.push(`1`);
+          params.push(true);
+        }
+
+        if (disabled_access) {
+          conditions.push("disabled_access=?");
+          params.push(true);
+        }
+
+        if (parking) {
+          conditions.push("parking=?");
+          params.push(true);
+        }
+
+        if (toilet) {
+          conditions.push("toilet=?");
+          params.push(true);
         }
         params.push(`${places}`);
 
-        query = `SELECT beaches.id, beaches.name, beaches.capacity, beaches.start_time, beaches.start_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free
+        query = `SELECT beaches.id, beaches.name, beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free
         FROM beaches
         LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
         WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month)
-        AND ${conditions.join(` AND `)} GROUP BY beaches.id
+        AND ${conditions.join(` AND `)} AND active=1 GROUP BY beaches.id
         HAVING (capacity + ?) > occupation OR occupation IS NULL`;
       }
     } else {
-      const { type, municipality, lifesaving, bar_restaurant } = req.body;
+      const {
+        type,
+        municipality,
+        province,
+        lifesaving,
+        bar_restaurant,
+        disabled_access,
+        parking,
+        toilet,
+      } = req.body;
+
       console.log("buscando según opciones, no se han indicado fecha/nºplazas");
 
-      if (type || municipality || lifesaving || bar_restaurant) {
-        const { type, municipality, lifesaving, bar_restaurant } = req.body;
+      if (
+        type ||
+        municipality ||
+        province ||
+        lifesaving ||
+        bar_restaurant ||
+        disabled_access ||
+        parking ||
+        toilet
+      ) {
+        const {
+          type,
+          municipality,
+          province,
+          lifesaving,
+          bar_restaurant,
+          disabled_access,
+          parking,
+          toilet,
+        } = req.body;
 
         //const params = [];
         //const conditions = [];
@@ -102,18 +170,38 @@ async function searchBeaches(req, res, next) {
           params.push(`${municipality}`);
         }
 
+        if (province) {
+          conditions.push("province=?");
+          params.push(`${province}`);
+        }
+
         if (lifesaving) {
           conditions.push("lifesaving=?");
-          params.push(`1`);
+          params.push(true);
         }
 
         if (bar_restaurant) {
           conditions.push("bar_restaurant=?");
-          params.push(`1`);
+          params.push(true);
+        }
+
+        if (disabled_access) {
+          conditions.push("disabled_access=?");
+          params.push(true);
+        }
+
+        if (parking) {
+          conditions.push("parking=?");
+          params.push(true);
+        }
+
+        if (toilet) {
+          conditions.push("toilet=?");
+          params.push(true);
         }
       }
-      query = `SELECT id, name, capacity from beaches
-      WHERE ${conditions.join(` AND `)}`;
+      query = `SELECT id, name, capacity, start_time, end_time, start_month, end_month from beaches
+      WHERE ${conditions.join(` AND `)} AND active=1`;
     }
 
     const [queryResults] = await connection.query(query, params);

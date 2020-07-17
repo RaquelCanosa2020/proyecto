@@ -44,7 +44,15 @@ function formatUtc(visit_date, visit_hour) {
 //console.log(("2020-07-04T09:00:00.000Z")); // 2020 - 07 - 04 11: 00: 00
 //console.log(formatUtc("04/07/2020", "9")); // 2020 - 07 - 04 07: 00: 00
 
-//console.log(formatUtc("04/07/2020", "9").toISOString); //undefined
+//console.log(formatUtc("04/07/2020", "9")function replace(value) {
+  if (value === "Sí") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+console.log(replace("Sí"));.toISOString); //undefined
 //console.log(new Date(formatUtc("04/07/2020", "9"))); // 2020 - 07 - 04T05: 00: 00.000Z
 //console.log(new Date(formatUtc("04/07/2020", "9")).toISOString()); // 2020 - 07 - 04T05: 00: 00.000Z
 
@@ -104,7 +112,7 @@ const fecha_recibida = new Date("2020-07-08T10:42:00.000Z");
 const fecha_final = addMinutes(fecha_recibida, 30);
 
 console.log(formatDateToDB(fecha_recibida));
-console.log(formatDateToDB(fecha_final));*/
+console.log(formatDateToDB(fecha_final));
 
 let numeros = [2, 7, 75, 8, 1, 9, 4, 7];
 
@@ -113,5 +121,32 @@ for (let i = 0; i <= numeros.length; i++) {
     numeros.splice(i, 1);
   }
 }
+//Anterior:
+ /* for (let index = 0; index < beaches; index++) {
+        const playas = ["Barrañán", "Pedra do Sal", "Caión", "Baldaio", "Ares"];
+        const municipios = [
+          "Carballo",
+          "Carballo",
+          "A Laracha",
+          "Arteixo",
+          "Ares",
+        ];
+        const name = playas[index];
+        const municipality = municipios[index];
+        const type = ["urban", "not urban", "isolated"];
+        const typeBeach = sample(type);
+        const truefalse = sample([1, 0]); //no funciona ninguno de los 2 métodos con true/false, dice que tengo que meter INT
+        /*const boole = (number) => { //pero si meto yo directamente en values true o false si me lo acepta¿?
+          number = Math.random();
+          if (number < 0.5) {
+            return true;
+          }
+          {
+            return false;
+          }
+        }; */
 
-console.log(numeros);
+const faker = require("faker/locale/es");
+for (let i = 1; i < 11; i++) {
+  console.log(faker.date.recent(5));
+}

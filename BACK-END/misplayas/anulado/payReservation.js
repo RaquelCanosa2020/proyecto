@@ -1,4 +1,4 @@
-const { getConnection } = require("../../db");
+const { getConnection } = require("../db");
 const {
   getHours,
   parseISO,
@@ -6,10 +6,8 @@ const {
   setMinutes,
   setSeconds,
 } = require("date-fns");
-const { formatDateToUser, sendMail, generateError } = require("../../helpers");
-const {
-  payReservationSchema,
-} = require("../../validators/reservationValidators");
+const { formatDateToUser, sendMail, generateError } = require("../helpers");
+const { payReservationSchema } = require("../validators/reservationValidators");
 
 //Las reservas una vez pagadas no pueden modificarse.
 

@@ -9,12 +9,13 @@ const { BeachSchema } = require("../../validators/beachesValidators");
 
 //Editar y cambiar datos de una playa, sólo el administrador.
 
-async function editBeach(req, res, next) {
+async function newBeach(req, res, next) {
   let connection;
 
   try {
     connection = await getConnection();
-    const { id } = req.params;
+    console.log(req.body);
+
     await BeachSchema.validateAsync(req.body);
 
     // Sacamos los datos
@@ -37,48 +38,46 @@ async function editBeach(req, res, next) {
     } = req.body;
 
     //la comprobación de que es el Admin ya se hace antes en isAdmin.js
-    //datos actuales:
+    //comprobar que no hay otra playa con mismo nombre/municipio:
 
     const [current] = await connection.query(
       `
-      SELECT id, name, type, municipality, province, description, start_time, end_time, start_month, end_month, capacity,
-      lifesaving, bar_restaurant, disabled_access, parking, toilet
+      SELECT id, name, municipality
       FROM beaches
-      WHERE id=?`,
-      [id]
+      WHERE name=? AND municipality=?`,
+      [req.body.name, req.body.municipality]
     );
-    const [currentEntry] = current;
-    console.log(currentEntry);
-    console.log(req.body);
-
-    let savedImageFileName;
+    if (current[0] !== 0) {
+      generateError(
+        "Ya hay una playa con el mismo nombre en ese municipio",
+        409
+      );
+    }
 
     // Procesar la imagen si existe (como es la foto por defecto de la playa, subida
     //por el administrador, en este caso sólo 1 foto que aparecerá junto a la playa en el
     //listado de playas)
 
+    let savedImageFileName;
+
     if (req.files && req.files.image) {
       try {
         // Procesar y guardar imagen
         savedImageFileName = await processAndSaveImage(req.files.image);
-
-        if (currentEntry.image) await deleteUpload(currentEntry.image);
       } catch (error) {
         throw generateError(
           "No se pudo procesar la imagen. Inténtalo de nuevo",
           400
         );
       }
-    } else {
-      savedImageFileName = currentEntry.image;
     }
 
-    // Ejecutar la query de edición de la playa con los nuevos datos:
-    await connection.query(
+    // Ejecutar la query de inserción de la playa con lsus datos:
+    const [newBeach] = await connection.query(
       `
-      UPDATE beaches SET name=?, type=?, municipality=?, province=?, description=?, start_time=?, end_time=?, 
-      start_month=?, end_month=?, capacity=?, lifesaving=?, bar_restaurant=?, disabled_access=?, parking=?, toilet=?, image=?, lastUpdate=UTC_TIMESTAMP()
-      WHERE id=?
+       INSERT INTO beaches (creation_date, name, type, municipality, province, description, start_time, end_time, start_month, end_month,
+        capacity, lifesaving, bar_restaurant, disabled_access, parking, toilet, image, lastUpdate)
+        VALUES(UTC_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())
     `,
       [
         name,
@@ -97,14 +96,13 @@ async function editBeach(req, res, next) {
         parking,
         toilet,
         savedImageFileName,
-        id,
       ]
     );
 
     // Devolver resultados
     res.send({
       status: "ok",
-      data: `La playa ${currentEntry.name}, nº ${id} ha sido actualizada.`,
+      data: `La playa ${name}, ha sido creada con el nº ${newBeach.insertId}.`,
     });
   } catch (error) {
     next(error);
@@ -113,4 +111,4 @@ async function editBeach(req, res, next) {
   }
 }
 
-module.exports = editBeach;
+module.exports = newBeach;

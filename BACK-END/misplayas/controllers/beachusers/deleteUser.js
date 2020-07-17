@@ -30,24 +30,14 @@ async function deleteUser(req, res, next) {
       await deleteUpload(current[0].image);
     }
 
-    //Primero pasamos su id al id 2 de usuario anónimo (sus reservas nos saldrán con este usuario)
-
-    await connection.query(
-      `
-      UPDATE users id=2
-      WHERE id=?
-    `,
-      [id]
-    );
-
-    //Ahora lo borramos (por nombre y email, puesto que su id ya no existe)
+    //Ahora lo borramos. Se borran todos sus registros (on delete cascade en la BD)
 
     await connection.query(
       `
       DELETE FROM users
-      WHERE email=?, name=?
+      WHERE id=?
     `,
-      [current[0].email, current[0].name]
+      [id]
     );
 
     res.send({

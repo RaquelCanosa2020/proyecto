@@ -31,8 +31,6 @@ async function newUser(req, res, next) {
     }
 
     // enviar un mensaje de confirmación de registro al email indicado
-    // ejemplo url validación:
-    // http://localhost:3000/users/validate/454e5109e4f3245c63be6fddb9ab05e4296ad1c6
 
     const registration_code = randomString(40);
     const validationURL = `${process.env.PUBLIC_HOST}/beachusers/validate/${registration_code}`;
@@ -41,8 +39,9 @@ async function newUser(req, res, next) {
     try {
       await sendMail({
         email,
-        title: "Valida tu cuenta de usuario en la app diario de viajes",
-        content: `Para validar tu cuenta de usuario en la app diario de viajes haz click aquí: ${validationURL}`,
+        title:
+          "Valida tu cuenta de usuario en la app de reserva de espacio en playas",
+        content: `Para validar tu cuenta de usuario en la app de reserva de espacio en playas haz click aquí: ${validationURL}`,
       });
     } catch (error) {
       throw generateError("Error en el envío de mail", 500);

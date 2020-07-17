@@ -6,8 +6,8 @@ async function listBeaches(req, res, next) {
   try {
     connection = await getConnection();
     // Sacamos las posibles opciones del querystring:
-    //  search: para listar solo las entradas que contengan su valor en place o description
-    //  order: para ordernar el listado por voteAverage, place o date
+    //  search: para listar solo las entradas que contengan su valor en name o municipality
+    //  order: para ordernar el listado por voteAverage, municipality, province o name
     //  direction: para la dirección de la ordenación desc o asc
     const { search, order, direction } = req.query;
 
@@ -24,6 +24,9 @@ async function listBeaches(req, res, next) {
       case "municipality":
         orderBy = "municipality";
         break;
+      case "province":
+        orderBy = "province";
+        break;
       default:
         orderBy = "name";
     }
@@ -31,17 +34,14 @@ async function listBeaches(req, res, next) {
     // Ejecuto la query en base a si existe querystring de search o no
     let queryResults;
 
-    //queryResult es un [resultados-query, otra info que no nos interesa]
-    //podríamos hacer [queryResult] = await....desesctructuramos para que ya nos de solo lo que nos interesa.
-
     if (search) {
       queryResults = await connection.query(
         `
-        SELECT beaches.*, ROUND(AVG(ratings.value),1) AS voteAverage
+        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
         FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
-                    LEFT JOIN ratings ON reservations.id = ratings.id_reservation
+        LEFT JOIN ratings ON reservations.id = ratings.id_reservation
+        WHERE active=1 AND (name LIKE ? OR municipality LIKE ?)
         GROUP BY beaches.id
-        WHERE name LIKE ? OR municipality LIKE ?
         ORDER BY ${orderBy} ${orderDirection}
         `,
         [`%${search}%`, `%${search}%`]
@@ -54,23 +54,13 @@ async function listBeaches(req, res, next) {
       }
     } else {
       queryResults = await connection.query(
-        /*
         `
-        SELECT beaches.id, beaches.name, beaches.municipality, AVG(ratings.value) AS voteAverage
-        FROM beaches, ratings, reservations
-        WHERE ratings.id_reservation = reservations.id 
-        AND reservations.id_beach = beaches.id
-        GROUP BY beaches.id
-       
-        ORDER BY ${orderBy} ${orderDirection}
-      );*/
-
-        `
-        SELECT beaches.*, ROUND(AVG(ratings.value),1) AS voteAverage
+        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
         FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
         LEFT JOIN ratings ON reservations.id = ratings.id_reservation
+        WHERE beaches.active=1
         GROUP BY beaches.id
-       
+        
         ORDER BY ${orderBy} ${orderDirection}`
       );
     }

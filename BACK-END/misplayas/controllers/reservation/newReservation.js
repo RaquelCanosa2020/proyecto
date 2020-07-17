@@ -23,37 +23,30 @@ async function newReservation(req, res, next) {
 
     const { visit, places, id_beach, cc_number } = req.body;
 
-    //⏩ comprobar que no falta info en el body:
+    //⏩ comprobar que no falta info en el body: en validación
 
-    if (!visit || !places || !id_beach || !cc_number) {
+    //procesamos mes y hora de la visita,
+
+    const visitUtc = new Date(visit);
+    const visitHour = visitUtc.getHours();
+    const visitMonth = visitUtc.getMonth() + 1;
+
+    console.log(`horaUTC: ${visitUtc}`);
+    console.log(`hora local: ${visitHour}`);
+    console.log(`mes: ${visitMonth}`);
+
+    //comprobamos que la fecha no es pasada o más allá de 5 días:
+
+    if (visitUtc <= new Date() || visitUtc > addDays(new Date(), 5)) {
       {
         throw generateError(
-          `Faltan datos en la petición. Debes seleccionar
-        visit: fecha y hora de la visita,
-        places: nº de sitios a reservar,
-        id_beach: número de playa,
-        cc_number: debes introducir nº tarjeta de crédito`,
-
-          400
+          "La fecha no es válida, reservas con antelación máxima de 5 días",
+          403
         );
       }
     }
 
-    //procesamos día y hora, comprobamos fecha no pasada
-
-    const visitUtc = new Date(visit);
-    const visitHour = visitUtc.getHours();
-
-    console.log(visitUtc);
-    console.log(visitHour);
-
-    if (visitUtc <= new Date() || visitUtc > addDays(new Date(), 5)) {
-      {
-        throw generateError("La fecha no es válida", 403);
-      }
-    }
-
-    //comprobamos que no hay otra reserva ese mismo día/fecha
+    //comprobamos que no hay otra reserva ese mismo día/fecha para ese usuario
 
     const [existingReservation] = await connection.query(
       `SELECT id
@@ -71,12 +64,12 @@ async function newReservation(req, res, next) {
       }
     }
 
-    //⏩comprobar que la hora está incluida en el horario de la playa:
+    //⏩comprobar que la hora/mes están incluidos en el horario de la playa:
     //necesito la info de la playa ():
 
     const [infoBeach] = await connection.query(
       `
-          SELECT start_time, end_time, name, capacity
+          SELECT start_time, end_time, start_month, end_month, name, capacity
           FROM beaches
           WHERE id=?
           `,
@@ -85,26 +78,30 @@ async function newReservation(req, res, next) {
 
     //proceso la hora de inicio y fin de la playa (están en horario local):
 
-    const start = infoBeach[0].start_time;
-    const startHour = Number(start.split(":")[0]);
-
-    const end = infoBeach[0].end_time;
-    const endHour = Number(end.split(":")[0]);
+    const startHour = infoBeach[0].start_time;
+    const endHour = infoBeach[0].end_time;
+    const startMonth = infoBeach[0].start_month;
+    const endMonth = infoBeach[0].end_month;
 
     //comparo visit con el horario (en local ambos):
-
-    if (Number(visitHour) < startHour || Number(visitHour) >= endHour) {
-      throw generateError(
-        `Para esta playa el horario es entre las ${startHour} horas y las ${endHour} horas`,
-        404
-      );
+    if (visitMonth < startMonth || visitMonth > endMonth) {
+      //compruebo primero el mes
+      throw generateError(`para el mes indicado no es necesario reservar`, 404);
+    } else {
+      if (visitHour < startHour || visitHour > endHour - 1) {
+        //si el mes ok compruebo la hora
+        throw generateError(
+          "la hora indicada no está dentro del horario de esta playa en los meses que es necesario reservar"
+        );
+      }
     }
+
     //console.log("procesando");
 
     //⏩comprobar que hay plazas disponibles esa hora:
 
     const placesNumber = Number(places); //ya que places es un string
-    //console.log(places);
+    console.log(`plazas solicitadas: ${places}`);
 
     //aforo de la playa:
     const capacity = Number(infoBeach[0].capacity);
@@ -124,8 +121,7 @@ async function newReservation(req, res, next) {
     );
     const occupation = Number(result[0].occupation);
 
-    console.log(occupation);
-    console.log(occupation + placesNumber); //8Es
+    console.log(`plazas ya ocupadas: ${occupation}`);
 
     //comparar ambas
 
@@ -134,6 +130,13 @@ async function newReservation(req, res, next) {
     if (occupation === null) {
       setZero(occupation);
     }
+    // ocupación
+    const availability = capacity - occupation;
+
+    console.log(
+      `Hay ${availability} plazas disponibles en la playa y horario indicados`
+    );
+    console.log(`ocupadas+solicitadas: ${occupation + placesNumber}`);
 
     //comprobamos que haya sitio libre
 
@@ -144,13 +147,6 @@ async function newReservation(req, res, next) {
       );
     }
     //console.log(occupation, places, capacity);
-
-    // ocupación
-    const availability = capacity - occupation;
-
-    console.log(
-      `Hay ${availability} plazas disponibles en la playa y horario indicados`
-    );
 
     // obtenemos el nombre del usuario
 
@@ -167,7 +163,7 @@ async function newReservation(req, res, next) {
 
     //⏩si todo ok, grabamos la reserva
 
-    const [finalResult] = await connection.query(
+    const [newReservation] = await connection.query(
       `
       INSERT INTO reservations(date, visit, places, id_beach, id_user, user_name, total_euros, cc_number, lastUpdate)
       VALUES(UTC_TIMESTAMP, ?, ?, ?, ?, ?, 3, SHA2(?, 512), UTC_TIMESTAMP)
@@ -175,7 +171,7 @@ async function newReservation(req, res, next) {
       [formatDateToDB(visit), places, id_beach, id_user, userName, cc_number]
     );
 
-    const reservationNumber = finalResult.insertId;
+    const reservationNumber = newReservation.insertId;
 
     //⏩por cuestión de las FK tengo que crear ya la entrada en ratings (sólo en caso de que no exista)
 
@@ -206,16 +202,20 @@ async function newReservation(req, res, next) {
       await sendMail({
         email: userEmail,
         title: "Reserva de espacio en playa.",
-        content: `Se confirma la reserva realizada con los siguientes datos:
-          Reserva realizada por: ${userName} (usuario nº: ${id_user})
-          Playa: ${beachName} (nº ${id_beach})
-          Fecha y hora reservada (1 hora): ${dateToUser} 
-          Nº plazas: ${places} personas.
-          Fianza: 3 euros.
-          Nº reserva: ${reservationNumber}
+        content: `Se confirma la reserva nº${reservationNumber} realizada con los siguientes datos:
+       👣 Usuario: ${userName} (usuario nº: ${id_user}).
+
+       🌅 Playa: ${beachName} (nº ${id_beach}).
+
+       📅 Fecha y hora: ${dateToUser} 
+
+       👥 Plazas: ${places} personas.
+
+       💶 Fianza de 3 euros (pagado).
+
           Reserva confirmada y pagada el ${nowDateUser}
           
-          Sólo se permiten cambios y anulaciones hasta 12 horas antes de la fecha/hora reservada. `,
+          Sólo se permiten cambios y anulaciones hasta 24 horas antes de la fecha/hora reservada. `,
       });
     } catch (error) {
       const emailError = new Error("Error de envío de mail");
@@ -224,11 +224,19 @@ async function newReservation(req, res, next) {
 
     res.send({
       status: "ok",
-      message: `Se guardó la reserva para ${userName} (usuario nº: ${id_user}), en la playa ${beachName} (nº ${id_beach})
-      para la fecha ${formatDateToUser(
-        visit
-      )} para ${places} personas. Nº reserva: ${reservationNumber}.
-      Pagada fianza de 3 euros.`,
+      message: `Se guardó la reserva nº${reservationNumber}. Datos de la reserva:
+
+       👣 Usuario: ${userName} (usuario nº: ${id_user}).
+
+       🌅 Playa: ${beachName} (nº ${id_beach}).
+
+       📅 Fecha y hora: ${dateToUser} 
+
+       👥 Plazas: ${places} personas.
+
+       💶 Fianza de 3 euros (pagado).
+       
+       📨 Se ha enviado correo de confirmación.`,
     });
 
     //Falta: alguna comprobación más ( reservas y plazas máx; )

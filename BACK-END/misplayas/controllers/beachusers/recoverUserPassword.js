@@ -15,7 +15,7 @@ async function recoverUserPassword(req, res, next) {
 
     const { email } = req.body;
 
-    // Comprobar que hay un usuario con id 12
+    // Comprobar que hay un usuario con ese id
     const [current] = await connection.query(
       `
       SELECT id

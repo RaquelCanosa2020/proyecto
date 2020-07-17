@@ -84,8 +84,8 @@ async function editUser(req, res, next) {
         await sendMail({
           email,
           title:
-            "Cambiaste tu email en la aplicación diario de viajes. Por favor valida de nuevo",
-          content: `Para validar tu nuevo email en la app diario de viajes haz click aquí: ${validationURL}`,
+            "Cambiaste tu email en la aplicación de reserva de espacio en playas. Por favor valida de nuevo",
+          content: `Para validar tu nuevo email en la app de reserva de espacio en playas haz click aquí: ${validationURL}`,
         });
       } catch (error) {
         throw generateError("Error en el envío de mail", 500);

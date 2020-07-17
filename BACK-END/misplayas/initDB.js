@@ -9,7 +9,18 @@ const { formatDateToDB } = require("./helpers");
 const { random, sample } = require("lodash");
 const uuid = require("uuid");
 const { add, startOfHour } = require("date-fns");
+
+//axios lo uso para sacar datos de las playas lo más reales posibles
+//hago la función replace porque los booleanos me los da en Sí y No, para pasarlos a true/false
 const axios = require("axios");
+
+function replace(value) {
+  if (value === "Sí") {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 let connection;
 
@@ -23,13 +34,13 @@ async function main() {
     
       SET FOREIGN_KEY_CHECKS = 0;`);
 
-    // Borrar las tablas si existen (diary, diary_votes)
+    // Borrar las tablas si existen (
     console.log("Borrando tablas");
     await connection.query("DROP TABLE IF EXISTS photos");
     await connection.query("DROP TABLE IF EXISTS ratings");
     await connection.query("DROP TABLE IF EXISTS payments");
     await connection.query("DROP TABLE IF EXISTS reservations");
-    await connection.query("DROP TABLE IF EXISTS beaches");
+    //await connection.query("DROP TABLE IF EXISTS beaches");
     await connection.query("DROP TABLE IF EXISTS users");
 
     // Crear las tablas de nuevo
@@ -53,25 +64,29 @@ async function main() {
       );
     `);
 
-    await connection.query(`
+    /*await connection.query(`
       CREATE TABLE beaches (
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         creation_date DATETIME NOT NULL,
-        type ENUM ('urban', 'not urban', 'isolated'),
+        type VARCHAR(50),
         name VARCHAR(50),
         municipality VARCHAR(50),
+        province VARCHAR(50),
         description TEXT,
         start_time INT UNSIGNED,
         end_time INT UNSIGNED,
         start_month INT UNSIGNED,
         end_month INT UNSIGNED,
         capacity INT UNSIGNED,
-        lifesaving BOOLEAN DEFAULT false,
-        bar_restaurant BOOLEAN DEFAULT false,
+        lifesaving BOOLEAN,
+        bar_restaurant BOOLEAN,
+        disabled_access BOOLEAN,
+        parking BOOLEAN,
+        toilet BOOLEAN,
         image TINYTEXT,
         lastUpdate DATETIME NOT NULL
       );
-    `);
+    `);*/
 
     await connection.query(`
       CREATE TABLE reservations (
@@ -86,7 +101,7 @@ async function main() {
         cc_number TINYTEXT,
         lastUpdate DATETIME NOT NULL,
         FOREIGN KEY (id_beach) REFERENCES beaches (id),
-        FOREIGN KEY (id_user) REFERENCES users (id)
+        FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE CASCADE
       );
     `);
 
@@ -94,7 +109,7 @@ async function main() {
       CREATE TABLE ratings (
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         value FLOAT,
-        date DATETIME NOT NULL,
+        date DATETIME NOT NULL, 
         comment TEXT,
         id_reservation INT UNSIGNED,
         lastUpdate DATETIME NOT NULL,
@@ -112,7 +127,7 @@ async function main() {
         id_beach INT UNSIGNED,
         lastUpdate DATETIME NOT NULL,
         FOREIGN KEY (id_beach) REFERENCES beaches (id),
-        FOREIGN KEY (id_user) REFERENCES users (id)
+        FOREIGN KEY (id_user) REFERENCES users (id) ON DELETE CASCADE
       )
       
     `);
@@ -134,15 +149,6 @@ async function main() {
     `
     );
 
-    console.log("Creando usuario anónimo");
-
-    await connection.query(
-      `
-      INSERT INTO users(registration_date, email, password, role, name, active, lastUpdate, lastAuthUpdate)
-      VALUES(UTC_TIMESTAMP(), "${process.env.ANONYMUS_USER_EMAIL}", SHA2("${process.env.DEFAULT_ANONYMUS_PASSWORD}", 512), "normal", "Anónimo", true, UTC_TIMESTAMP(), UTC_TIMESTAMP())
-    `
-    );
-
     console.log("Metiendo datos de prueba en users");
     const users = 10;
 
@@ -157,8 +163,8 @@ async function main() {
       `
       );
     }
-
-    console.log("Metiendo datos de prueba en beaches");
+    //lo comento ya que tarda algo en cargar los datos y siempre van a ser las mismas:
+    /*console.log("Metiendo datos de prueba en beaches");
 
     const playas = [
       "Arealonga",
@@ -179,59 +185,53 @@ async function main() {
       );
 
       const data = dataPlaya[0].properties;
-      const datos = { nombre: data.Nombre, municipio: data.Término_Mu };
 
-      /* for (let index = 0; index < beaches; index++) {
-        const playas = ["Barrañán", "Pedra do Sal", "Caión", "Baldaio", "Ares"];
-        const municipios = [
-          "Carballo",
-          "Carballo",
-          "A Laracha",
-          "Arteixo",
-          "Ares",
-        ];
-        const name = playas[index];
-        const municipality = municipios[index];
-        const type = ["urban", "not urban", "isolated"];
-        const typeBeach = sample(type);
-        const truefalse = sample([1, 0]); //no funciona ninguno de los 2 métodos con true/false, dice que tengo que meter INT
-        /*const boole = (number) => { //pero si meto yo directamente en values true o false si me lo acepta¿?
-          number = Math.random();
-          if (number < 0.5) {
-            return true;
-          }
-          {
-            return false;
-          }
-        }; 
-        const start_time = sample([8, 9]);
-        const end_time = sample([21, 22]);
-        const start_month = sample([5, 6]);
-        const end_month = sample([9, 10]);
-        const capacity = sample([200, 300, 20]);*/
+      const start_time = sample([8, 9]);
+      const end_time = sample([21, 22]);
+      const start_month = sample([5, 6]);
+      const end_month = sample([9, 10]);
+      const capacity = sample([200, 300, 20]);
+
       await connection.query(
-        `
-        INSERT INTO beaches(creation_date, name, type, municipality, description, start_time, end_time, start_month, end_month, capacity, lifesaving, bar_restaurant, lastUpdate)
-        VALUES(UTC_TIMESTAMP(), ?, "urban", ?, "${faker.lorem.paragraph()}", 9, 21, 7, 9, 20, true, false, UTC_TIMESTAMP())
+        `INSERT INTO beaches(creation_date, name, type, municipality, province, description, start_time, end_time,
+          start_month, end_month, capacity, parking, lifesaving, bar_restaurant,
+          toilet, disabled_access, lastUpdate)
+        VALUES(UTC_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())
       `,
-        [datos.nombre, datos.municipio]
+        [
+          data.Nombre,
+          data.Grado_urba,
+          data.Término_Mu,
+          data.Provincia,
+          data.Descripció,
+          start_time,
+          end_time,
+          start_month,
+          end_month,
+          capacity,
+          replace(data.Aparcamien),
+          replace(data.Auxilio_y_),
+          replace(data.Establecim),
+          replace(data.Aseos),
+          replace(data.Acceso_dis),
+        ]
       );
-    }
+    }*/
 
-    //en capacity indico un aforo general de 20 a todas, para hacer pruebas.
-
-    console.log("Metiendo datos de prueba en reservations");
+    console.log("Metiendo datos de prueba en reservations y en ratings");
 
     const numberOfReservations = 20;
 
     for (let index = 0; index < numberOfReservations; index++) {
-      const date = faker.date.recent();
+      const date = faker.date.recent(10);
 
       const visitDate = add(date, { days: 3 });
       const visitHour = startOfHour(visitDate); //para obtener horas en punto.
+      const ratingDate = add(visitDate, { days: 2 });
 
       const formatDate = formatDateToDB(date);
       const formatVisitDate = formatDateToDB(visitHour);
+      const formatRatingDate = formatDateToDB(ratingDate);
 
       await connection.query(`
         INSERT INTO reservations(date, visit, places, id_beach, id_user, lastUpdate)
@@ -241,29 +241,18 @@ async function main() {
           "${random(1, 5)}",
           "${random(1, 5)}",
           "${random(2, users + 1)}",
-          UTC_TIMESTAMP())
-
-          
+          UTC_TIMESTAMP());
+                 
       `);
-    }
-
-    //Añadimos el user_id, referencia al usuario que introduce la entrada. Como número aleatorio entre 2(ya que el 1 es el addor
-    //y users+1, si tenemos 10 usuarios en realidad tenemos 11, por la misma razón, el addor es el 1.
-
-    console.log("Metiendo datos de prueba en ratings");
-
-    for (let index = 0; index < numberOfReservations; index++) {
-      const date = formatDateToDB(faker.date.recent());
-
       await connection.query(`
-        INSERT INTO ratings(value, date, comment, id_reservation, lastUpdate)
-        VALUES (
-          "${random(1, 5)}",
-          "${date}",
-          "${faker.lorem.paragraph()}",
-          "${index + 1}", 
-          UTC_TIMESTAMP())
-      `);
+      INSERT INTO ratings(value, date, comment, id_reservation, lastUpdate)
+      VALUES(
+        "${random(1, 5)}",
+        "${formatRatingDate}",
+        "${faker.lorem.paragraph()}",
+        "${index + 1}",
+        UTC_TIMESTAMP());
+        `);
     }
 
     console.log("Metiendo datos de prueba en photos");

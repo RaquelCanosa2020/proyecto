@@ -10,7 +10,7 @@ async function getUser(req, res, next) {
 
     const [result] = await connection.query(
       `
-      SELECT id, registration_date, email, role, name, image
+      SELECT id, registration_date, email, role, IFNULL(name, "Anónimo") AS name, IFNULL(image, "vacío") AS avatar
       FROM users
       WHERE id=?
     `,
@@ -28,7 +28,7 @@ async function getUser(req, res, next) {
     const responseData = {
       registrationDate: userData.registration_date,
       name: userData.name,
-      image: userData.image,
+      image: userData.avatar,
     };
 
     if (userData.id === req.auth.id || req.auth.role === "admin") {

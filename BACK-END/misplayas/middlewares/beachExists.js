@@ -9,7 +9,7 @@ async function beachExists(req, res, next) {
     connection = await getConnection();
     const { id } = req.params;
 
-    console.log("comprobando que en la tabla de playas hay una entrada id", id);
+    console.log("comprobando que en la tabla de playas hay una de id", id);
 
     // Comprobar que la entrada que queremos editar exista en la base de datos
     const [current] = await connection.query(

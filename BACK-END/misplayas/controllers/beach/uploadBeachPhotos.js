@@ -1,5 +1,12 @@
 const { getConnection } = require("../../db");
-const { processAndSaveImage, formatDateToDB } = require("../../helpers");
+const {
+  processAndSaveImage,
+  formatDateToDB,
+  generateError,
+} = require("../../helpers");
+
+//para que los usuarios suban fotos de las playas (us. registrado pero no necesario
+//que tenga reserva de esa playa)
 
 async function uploadBeachPhotos(req, res, next) {
   let connection;
@@ -12,6 +19,24 @@ async function uploadBeachPhotos(req, res, next) {
     const { id } = req.params;
     const id_user = req.auth.id;
     console.log(id);
+
+    //ponemos un máx de 3 fotos por playa y usuario. comprobamos:
+
+    const [images] = await connection.query(
+      `
+      SELECT id
+      FROM photos
+      WHERE id_beach=? AND id_user=?
+    `,
+      [id, id_user]
+    );
+
+    if (images.length >= 3) {
+      throw generateError(
+        "No se pueden subir más de 3 fotos por usuario a esta playa, borra alguna primero",
+        406
+      );
+    }
 
     let savedImageFileName;
 

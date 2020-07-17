@@ -3,33 +3,57 @@ const { generateError } = require("../helpers");
 
 // Valida nueva reserva
 const newReservationSchema = Joi.object().keys({
-  visit: Joi.any().error(generateError("La fecha es obligatoria", 400)),
+  visit: Joi.any()
+    .required()
+    .error(generateError("La fecha es obligatoria", 400)),
 
   places: Joi.number()
+    .required()
     .integer()
     .min(1)
     .max(5)
-    .error(generateError("El campo places debe estar entre 1 y 5", 400)),
+    .error(
+      generateError(
+        "El campo places es obligatorio y debe estar entre 1 y 5",
+        400
+      )
+    ),
   id_beach: Joi.number()
+    .required()
     .integer()
-    .error(generateError("El campo id_beach debe ser un número entero", 400)),
+    .error(
+      generateError(
+        "El campo id_beach es obligatorio y debe ser un número entero",
+        400
+      )
+    ),
   cc_number: Joi.string()
+    .required()
     .creditCard()
-    .error(generateError("El número de tarjeta no es válido", 400)),
+    .error(
+      generateError(
+        "No se ha indicado el número de tarjeta o no es un número válido",
+        400
+      )
+    ),
 });
 
 //eEdición de reserva.
 
 const editReservationSchema = Joi.object().keys({
-  visit: Joi.any().error(generateError("La fecha es obligatoria", 400)),
+  visit: Joi.any()
+    .required()
+    .error(generateError("La fecha es obligatoria", 400)),
 
   places: Joi.number()
+    .required()
     .integer()
     .min(1)
     .max(5)
     .error(generateError("El campo places debe estar entre 1 y 5", 400)),
   id_beach: Joi.number()
     .integer()
+    .required()
     .error(generateError("El campo id_beach debe ser un número entero", 400)),
 });
 
@@ -46,7 +70,7 @@ const voteReservationSchema = Joi.object().keys({
     .required()
     .error(
       generateError(
-        "El campo voto debe existir y tener un valor entre 1 y 5 (incluídos)",
+        "El campo value debe existir y tener un valor entre 1 y 5 (incluídos)",
         400
       )
     ),

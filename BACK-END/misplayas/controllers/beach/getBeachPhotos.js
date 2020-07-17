@@ -1,4 +1,5 @@
 const { getConnection } = require("../../db");
+const { generateError } = require("../../helpers");
 
 async function getBeachPhotos(req, res, next) {
   let connection;
@@ -11,14 +12,19 @@ async function getBeachPhotos(req, res, next) {
     // Ejecutar query para sacar lista de fotos
     const [photos] = await connection.query(
       `
-      SELECT description, link, date, id_user
-      FROM photos
-      WHERE id_beach = ?
-      ORDER BY date
+      SELECT P.id, P.description, P.link, P.date, (IFNULL(U.name,"ANÓNIMO")) AS name
+      FROM photos P, users U
+      WHERE U.id = P.id_user AND P.id_beach = ?
+      ORDER BY date DESC
       `,
       [id]
     );
-    console.log(photos);
+    if (photos.length === 0) {
+      throw generateError(
+        "Todavía no hay ninguna foto de esta playa subida por usuarios ",
+        401
+      );
+    }
 
     res.send({
       status: "ok",

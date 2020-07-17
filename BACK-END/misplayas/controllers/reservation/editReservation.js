@@ -36,16 +36,20 @@ async function editReservation(req, res, next) {
   `,
       [id]
     );
+    console.log(req.auth.id);
+    console.log(req.auth.role);
 
     const [currentReserv] = current;
 
-    if (currentReserv.user_id !== id_user && id_role !== "admin") {
-      throw generateError("No tienes permisos para editar esta entrada", 403);
+    console.log(currentReserv.id_user);
+
+    if (currentReserv.id_user !== req.auth.id && req.auth.role !== "admin") {
+      throw generateError("No tienes permisos para editar esta reserva", 403);
     }
 
     //Comprobamos que en el momento no faltan 1 día o menos para visit
 
-    const currentVisit = new Date(currentReserv.user_id);
+    const currentVisit = new Date(currentReserv.visit);
 
     if (currentVisit < addDays(new Date(), 1)) {
       {
@@ -56,40 +60,32 @@ async function editReservation(req, res, next) {
       }
     }
 
-    //⏩ comprobar que no falta info en el body:
-
-    if (!visit || !places || !id_beach) {
-      {
-        throw generateError(
-          `Faltan datos en la pformatDateToUseretición. Debes cubrir
-        visit: fecha y hora de la visita,
-        places: nº de sitios a reservar,
-        id_beach: número de playa`,
-          400
-        );
-      }
-    }
+    //⏩ comprobar que no falta info en el body: validator
 
     //procesamos día y hora, comprobamos fecha no pasada o posterior a
     //5 días (máximo para reservar)
     const visitUtc = new Date(visit);
     const visitHour = visitUtc.getHours();
+    const visitMonth = visitUtc.getMonth() + 1;
     console.log(visitUtc);
     console.log(visitHour);
 
     if (visitUtc <= new Date() || visitUtc > addDays(new Date(), 5)) {
       {
-        throw generateError("La fecha no es válida", 403);
+        throw generateError(
+          "La fecha no es válida, reservas con antelación máxima de 5 días",
+          403
+        );
       }
     }
 
     //comprobamos que no hay otra reserva ese mismo día/fecha
 
     const [existingReservation] = await connection.query(
-      `SELECT id
+      `SELECT id, date
       FROM reservations
-      WHERE id_user = ? AND visit = ?`,
-      [id_user, formatDateToDB(visit)]
+      WHERE id_user = ? AND visit = ? AND id <> ?`,
+      [id_user, formatDateToDB(visit), id]
     );
 
     if (existingReservation.length !== 0) {
@@ -115,20 +111,24 @@ async function editReservation(req, res, next) {
 
     //proceso la hora de inicio y fin de la playa (están en horario local):
 
-    const start = infoBeach[0].start_time;
-    const startHour = Number(start.split(":")[0]);
-
-    const end = infoBeach[0].end_time;
-    const endHour = Number(end.split(":")[0]);
+    const startHour = infoBeach[0].start_time;
+    const endHour = infoBeach[0].end_time;
+    const startMonth = infoBeach[0].start_month;
+    const endMonth = infoBeach[0].end_month;
 
     //comparo visit con el horario (en local ambos):
-
-    if (Number(visitHour) < startHour || Number(visitHour) >= endHour) {
-      throw generateError(
-        `Esta playa dispone de horario entre las ${startHour} horas y las ${endHour} `,
-        404
-      );
+    if (visitMonth < startMonth || visitMonth > endMonth) {
+      //compruebo primero el mes
+      throw generateError(`para el mes indicado no es necesario reservar`, 404);
+    } else {
+      if (visitHour < startHour || visitHour > endHour - 1) {
+        //si el mes ok compruebo la hora
+        throw generateError(
+          "la hora indicada no está dentro del horario de esta playa en los meses que es necesario reservar"
+        );
+      }
     }
+
     //console.log("procesando");
 
     //⏩comprobar que hay plazas disponibles esa hora:
@@ -144,22 +144,18 @@ async function editReservation(req, res, next) {
     //ocupación en la hora indicada
     console.log("comprobando ocupacion");
 
-    //console.log(result1[0].capacity); //20
-
-    //ocupación en la hora indicada
-    console.log("comprobando ocupacion");
-
     const [result] = await connection.query(
       `
         SELECT SUM(places) AS occupation
         FROM reservations
-        WHERE id_beach = ? AND visit = ? AND cc_number IS NOT NULL
+        WHERE id_beach = ? AND visit = ?
       `,
       [id_beach, formatDateToDB(visit)]
     );
     const occupation = Number(result[0].occupation);
+
     console.log(occupation);
-    console.log(occupation + places); //8Es
+    console.log(occupation + placesNumber); //8Es
 
     //comparar ambas
 
@@ -179,12 +175,13 @@ async function editReservation(req, res, next) {
     }
     //console.log(occupation, places, capacity);
 
-    //informamos de la ocupación
+    // ocupación
     const availability = capacity - occupation;
 
     console.log(
       `Hay ${availability} plazas disponibles en la playa y horario indicados`
     );
+
     // obtenemos el nombre del usuario
 
     const [userInfo] = await connection.query(
@@ -197,6 +194,7 @@ async function editReservation(req, res, next) {
     );
     const userName = userInfo[0].name;
     const userEmail = userInfo[0].email;
+    console.log(userEmail);
 
     //⏩si todo ok, grabamos los nuevos datos de la reserva
 
@@ -208,7 +206,7 @@ async function editReservation(req, res, next) {
       [formatDateToDB(visit), places, id_beach, id_user, id]
     );
 
-    //⏩ envío de correo confirmando la reserva:
+    //⏩ envío de correo confirmando el cambio de reserva:
 
     const nowDateUser = formatDateToUser(new Date());
     const dateToUser = formatDateToUser(visit);
@@ -217,14 +215,19 @@ async function editReservation(req, res, next) {
       await sendMail({
         email: userEmail,
         title: "Reserva de espacio en playa.",
-        content: `Se confirma la modificación de la reserva realizada con los siguientes datos:
-          Reserva realizada por: ${userName} (usuario nº: ${id_user})
-          Playa: ${beachName} (nº ${id_beach})
-          Fecha y hora reservada (1 hora): ${dateToUser} 
-          Nº plazas: ${places} personas.
-          Fianza: 3 euros.
-          Nº reserva: ${id}
-          Reserva confirmada y pagada el ${nowDateUser}
+        content: `Se confirma la reserva nº${id} modificada con los siguientes datos:
+       👣 Usuario: ${userName} (usuario nº: ${id_user}).
+
+       🌅 Playa: ${beachName} (nº ${id_beach}).
+
+       📅 Fecha y hora: ${dateToUser} 
+
+       👥 Plazas: ${places} personas.
+
+       💶 Fianza de 3 euros (pagado).
+
+          
+          Reserva modificada el ${nowDateUser},
           
           Sólo se permiten cambios y anulaciones hasta 24 horas antes de la fecha/hora reservada. `,
       });
@@ -235,11 +238,19 @@ async function editReservation(req, res, next) {
 
     res.send({
       status: "ok",
-      message: `Se modificó la reserva para ${userName} (usuario nº: ${id_user}), en la playa ${beachName} (nº ${id_beach})
-      para la fecha ${formatDateToUser(
-        visit
-      )} para ${places} personas. Nº reserva: ${id}.
-      Pagada fianza de 3 euros.`,
+      message: `Se modificó la reserva nº${id}. Datos de la reserva:
+
+       👣 Usuario: ${userName} (usuario nº: ${id_user}).
+
+       🌅 Playa: ${beachName} (nº ${id_beach}).
+
+       📅 Fecha y hora: ${dateToUser} 
+
+       👥 Plazas: ${places} personas.
+
+       
+       
+       📨 Se ha enviado correo de confirmación.`,
     });
 
     //Falta: alguna comprobación más ( reservas y plazas máx; )
