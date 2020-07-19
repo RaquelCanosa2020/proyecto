@@ -1,17 +1,17 @@
 const { getConnection } = require("../../db");
-const { getHours, parseISO, setMinutes, setSeconds } = require("date-fns");
 const { formatDateToDB } = require("../../helpers");
+
+//Nos da lista de playas según características y/o disponibilidad para una fecha y plazas determinadas.
 
 async function searchBeaches(req, res, next) {
   let connection;
-
   let query;
   const params = [];
   const conditions = [];
 
   try {
     connection = await getConnection();
-    if (req.body.visit && req.body.places) {
+    if (req.body.visit) {//A. si usuario indica fecha 
       const {
         type,
         municipality,
@@ -36,7 +36,7 @@ async function searchBeaches(req, res, next) {
         "buscando disponibilidad para la fecha y nº plazas indicadas"
       );
 
-      if (
+      if (//A.1: usuario sólo indica fecha y personas, sin marcar ninguna opción
         !type &&
         !municipality &&
         !province &&
@@ -49,21 +49,16 @@ async function searchBeaches(req, res, next) {
         //Por fecha/hora y no se elige ninguna otra condición:
 
         params.push(`${places}`);
-        /*query = `SELECT beaches.id, beaches.name, beaches.capacity, SUM(reservations.places) AS occupation
-        FROM beaches
-        LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
-        GROUP BY beaches.id
-        HAVING (capacity + ?) > occupation OR occupation IS NULL`;*/
 
         query = `SELECT beaches.id, beaches.name, beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free
         FROM beaches
         LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
         WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month) AND active=1
         GROUP BY beaches.id
-        HAVING (capacity + ? > occupation OR occupation IS NULL);`;
+        HAVING capacity >= occupation + ? OR occupation IS NULL;`;
       }
 
-      //Por fecha/hora y se elige una o varias condiciones:
+      //A.2 Por fecha/hora y se elige una o varias condiciones:
       if (
         type ||
         municipality ||
@@ -120,9 +115,9 @@ async function searchBeaches(req, res, next) {
         LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
         WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month)
         AND ${conditions.join(` AND `)} AND active=1 GROUP BY beaches.id
-        HAVING (capacity + ?) > occupation OR occupation IS NULL`;
+        HAVING capacity >= occupation + ? OR occupation IS NULL`;
       }
-    } else {
+    } else {//No se indica fecha/personas, se buscan playas por sus características
       const {
         type,
         municipality,
@@ -146,16 +141,6 @@ async function searchBeaches(req, res, next) {
         parking ||
         toilet
       ) {
-        const {
-          type,
-          municipality,
-          province,
-          lifesaving,
-          bar_restaurant,
-          disabled_access,
-          parking,
-          toilet,
-        } = req.body;
 
         //const params = [];
         //const conditions = [];

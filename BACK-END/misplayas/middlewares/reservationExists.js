@@ -7,7 +7,7 @@ async function reservationExists(req, res, next) {
     const { id } = req.params;
 
     console.log(
-      "comprobando que en la tabla de reservas hay una entrada id",
+      "comprobando que existe la reserva id",
       id
     );
 

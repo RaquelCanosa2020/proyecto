@@ -150,3 +150,7 @@ const faker = require("faker/locale/es");
 for (let i = 1; i < 11; i++) {
   console.log(faker.date.recent(5));
 }
+
+//login admin: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZSI6ImFkbWluIiwiaWF0IjoxNTk1MTY2MjExLCJleHAiOjE1OTc3NTgyMTF9.vC2U225lhzoPgsxFTT6EVlTBS2CHM_MtPXx8weXpKNs
+//login rcanosa1@gmail.com: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTMsInJvbGUiOiJub3JtYWwiLCJpYXQiOjE1OTUxNzA3MTYsImV4cCI6MTU5Nzc2MjcxNn0.3Rxoj3Z3rHx7VpFbwjRI9QK8oyvPde--x2l2Y_EStq0
+

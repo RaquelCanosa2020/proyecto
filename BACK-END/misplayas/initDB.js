@@ -1,5 +1,4 @@
 //Este js no depende de express. Lo tenemos para resetear la BD cuando hagamos pruebas
-//Ojo, que nos borra las tablas que hayamos metido.
 
 require("dotenv").config(); //llamamos al .env
 
@@ -10,7 +9,7 @@ const { random, sample } = require("lodash");
 const uuid = require("uuid");
 const { add, startOfHour } = require("date-fns");
 
-//axios lo uso para sacar datos de las playas lo más reales posibles
+//axios lo uso para sacar datos de las playas
 //hago la función replace porque los booleanos me los da en Sí y No, para pasarlos a true/false
 const axios = require("axios");
 
@@ -33,14 +32,15 @@ async function main() {
   
     
       SET FOREIGN_KEY_CHECKS = 0;`);
+    //Desactivo primero las foreign keys para que no me de errores.
 
-    // Borrar las tablas si existen (
+    // Borrar las tablas si existen (no borro ni acutalizo las playas pq tarda un par de minutos)
     console.log("Borrando tablas");
     await connection.query("DROP TABLE IF EXISTS photos");
     await connection.query("DROP TABLE IF EXISTS ratings");
     await connection.query("DROP TABLE IF EXISTS payments");
     await connection.query("DROP TABLE IF EXISTS reservations");
-    //await connection.query("DROP TABLE IF EXISTS beaches");
+    await connection.query("DROP TABLE IF EXISTS beaches");
     await connection.query("DROP TABLE IF EXISTS users");
 
     // Crear las tablas de nuevo
@@ -64,29 +64,30 @@ async function main() {
       );
     `);
 
-    /*await connection.query(`
+    await connection.query(`
       CREATE TABLE beaches (
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         creation_date DATETIME NOT NULL,
         type VARCHAR(50),
-        name VARCHAR(50),
-        municipality VARCHAR(50),
-        province VARCHAR(50),
+        name VARCHAR(50) NOT NULL,
+        municipality VARCHAR(50) NOT NULL,
+        province VARCHAR(50) NOT NULL,
         description TEXT,
-        start_time INT UNSIGNED,
-        end_time INT UNSIGNED,
-        start_month INT UNSIGNED,
-        end_month INT UNSIGNED,
-        capacity INT UNSIGNED,
-        lifesaving BOOLEAN,
-        bar_restaurant BOOLEAN,
-        disabled_access BOOLEAN,
-        parking BOOLEAN,
-        toilet BOOLEAN,
+        start_time INT UNSIGNED NOT NULL,
+        end_time INT UNSIGNED NOT NULL,
+        start_month INT UNSIGNED NOT NULL,
+        end_month INT UNSIGNED NOT NULL,
+        capacity INT UNSIGNED NOT NULL,
+        lifesaving BOOLEAN DEFAULT FALSE,
+        bar_restaurant BOOLEAN DEFAULT FALSE,
+        disabled_access BOOLEAN DEFAULT FALSE,
+        parking BOOLEAN DEFAULT FALSE,
+        toilet BOOLEAN DEFAULT FALSE,
         image TINYTEXT,
+        active BOOLEAN DEFAULT TRUE,
         lastUpdate DATETIME NOT NULL
       );
-    `);*/
+    `);
 
     await connection.query(`
       CREATE TABLE reservations (
@@ -121,7 +122,7 @@ async function main() {
       CREATE TABLE photos(
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         link VARCHAR(50),
-        description TINYTEXT,
+        description TEXT,
         date DATETIME NOT NULL,
         id_user INT UNSIGNED,
         id_beach INT UNSIGNED,
@@ -131,14 +132,13 @@ async function main() {
       )
       
     `);
-
+    //una vez creadas las tablas, vuelvo a activar las FK:
     await connection.query(`
     SET FOREIGN_KEY_CHECKS = 1;`);
 
     // Meter datos de prueba en las tablas
 
-    //el usuario addor lo metemos manualmente, sin faker, yamunicipality q debemos controlar sus datos
-    //y, en especial la contraseña:
+    //el usuario addor lo metemos manualmente;
 
     console.log("Creando usuario administrador");
 
@@ -163,8 +163,8 @@ async function main() {
       `
       );
     }
-    //lo comento ya que tarda algo en cargar los datos y siempre van a ser las mismas:
-    /*console.log("Metiendo datos de prueba en beaches");
+    //tarda un par de minutos:
+    console.log("Metiendo datos de prueba en beaches");
 
     const playas = [
       "Arealonga",
@@ -194,10 +194,10 @@ async function main() {
 
       await connection.query(
         `INSERT INTO beaches(creation_date, name, type, municipality, province, description, start_time, end_time,
-          start_month, end_month, capacity, parking, lifesaving, bar_restaurant,
-          toilet, disabled_access, lastUpdate)
-        VALUES(UTC_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, UTC_TIMESTAMP())
-      `,
+            start_month, end_month, capacity, parking, lifesaving, bar_restaurant,
+            toilet, disabled_access, active, lastUpdate)
+          VALUES(UTC_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true, UTC_TIMESTAMP())
+        `,
         [
           data.Nombre,
           data.Grado_urba,
@@ -213,17 +213,21 @@ async function main() {
           replace(data.Auxilio_y_),
           replace(data.Establecim),
           replace(data.Aseos),
-          replace(data.Acceso_dis),
+          replace(data.Acceso_dis)
         ]
       );
-    }*/
+    }
 
     console.log("Metiendo datos de prueba en reservations y en ratings");
+    //incluyo las dos tablas a la vez para que me cuadren las fechas (fecha de valoración
+    // > a fecha de visita.)
 
     const numberOfReservations = 20;
 
     for (let index = 0; index < numberOfReservations; index++) {
       const date = faker.date.recent(10);
+
+
 
       const visitDate = add(date, { days: 3 });
       const visitHour = startOfHour(visitDate); //para obtener horas en punto.
@@ -232,46 +236,61 @@ async function main() {
       const formatDate = formatDateToDB(date);
       const formatVisitDate = formatDateToDB(visitHour);
       const formatRatingDate = formatDateToDB(ratingDate);
+      const id_user = random(2, users + 1)
+      const [user] = await connection.query(`
+      SELECT name
+      FROM users
+      WHERE id =?`, [id_user]);
+      const user_name = user[0].name
 
       await connection.query(`
-        INSERT INTO reservations(date, visit, places, id_beach, id_user, lastUpdate)
-        VALUES(
-          "${formatDate}",
-          "${formatVisitDate}", 
-          "${random(1, 5)}",
-          "${random(1, 5)}",
-          "${random(2, users + 1)}",
-          UTC_TIMESTAMP());
-                 
-      `);
-      await connection.query(`
-      INSERT INTO ratings(value, date, comment, id_reservation, lastUpdate)
-      VALUES(
-        "${random(1, 5)}",
-        "${formatRatingDate}",
-        "${faker.lorem.paragraph()}",
-        "${index + 1}",
-        UTC_TIMESTAMP());
+          INSERT INTO reservations(date, visit, places, id_beach, id_user, user_name, total_euros, cc_number,lastUpdate)
+          VALUES(
+            "${formatDate}",
+            "${formatVisitDate}", 
+            "${random(1, 5)}",
+            "${random(1, 5)}",
+            "${id_user}",
+            "${user_name}",
+            3,
+            "${faker.finance.account(16)}",
+            UTC_TIMESTAMP());
+                   
         `);
-    }
-
-    console.log("Metiendo datos de prueba en photos");
-
-    const numberOfPhotos = 20;
-
-    for (let index = 0; index < numberOfPhotos; index++) {
-      const date = formatDateToDB(faker.date.recent());
       await connection.query(`
-        INSERT INTO photos(link, description, date, id_beach, id_user, lastUpdate)
-        VALUES (
-          "${faker.lorem.sentence(1)}",
-          "${faker.lorem.sentence(1)}",
-          "${date}",
+        INSERT INTO ratings(value, date, comment, id_reservation, lastUpdate)
+        VALUES(
           "${random(1, 5)}",
-          "${random(1, 10)}", 
-          UTC_TIMESTAMP())
-      `);
+          "${formatRatingDate}",
+          "${faker.lorem.paragraph()}",
+          "${index + 1}",
+          UTC_TIMESTAMP());
+          `);
     }
+
+
+    /*console.log("Metiendo datos de prueba en photos");
+
+    //Al incluir una ruta ficticia que no está en la carpeta, no se puede llegar
+    //al punto final de borrar la foto de la carpeta. Prefiero subir algunas de prueba manualmente
+    //de paso que pruebo el endpoint de subir fotos.
+ 
+     const numberOfPhotos = 20;
+ 
+     for (let index = 0; index < numberOfPhotos; index++) {
+       const date = formatDateToDB(faker.date.recent());
+       const link = uuid.v4();
+       await connection.query(`
+         INSERT INTO photos(link, description, date, id_beach, id_user, lastUpdate)
+         VALUES (
+           "${link}",
+           "${faker.lorem.sentence(1)}",
+           "${date}",
+           "${random(1, 5)}",
+           "${random(1, 10)}", 
+           UTC_TIMESTAMP())
+       `);
+     }*/
   } catch (error) {
     console.error(error);
   } finally {

@@ -5,7 +5,7 @@ const { formatDateToUser, sendMail, generateError } = require("../../helpers");
 async function deleteReservation(req, res, next) {
   let connection;
 
-  //Anulación de reservas antes de 24 h de visita.
+  //Se permite anulación de reservas antes de 24 h de visita.
 
   try {
     connection = await getConnection();
@@ -37,9 +37,9 @@ async function deleteReservation(req, res, next) {
     }
 
     const reservDate = currentReserv.date; //para info
-    const cc_number = currentReserv.cc_number; //se necesitaría para el abono
+    const cc_number = currentReserv.cc_number; //aunque aquí no lo usamos, se necesitaría para el abono
     const reservUserName = currentReserv.name; //para info
-    const userEmail = currentReserv.email; //si le mandamos email
+    const userEmail = currentReserv.email; //le mandamos email de anulación
 
     //Comprobamos que en el momento no faltan 1 día o menos para visit
 
@@ -64,8 +64,8 @@ async function deleteReservation(req, res, next) {
           Realizada en fecha: ${formatDateToUser(reservDate)}
           Nº reserva: ${id}
           Reserva anulada el ${formatDateToUser(
-            new Date()
-          )} Se ha procedido al reintegro del importe a la misma tarjeta que hizo el pago.
+          new Date()
+        )} Se ha procedido al reintegro del importe a la misma tarjeta que hizo el pago.
          `,
       });
     } catch (error) {
@@ -73,7 +73,7 @@ async function deleteReservation(req, res, next) {
       throw emailError;
     }
 
-    // Borrar la entrada de la tabla (sería mejor anular..)
+    // Borrar la entrada de la tabla 
     await connection.query(
       `
       DELETE FROM reservations
@@ -83,7 +83,7 @@ async function deleteReservation(req, res, next) {
     );
 
     // Borrar votos asociados a esa entrda en la tabla ratings (que aún no tiene voto)
-    //Incluyo en la FK de la tabla de ratings que borre en cascada (funciona)
+    //Incluyo en la FK de la tabla de ratings que borre en cascada 
 
     res.send({
       status: "ok",

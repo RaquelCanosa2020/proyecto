@@ -1,8 +1,6 @@
 const { getConnection } = require("../../db");
 const {
   processAndSaveImage,
-  formatDateToDB,
-  deleteUpload,
   generateError,
 } = require("../../helpers");
 const { BeachSchema } = require("../../validators/beachesValidators");
@@ -72,7 +70,7 @@ async function newBeach(req, res, next) {
       }
     }
 
-    // Ejecutar la query de inserción de la playa con lsus datos:
+    // Ejecutar la query de inserción de la playa con sus datos:
     const [newBeach] = await connection.query(
       `
        INSERT INTO beaches (creation_date, name, type, municipality, province, description, start_time, end_time, start_month, end_month,

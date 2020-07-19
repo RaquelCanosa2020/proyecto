@@ -57,12 +57,6 @@ const editReservationSchema = Joi.object().keys({
     .error(generateError("El campo id_beach debe ser un número entero", 400)),
 });
 
-const payReservationSchema = Joi.object().keys({
-  cc_number: Joi.string()
-    .creditCard()
-    .error(generateError("El número de tarjeta no es válido", 400)),
-});
-
 const voteReservationSchema = Joi.object().keys({
   value: Joi.number()
     .min(1)
@@ -79,6 +73,5 @@ const voteReservationSchema = Joi.object().keys({
 module.exports = {
   newReservationSchema,
   editReservationSchema,
-  payReservationSchema,
   voteReservationSchema,
 };

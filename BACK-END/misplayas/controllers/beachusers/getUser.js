@@ -1,4 +1,5 @@
 const { getConnection } = require("../../db");
+const { gnnerateError, generateError } = require("../../helpers");
 
 async function getUser(req, res, next) {
   let connection;
@@ -8,6 +9,8 @@ async function getUser(req, res, next) {
 
     const { id } = req.params;
 
+    //query para obtener los datos
+
     const [result] = await connection.query(
       `
       SELECT id, registration_date, email, role, IFNULL(name, "Anónimo") AS name, IFNULL(image, "vacío") AS avatar
@@ -16,21 +19,22 @@ async function getUser(req, res, next) {
     `,
       [id]
     );
-
+    //comprobamos que existe
     if (result.length === 0) {
-      const error = new Error(`El usuario con id ${id} no existe`);
-      error.httpStatus = 404;
-      throw error;
+      throw generateError(`El usuario con id ${id} no existe`, 404)
+
     }
 
     const [userData] = result;
+
+    //elaboramos la respuesta con los datos a visualizar
 
     const responseData = {
       registrationDate: userData.registration_date,
       name: userData.name,
       image: userData.avatar,
     };
-
+    //si el que consulta es el propio usuario o admin, damos más datos
     if (userData.id === req.auth.id || req.auth.role === "admin") {
       responseData.email = userData.email;
       responseData.role = userData.role;

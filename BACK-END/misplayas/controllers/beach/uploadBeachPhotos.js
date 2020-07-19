@@ -59,7 +59,7 @@ async function uploadBeachPhotos(req, res, next) {
     }
 
     // Ejecutar la query de inserción de la foto:
-    await connection.query(
+    const [newPhoto] = await connection.query(
       `
 
             INSERT INTO photos (link, date, description, id_beach, id_user, lastUpdate)
@@ -72,8 +72,9 @@ async function uploadBeachPhotos(req, res, next) {
     res.send({
       status: "ok",
       data: {
-        id,
-        id_user,
+        "nºfoto": newPhoto.insertId,
+        "playa": id,
+        "usuario": id_user,
         date,
         description,
       },

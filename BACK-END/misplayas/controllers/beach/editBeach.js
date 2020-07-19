@@ -1,7 +1,6 @@
 const { getConnection } = require("../../db");
 const {
   processAndSaveImage,
-  formatDateToDB,
   deleteUpload,
   generateError,
 } = require("../../helpers");

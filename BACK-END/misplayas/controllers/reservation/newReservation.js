@@ -24,6 +24,7 @@ async function newReservation(req, res, next) {
     const { visit, places, id_beach, cc_number } = req.body;
 
     //⏩ comprobar que no falta info en el body: en validación
+    //⏩ comprobar que la playa está activa: isActiva.js
 
     //procesamos mes y hora de la visita,
 
@@ -37,10 +38,10 @@ async function newReservation(req, res, next) {
 
     //comprobamos que la fecha no es pasada o más allá de 5 días:
 
-    if (visitUtc <= new Date() || visitUtc > addDays(new Date(), 5)) {
+    if (visitUtc <= new Date() || visitUtc >= addDays(new Date(), 5)) {
       {
         throw generateError(
-          "La fecha no es válida, reservas con antelación máxima de 5 días",
+          "La fecha no es válida, la fecha de visita debe ser como mínimo hoy y como máximo dentro de 5 días",
           403
         );
       }

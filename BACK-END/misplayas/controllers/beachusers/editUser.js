@@ -77,7 +77,7 @@ async function editUser(req, res, next) {
 
       // Verificamos de nuevo el email recibido
       const registration_code = randomString(40);
-      const validationURL = `${process.env.PUBLIC_HOST}/beachusers/validate/${registration_code}`;
+      const validationURL = `${process.env.PUBLIC_HOST}/beach/users/validate/${registration_code}`;
 
       //Enviamos la url anterior por mail
       try {

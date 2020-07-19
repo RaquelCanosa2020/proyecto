@@ -1,5 +1,7 @@
-//necesitamos formatear la fecha que nos proporcionan los js, para que sea válida para mysql:
 
+//En este archivo tendremos distintas funciones auxiliares necesarias:
+
+//Mödulos usados:
 const fs = require("fs").promises;
 const path = require("path");
 const sharp = require("sharp");
@@ -14,7 +16,7 @@ const { es } = require("date-fns/locale");
 // Definimos directorio de subida de imágenes
 const imageUploadPath = path.join(__dirname, process.env.UPLOADS_DIR);
 
-//1.A usamos date-fns para dar formato válido para la Base de Datos a la fecha:
+//1.A usamos date-fns para dar formato válido para la Base de Datos a las fechas que guardemos:
 
 function formatDateToDB(date) {
   let internal_date;
@@ -33,7 +35,7 @@ function formatDateToDB(date) {
   return format(adjusted_date, "yyyy-MM-dd HH:mm:ss");
 }
 
-//1.B usamos date-fns para dar transformar fechas UTC de la BD en locales y formato amigable a mostrar al usuario:
+//1.B usamos date-fns para dar transformar fechas UTC de la BD en locales y formato "amigable" a mostrar al usuario:
 
 function formatDateToUser(date) {
   let dateToUser = `${format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", {
@@ -49,17 +51,12 @@ async function processAndSaveImage(uploadedImage) {
   await fs.mkdir(imageUploadPath, { recursive: true });
 
   // Leer la imagen que se subio
-  const image = sharp(uploadedImage.data); //upl.data es el buffer
+  const image = sharp(uploadedImage.data); //uploaded.data es el buffer
 
-  //console.log(uploadedImage);
-  //console.log(image);
-  //const bcrypt = require("bcrypt"); //para encriptar constraseñas. La quitamos usamos mysql SHA2
   // Saco información de la imagen
   const imageInfo = await image.metadata();
 
-  //console.log(imageInfo);
-
-  // Cambiarle el tamaño si es necesario
+  // Cambiarle el tamaño si es necesario, para no tener fotos excesivamente grandes.
   if (imageInfo.width > 1000) {
     image.resize(1000);
   }
@@ -72,13 +69,13 @@ async function processAndSaveImage(uploadedImage) {
   return imageFileName;
 }
 
-//3. Función para borrar imágenes (cuando se borran registros de viajes):
+//3. Función para borrar imágenes (cuando se borran fotos de playas):
 
 async function deleteUpload(uploadedImage) {
   await fs.unlink(path.join(imageUploadPath, uploadedImage));
 }
 
-//creamos función para generar códigos aleatorios que enviaremos
+//4. creamos función para generar códigos aleatorios que enviaremos
 //en el correo electrónico para activación de usuarios:
 
 function randomString(length = 20) {
@@ -86,6 +83,8 @@ function randomString(length = 20) {
 }
 
 //Nos devuelve un string de 20 caracteres que enviaremos al usuario y dónde deberá pinchar para activar cuenta.
+
+//5. Función para enviar mails a usuarios:
 
 async function sendMail({ email, title, content }) {
   // Configurar api key de sendgrid
@@ -109,9 +108,14 @@ async function sendMail({ email, title, content }) {
   await sendgrid.send(message);
 }
 
+//6. Para pasar a cero valores null de la BD cuando necesitamos operar con ellos
+//(realmente no es necesario, se puede utilizar la función ifnull de sql):
+
 function setZero() {
   return 0;
 }
+
+//7. Función de generación de errores:
 
 function generateError(message, code = 500) {
   const error = new Error(message);

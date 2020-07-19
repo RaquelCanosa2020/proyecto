@@ -20,9 +20,11 @@ async function getUserReservations(req, res, next) {
       );
     }
 
+    //consulta con sus reservas y sus datos, incluyendo valoración si la hubiera.
+
     const [result] = await connection.query(
       `
-      SELECT R.id, R.date, R.visit, R.places, R.id_beach, R.total_euros, IFNULL(ratings.value, "pendiente de valorar") AS value
+      SELECT R.id, R.date, R.visit, R.places, R.id_beach, R.total_euros, IFNULL(ratings.value, "pendiente de valorar") AS value,IFNULL(ratings.comment, "sin comentar") AS comment 
       FROM reservations R
       LEFT JOIN ratings ON R.id=ratings.id_reservation
       WHERE R.id_user = ?
@@ -30,13 +32,13 @@ async function getUserReservations(req, res, next) {
     `,
       [id]
     );
+    //si aún no hubiera reservas de ese usuario
 
     if (result.length === 0) {
-      const error = new Error(
-        `Aún no constan reservas a tu nombre en la base de datos`
+      throw generateError(
+        `Aún no constan reservas a tu nombre en la base de datos`,
+        404
       );
-      error.httpStatus = 404;
-      throw error;
     }
 
     res.send({

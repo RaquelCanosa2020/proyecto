@@ -50,10 +50,11 @@ async function recoverUserPassword(req, res, next) {
         email: email,
         title: "Código de reseteo de tu password",
         content: `
-          Alguién solicitó una recuperación de tu contraseña, este es el código que tienes que usar:
+          Se ha solicitado código para recuperación de contraseña para tu cuenta en la web de reservas
+          de espacio en playas. El código es:
           ${recoverCode}
 
-          Si no fuiste tu quien solicitó esta recuperación, ignora este correo. Nada cambió.
+          Si no fuiste tu quien solicitó esta recuperación, ignora este correo y revisa tu cuenta.
         `,
       });
     } catch (error) {

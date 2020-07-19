@@ -12,7 +12,7 @@ const {
   editReservationSchema,
 } = require("../../validators/reservationValidators");
 
-//Se podrán modificar las reservas antes 12 horas de visit.
+//Se podrán modificar las reservas antes 1día  de visit.
 
 async function editReservation(req, res, next) {
   let connection;
@@ -23,7 +23,6 @@ async function editReservation(req, res, next) {
     await editReservationSchema.validateAsync(req.body);
     const { id } = req.params;
     const id_user = req.auth.id;
-    const id_role = req.auth.role;
 
     const { visit, places, id_beach } = req.body;
 
@@ -61,6 +60,7 @@ async function editReservation(req, res, next) {
     }
 
     //⏩ comprobar que no falta info en el body: validator
+    //⏩ comprobar que la playa está activa: isActiva.js
 
     //procesamos día y hora, comprobamos fecha no pasada o posterior a
     //5 días (máximo para reservar)
@@ -70,7 +70,7 @@ async function editReservation(req, res, next) {
     console.log(visitUtc);
     console.log(visitHour);
 
-    if (visitUtc <= new Date() || visitUtc > addDays(new Date(), 5)) {
+    if (visitUtc <= new Date() || visitUtc >= addDays(new Date(), 5)) {
       {
         throw generateError(
           "La fecha no es válida, reservas con antelación máxima de 5 días",

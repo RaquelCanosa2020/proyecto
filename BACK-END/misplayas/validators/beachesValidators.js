@@ -1,8 +1,8 @@
 const Joi = require("@hapi/joi");
 const { generateError } = require("../helpers");
-const { toPlainObject } = require("lodash");
 
-// Valida CAMBIOS PLAYA
+
+// Valida datos de PLAYA, tanto nueva como edición, ya que son los mismos datos
 
 const BeachSchema = Joi.object().keys({
   name: Joi.string()
@@ -43,21 +43,21 @@ const BeachSchema = Joi.object().keys({
     .min(0)
     .max(23)
     .required()
-    .error(generateError("El campo start_time debe estar entre 0 y 23", 400)),
+    .error(generateError("El campo start_time debe existir y estar entre 0 y 23", 400)),
 
   end_time: Joi.number()
     .integer()
     .min(0)
     .max(23)
     .required()
-    .error(generateError("El campo start_time debe estar entre 0 y 23", 400)),
+    .error(generateError("El campo start_time debe existir y estar entre 0 y 23", 400)),
   start_month: Joi.number()
     .integer()
     .min(1)
     .max(12)
     .required()
     .error(
-      generateError("El campo start_month debe ser un número entre 1 y 12", 400)
+      generateError("El campo start_month debe existir y ser un número entre 1 y 12", 400)
     ),
   end_month: Joi.number()
     .integer()
@@ -65,13 +65,13 @@ const BeachSchema = Joi.object().keys({
     .max(12)
     .required()
     .error(
-      generateError("El campo end_month debe ser un número entre 1 y 12", 400)
+      generateError("El campo end_month debe existir y ser un número entre 1 y 12", 400)
     ),
   capacity: Joi.number()
     .integer()
     .min(1)
     .required()
-    .error(generateError("El campo capacity debe ser un número entero", 400)),
+    .error(generateError("El campo capacity debe existir y ser un número entero", 400)),
   lifesaving: Joi.number()
     .integer()
     .min(0)

@@ -12,9 +12,9 @@ async function getBeachVotes(req, res, next) {
     // Ejecutar query para sacar lista de votos
     const [votes] = await connection.query(
       `
-      SELECT ratings.value, ratings.date, comment, IFNULL(users.name,"ANÓNIMO") AS name, users.id
+      SELECT ratings.value, ratings.date, IFNULL(comment,"     ") AS comment, IFNULL(users.name,"ANÓNIMO") AS name, users.id
       FROM ratings, reservations, users
-      WHERE reservations.id_beach=? AND reservations.id = ratings.id_reservation
+      WHERE reservations.id_beach=? AND reservations.id = ratings.id_reservation AND ratings.value IS NOT NULL
       AND reservations.id_user = users.id
       ORDER BY ratings.id DESC
     `,
@@ -28,7 +28,7 @@ async function getBeachVotes(req, res, next) {
     const [rating] = await connection.query(
       `
       SELECT ROUND(AVG(ratings.value),1) AS voteAverage, COUNT(ratings.id) AS voteNumber FROM ratings, reservations
-WHERE ratings.id_reservation = reservations.id
+WHERE ratings.id_reservation = reservations.id AND ratings.value IS NOT NULL
 AND reservations.id_beach = ?
     `,
       [id]

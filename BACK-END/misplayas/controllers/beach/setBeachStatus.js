@@ -1,5 +1,8 @@
 const { getConnection } = require("../../db");
-const { deleteUpload } = require("../../helpers");
+
+//Para que no se borren los datos de reservas, etc,  en vez de borrar una playa
+//la inactivo, así no saldrá en los buscadores
+//Activa/inactiva una playa según su estado.
 
 async function setBeachStatus(req, res, next) {
   let connection;
@@ -12,8 +15,7 @@ async function setBeachStatus(req, res, next) {
 
     //comprobación de que exite en beachExists.js
 
-    //Planteo que, en vez de borrar la playa, siga en la base de datos, pero que los usuarios no la
-    //puedan elegir en los buscadores, la paso a inactiva:
+    //selecciono el status actual de la playa
 
     const [currentStatus] = await connection.query(
       `SELECT active
@@ -22,7 +24,9 @@ async function setBeachStatus(req, res, next) {
     `,
       [id]
     );
-    console.log(currentStatus[0].active);
+    //console.log(currentStatus[0].active);
+
+    //le cambio el status
     if (currentStatus[0].active === 1) {
       await connection.query(
         `
@@ -43,6 +47,8 @@ async function setBeachStatus(req, res, next) {
       );
     }
 
+    //obtengo el esado actual (para darlo en el mensaje)
+
     const [newStatus] = await connection.query(
       `
       SELECT active
@@ -58,7 +64,7 @@ async function setBeachStatus(req, res, next) {
       status: "ok",
       message: `La Playa id ${id} ha cambiado de status. Ahora se encuentra ${
         estado === 1 ? "Activa" : "Inactiva"
-      }`,
+        }`,
     });
   } catch (error) {
     next(error);

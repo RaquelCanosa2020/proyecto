@@ -7,18 +7,18 @@ const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 
-//llamamos a los diferentes middlewares y funciones que están en otros js:
-const beachExists = require("./middlewares/beachExists");
-const isActive = require("./middlewares/isActive");
-const reservationExists = require("./middlewares/reservationExists");
-const isUser = require("./middlewares/isUser");
-const isAdmin = require("./middlewares/isAdmin");
+//llamamos a los diferentes middlewares complementarios que están en otros js:
+const beachExists = require("./middlewares/beachExists");//si existe o no una playa
+const isActive = require("./middlewares/isActive");//si la playa está activa o no
+const reservationExists = require("./middlewares/reservationExists");//si existe la reserva
+const isUser = require("./middlewares/isUser");//si quien hace la petición es usuario registrado
+const isAdmin = require("./middlewares/isAdmin");//si quien hace la petición es el administrador.
 
 //Beaches controllers:
 
 const listBeaches = require("./controllers/beach/listBeaches");
-const getBeach = require("./controllers/beach/getBeach");
 const searchBeaches = require("./controllers/beach/searchBeaches");
+const getBeach = require("./controllers/beach/getBeach");
 const getBeachVotes = require("./controllers/beach/getBeachVotes");
 const getBeachPhotos = require("./controllers/beach/getBeachPhotos");
 const uploadBeachPhotos = require("./controllers/beach/uploadBeachPhotos");
@@ -65,76 +65,79 @@ app.use(bodyParser.json());
 // Procesado de body tipo form-data
 app.use(fileUpload());
 
-/** 🌅ENDPOINTS DE PLAYAS🌅 (obvio DE MOMENTO las del admin: crear o modificar / borrar playas)*/
+/** 🌅ENDPOINTS DE PLAYAS🌅 **/
 
-// Listar playas, incluidas búsquedas por nombre de playa o municipio 🔧//PTE incluir alguna foto?
+// Listar playas, incluidas búsquedas por nombre de playa o municipio
 // Público
 app.get("/beaches", listBeaches);
 
-// Buscar playas, buscador avanzado por fecha, plazas y/o opciones 🔧
+// Buscar playas, buscador avanzado por fecha, plazas y/u opciones
 // Público
 app.get("/beaches/search", searchBeaches);
 
-// Mostrar una sola playa 🔧
+// Mostrar una sola playa
 // GET - /beaches/:id
 // Público
 app.get("/beaches/:id", beachExists, getBeach);
 //Incluye la disponibilidad en este momento o en la fecha que indique el usuario en el body
 
-// Ver votos de una playa 🔧
+// Ver votos de una playa
 // GET - /beaches/:id/votes
 // Público
 app.get("/beaches/:id/votes", beachExists, getBeachVotes);
 
-// Ver fotos de una playa 🔧
+// Ver fotos de una playa
 // GET - /beaches/:id/photos
 // Público
 app.get("/beaches/:id/photos", beachExists, getBeachPhotos);
 
-// Subir fotos de una playa por los usuarios 🔧 //
+// Subir fotos de una playa por los usuarios (de una en una, un máximo de 3 usuario y playa)
 // POST - /beaches/:id/photos
-// Sólo usuarios registrados
+// Sólo usuarios registrados pero de cualquier playa
 app.post("/beaches/:id/photos", isUser, beachExists, uploadBeachPhotos);
 
-// Borrar fotos de una playa por los usuarios 🔧 //
+// Borrar fotos de una playa por los usuarios
 // POST - /beaches/:id/photos
-// Sólo usuarios registrados, el autor o admin
+// Sólo usuarios registrados, el autor de la foto o admin
 app.delete(
   "/beaches/:id/photos/:imageID",
   isUser,
   beachExists,
   deleteBeachPhoto
 );
-// INcluir una playa 🔧
+// INcluir una nueva playa
 // POST - /beaches
 // Sólo administrador
 app.post("/beaches", isUser, isAdmin, newBeach);
 
-// Modificar datos de una playa 🔧
+// Modificar datos de una playa
 // PUT - /beaches
 // Sólo administrador
 app.put("/beaches/:id", isUser, isAdmin, beachExists, editBeach);
 
-// Activar/inactivar una playa (en vez de borrar) 🔧
+// Activar/inactivar una playa (en vez de borrar)
 // DELETE - /beaches
 // Sólo administrador
 app.delete("/beaches/:id", isUser, isAdmin, beachExists, setBeachStatus);
 
 /** ⌚ENDPOINTS DE RESERVAS⌚*/
 
-// Crear una nueva reserva para una playa 👣
+// Crear una nueva reserva para una playa
 // POST - /reservations
-// Sólo usuarios registrados --PENDIENTE
-app.post("/reservations", isUser, isActive, newReservation); //pte isUser
+// Sólo usuarios registrados
+app.post("/reservations", isUser, isActive, newReservation);
 
-// Confirmar y pagar una reserva 🔧 NO LO VOY A HACER. El usuario paga al hacer reserva
+// Confirmar y pagar una reserva ❌ ANULADO. El usuario paga al hacer reserva
+/***En principio la plaza no estaba ocupada hasta el pago, pero creo que es innecesario
+ * El usuario selecciona la playa, va a la pantalla de esa playa y, si la quiere reservar
+ * incluye los datos *** */
 // POST - /reservations/:id
-// Sólo usuarios registrados autor --PENDIENTE
+// Sólo usuarios registrados autor
 ////app.post("/reservations/:id", isUser, reservationExists, payReservation);
 
-// Cambiar una reserva (id reserva) 👣
+// Cambiar una reserva (id reserva)
 // PUT - /reservations/:id
-// Sólo usuarios registrados, el autor o admin --PENDIENTE
+// Sólo usuarios registrados, el autor o admin
 app.put(
   "/reservations/:id",
   isUser,
@@ -143,72 +146,72 @@ app.put(
   editReservation
 ); //pte isUser
 
-// Anular una reserva (id reserva) 🔧
+// Anular una reserva (id reserva)
 // DELETE - /reservations/:id
 // Sólo usuarios registrados, el autor o admin --PENDIENTE
-app.delete("/reservations/:id", isUser, reservationExists, deleteReservation); //pte isUser
+app.delete("/reservations/:id", isUser, reservationExists, deleteReservation);
 
-//Votar una reserva 🔧
+//Votar una reserva
 // POST - /reservations/:id/votes
 // Sólo usuarios registrados --PENDIENTE
-app.post("/reservations/:id/votes", isUser, reservationExists, voteReservation); //pte isUser
+app.post("/reservations/:id/votes", isUser, reservationExists, voteReservation);
 
 /** 👣ENDPOINTS DE USUARIOS👣**/
 
-// Registro de usuarios 🔧
-// POST - /beachusers
+// Registro de usuarios
+// POST - /beach/users
 // Público
 app.post("/beach/users", newUser);
 
-// Validación de usuarios registrados 🔧
-// GET - /beachusers/validate/:code
+// Validación de usuarios registrados
+// GET - /beach/users/validate/:code
 // Público
 app.get("/beach/users/validate/:code", validateUser);
 
-// Login de usuarios 🔧
-// POST - /beachusers/login
+// Login de usuarios
+// POST - /beach/users/login
 // Público
 app.post("/beach/users/login", loginUser);
 
-// Ver información de un usuario 🔧
-// GET - /beachusers/:id
+// Ver información de un usuario
+// GET - /beach/users/:id
 // Sólo para usuarios registrados
-// Pero si el usuario es el mismo o admin debería mostrar toda la información
+// Si la info es del usuario que accede o admin muestra toda la información
 app.get("/beach/users/:id", isUser, getUser);
 
-// Editar datos de usuario: email, name, avatar 🔧
-// PUT - /beachusers/:id
+// Editar datos de usuario: email, name, avatar
+// PUT - /beach/users/:id
 // Sólo el propio usuario o el usuario admin
 app.put("/beach/users/:id", isUser, editUser);
 
-// Borrar un usuario 🔧
-// DELETE- /beachusers/:id
+// Borrar un usuario
+// DELETE- /beach/users/:id
 // Sólo el usuario admin
 app.delete("/beach/users/:id", isUser, isAdmin, deleteUser);
 
-// Editar password de usuario 🔧
-// POST - /beachusers/:id/password
+// Editar password de usuario
+// POST - /beach/users/:id/password
 // Sólo el propio usuario
 app.post("/beach/users/:id/password", isUser, editUserPassword);
 
-// Enviar código de reset de password 🔧
-// POST - /beachusers/recover-password
+// Enviar código de reset de password
+// POST - /beach/users/recover-password
 // Público
 app.post("/beach/users/recover-password", recoverUserPassword);
 
-// Resetear password de usuario 🔧
-// POST - /beachusers/reset-password
+// Resetear password de usuario
+// POST - /beach/users/reset-password
 // Público
 app.post("/beach/users/reset-password", resetUserPassword);
 
-// Ver reservas de un usuario (id usuario) 🔧
-// GET - /reservations/:id
-// Sólo usuarios registrados, el autor o admin--PENDIENTE
+// Ver reservas de un usuario (id usuario)
+// GET - /beach/users/:id/reservations
+// Sólo usuarios registrados, el autor o admin
 app.get("/beach/users/:id/reservations", isUser, getUserReservations); //
 
-// Ver playas de un usuario (id usuario) 🔧
-// GET - /reservations/:id
-// Sólo usuarios registrados, el autor o admin--PENDIENTE
+// Ver playas de un usuario (id usuario)
+// GET - //beach/users/:id/beaches
+// Sólo usuarios registrados, el autor o admin
 app.get("/beach/users/:id/beaches", isUser, getUserBeaches); //
 
 // Error middleware

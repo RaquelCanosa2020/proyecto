@@ -38,7 +38,7 @@ async function deleteBeachPhoto(req, res, next) {
       );
     }
 
-    // Borrar la imagen que coincida de la db
+    // Borrar la imagen en la base de datos
     await connection.query(
       `
       DELETE FROM photos
@@ -47,7 +47,7 @@ async function deleteBeachPhoto(req, res, next) {
       [imageID, id]
     );
 
-    //Borrado del disco.
+    //Borrado del directorio static/uploads
     await deleteUpload(currentPhoto.link);
 
     res.send({

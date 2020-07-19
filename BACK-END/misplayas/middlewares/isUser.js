@@ -1,5 +1,6 @@
 const jsonwebtoken = require("jsonwebtoken");
 const { getConnection } = require("../db");
+const { generateError } = require("../helpers");
 
 async function isUser(req, res, next) {
   let connection;
@@ -11,9 +12,8 @@ async function isUser(req, res, next) {
     const { authorization } = req.headers;
 
     if (!authorization) {
-      const error = new Error("Falta la cabecera de autorización");
-      error.httpStatus = 401;
-      throw error;
+      throw generateError("Falta la cabecera de autorización", 401);
+
     }
 
     // Comprobar que el token es válido
@@ -22,9 +22,8 @@ async function isUser(req, res, next) {
     try {
       tokenInfo = jsonwebtoken.verify(authorization, process.env.SECRET);
     } catch (error) {
-      const tokenError = new Error("El token no es válido");
-      tokenError.httpStatus = 401;
-      throw tokenError;
+      throw generateError("El token no es válido", 401);
+
     }
 
     // Sacamos de la base de datos información de la última vez
@@ -39,13 +38,10 @@ async function isUser(req, res, next) {
     );
 
     if (result.length === 0) {
-      const error = new Error("El usuario no existe en la base de datos");
-      error.httpStatus = 401;
-      throw error;
+      throw generateError("El usuario no existe en la base de datos", 401);
+
     }
 
-    // en caso de linux:
-    // const tokenCreatedAt = new Date((tokenInfo.iat + 7200) * 1000);
     const tokenCreatedAt = new Date(tokenInfo.iat * 1000);
     const userLastAuthUpdate = new Date(result[0].lastAuthUpdate);
 
@@ -55,11 +51,10 @@ async function isUser(req, res, next) {
     );
 
     if (tokenCreatedAt < userLastAuthUpdate) {
-      const error = new Error(
-        "El token ya no es válido. Haz login para conseguir otro"
+      throw generateError(
+        "El token ya no es válido. Haz login para conseguir otro", 401
       );
-      error.httpStatus = 401;
-      throw error;
+
     }
 
     // Meter ese contenido en el objeto de petición para futuro uso

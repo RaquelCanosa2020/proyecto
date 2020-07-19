@@ -14,7 +14,7 @@ async function voteReservation(req, res, next) {
     await voteReservationSchema.validateAsync(req.body);
 
     const { id } = req.params;
-    const { value, comment } = req.body; //añado user temporal antes de incluir control autoriz.
+    const { value, comment } = req.body;
     const id_user = req.auth.id;
     const id_role = req.auth.role;
     const userVote = parseInt(value);
@@ -83,9 +83,10 @@ async function voteReservation(req, res, next) {
     );
     console.log(existingVote);
     if (existingVote.length !== 0) {
-      const error = new Error(`Ya votaste la reserva ${id} con tu usuario`);
-      error.httpStatus = 403;
-      throw error;
+      throw generateError(
+        `Ya votaste la reserva ${id} con tu usuario`,
+        403
+      );
     }
 
     console.log("puedes votar");

@@ -1,6 +1,8 @@
 const { getConnection } = require("../../db");
 const { generateError } = require("../../helpers");
 
+//El usuario puede consultar las playas a las que ha ido:
+
 async function getUserBeaches(req, res, next) {
   let connection;
 
@@ -19,7 +21,7 @@ async function getUserBeaches(req, res, next) {
         403
       );
     }
-
+    //hacemos la consulta, incluyendo fecha de última visita, número de reservas y su valoración media de la playa:
     const [result] = await connection.query(
       `
         SELECT B.id, B.name, B.municipality, B.province, MAX(R.visit) AS lastVisit, COUNT(R.id) AS numberOfReservations, IFNULL(ROUND(AVG(RR.value),1),"sin valoraciones") AS yourAverageRating
@@ -29,13 +31,9 @@ async function getUserBeaches(req, res, next) {
     `,
       [id]
     );
-
+    //si no hubiera visitado aún ninguna playa
     if (result.length === 0) {
-      const error = new Error(
-        `Aún no constan visitas a playas a tu nombre en la base de datos`
-      );
-      error.httpStatus = 404;
-      throw error;
+      throw generateError(`Aún no constan visitas a playas a tu nombre en la base de datos`, 404)
     }
 
     res.send({

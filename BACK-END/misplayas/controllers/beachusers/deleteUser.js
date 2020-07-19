@@ -1,5 +1,8 @@
 const { getConnection } = require("../../db");
-const { deleteUpload } = require("../../helpers");
+const { deleteUpload, generateError } = require("../../helpers");
+
+//Borrado de usuarios sólo por admin. Se borrarán sus reservas, votos y fotos
+//
 
 async function deleteUser(req, res, next) {
   let connection;
@@ -7,6 +10,8 @@ async function deleteUser(req, res, next) {
     connection = await getConnection();
 
     const { id } = req.params;
+
+    //compruebo identidad admin, en isAdmin.js
 
     // Compruebo que existe el usuario
     const [current] = await connection.query(
@@ -19,26 +24,25 @@ async function deleteUser(req, res, next) {
     );
 
     if (current.length === 0) {
-      const error = new Error(
-        `No existe ningún usuario con id ${id} en la base de datos`
-      );
-      error.httpStatus = 404;
-      throw error;
+      throw generateError(`No existe ningún usuario con id ${id} en la base de datos`, 404)
+
     }
+    const [currentAvatar] = current;
+
+    //Borramos su imagen en uploads, si la había
+    console.log(currentAvatar.image)
 
     if (current[0].image) {
-      await deleteUpload(current[0].image);
+      await deleteUpload(currentAvatar.image);
     }
+
 
     //Ahora lo borramos. Se borran todos sus registros (on delete cascade en la BD)
 
-    await connection.query(
-      `
-      DELETE FROM users
-      WHERE id=?
-    `,
-      [id]
-    );
+    await connection.query(`
+    DELETE FROM users
+    WHERE id=?
+    `, [id])
 
     res.send({
       status: "ok",

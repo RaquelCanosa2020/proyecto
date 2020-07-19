@@ -1,5 +1,9 @@
 const { getConnection } = require("../db");
 
+
+//para los endpoints de reservas, revisa la playa indicada en el body para
+//comprobar que existe y que está activa.
+
 async function isActive(req, res, next) {
   let connection;
   try {
@@ -7,7 +11,7 @@ async function isActive(req, res, next) {
 
     console.log("comprobando que la playa está activa");
 
-    // Comprobar que la entrada que queremos editar exista en la base de datos
+    // Comprobar que la playa existe y está activa
     const [beach] = await connection.query(
       `
     SELECT id, active
@@ -17,7 +21,7 @@ async function isActive(req, res, next) {
       [req.body.id_beach]
     );
 
-    if (beach[0].active === 0 || beach[0].active === 0) {
+    if (beach[0].lentgh === 0 || beach[0].active === 0) {
       const error = new Error(
         `La playa con id ${req.body.id_beach} no existe o no está activa para reservas en estos momentos`
       );

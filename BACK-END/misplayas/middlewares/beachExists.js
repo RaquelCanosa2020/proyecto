@@ -2,6 +2,7 @@
 //haremos referencia en las app que lo necesiten en server.js.
 
 const { getConnection } = require("../db");
+const { generateError } = require("../helpers");
 
 async function beachExists(req, res, next) {
   let connection;
@@ -22,11 +23,8 @@ async function beachExists(req, res, next) {
     );
 
     if (current.length === 0) {
-      const error = new Error(
-        `La playa con id ${id} no existe en la base de datos`
-      );
-      error.httpStatus = 404;
-      throw error;
+      throw generateError(`La playa con id ${id} no existe en la base de datos`, 404);
+
     } else {
       next();
     }
