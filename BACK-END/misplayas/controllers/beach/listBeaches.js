@@ -37,7 +37,7 @@ async function listBeaches(req, res, next) {
     if (search) {
       queryResults = await connection.query(
         `
-        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
+        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
         FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
         LEFT JOIN ratings ON reservations.id = ratings.id_reservation
         WHERE active=1 AND (name LIKE ? OR municipality LIKE ?)
@@ -55,7 +55,7 @@ async function listBeaches(req, res, next) {
     } else {
       queryResults = await connection.query(
         `
-        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
+        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
         FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
         LEFT JOIN ratings ON reservations.id = ratings.id_reservation
         WHERE beaches.active=1

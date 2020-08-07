@@ -2,6 +2,11 @@ const Joi = require("@hapi/joi");
 const { generateError } = require("../helpers");
 
 const newUserSchema = Joi.object().keys({
+  name: Joi.string()
+    .max(100)
+    .error(
+      generateError("El nombre no puede tener más de 100 caracteres", 400)
+    ),
   email: Joi.string()
     .email()
     .required()
@@ -33,6 +38,9 @@ const editUserSchema = Joi.object().keys({
         400
       )
     ),
+  avatar: Joi.any()
+
+
 });
 
 const editUserPasswordSchema = Joi.object().keys({

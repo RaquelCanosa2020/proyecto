@@ -40,7 +40,7 @@ async function main() {
     await connection.query("DROP TABLE IF EXISTS ratings");
     await connection.query("DROP TABLE IF EXISTS payments");
     await connection.query("DROP TABLE IF EXISTS reservations");
-    await connection.query("DROP TABLE IF EXISTS beaches");
+    //await connection.query("DROP TABLE IF EXISTS beaches");
     await connection.query("DROP TABLE IF EXISTS users");
 
     // Crear las tablas de nuevo
@@ -64,7 +64,7 @@ async function main() {
       );
     `);
 
-    await connection.query(`
+    /*await connection.query(`
       CREATE TABLE beaches (
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         creation_date DATETIME NOT NULL,
@@ -87,7 +87,7 @@ async function main() {
         active BOOLEAN DEFAULT TRUE,
         lastUpdate DATETIME NOT NULL
       );
-    `);
+    `);*/
 
     await connection.query(`
       CREATE TABLE reservations (
@@ -164,7 +164,7 @@ async function main() {
       );
     }
     //tarda un par de minutos:
-    console.log("Metiendo datos de prueba en beaches");
+    /*console.log("Metiendo datos de prueba en beaches");
 
     const playas = [
       "Arealonga",
@@ -216,7 +216,7 @@ async function main() {
           replace(data.Acceso_dis)
         ]
       );
-    }
+    }*/
 
     console.log("Metiendo datos de prueba en reservations y en ratings");
     //incluyo las dos tablas a la vez para que me cuadren las fechas (fecha de valoración

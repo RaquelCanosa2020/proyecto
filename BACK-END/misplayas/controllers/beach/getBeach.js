@@ -42,9 +42,11 @@ async function getBeach(req, res, next) {
       const { visit } = req.body;
       visitDate = formatDateToDB(visit);
       visitUser = formatDateToUser(visit); //formato "amable" para la respuesta
-      const visitHour = new Date(visitDate).getHours(); //saco la hora de la visita
-      const visitMonth = new Date(visitDate).getMonth() + 1; //saco el mes de la visita
-      console.log(visitHour, visitMonth);
+      const visitHour = new Date(visit).getHours(); //saco la hora de la visita
+      const visitMonth = new Date(visit).getMonth() + 1; //saco el mes de la visita
+      console.log(`hora: ${visitHour}, mes: {visitMonth}`);
+      console.log(`visitDate ${visitDate}`);
+      console.log(`visitDate ${visitUser}`);
 
       if (visitMonth < startMonth || visitMonth > endMonth) {
         //compruebo primero el mes
@@ -82,6 +84,8 @@ async function getBeach(req, res, next) {
 
     free = Number(result[0].capacity) - Number(occupation[0].occupation);
 
+    console.log(`aforo máximo ${Number(result[0].capacity)}, ocupación: ${Number(occupation[0].occupation)}, plazas: ${free}`)
+
     if (result[0].active === 0) {
       free = "PLAYA INACTIVA";
       aviso = "playa inactiva en la web de reservas. Pregunte disponibilidad en el correspondiente Ayuntamiento."
@@ -90,8 +94,8 @@ async function getBeach(req, res, next) {
     res.send({
       status: "ok",
       data: {
-        información: result[0],
-        disponibilidad: `plazas disponibles actualmente para la fecha ${visitUser}: ${free}`,
+        info: result[0],
+        disponibilidad: `plazas disponibles actualmente para la fecha ${visitUser}: ${free} plazas`,
         aviso, //aviso en caso de que hora o mes no se corresponda
       },
     });

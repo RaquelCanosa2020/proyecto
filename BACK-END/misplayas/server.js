@@ -6,6 +6,7 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
+const cors = require('cors');
 
 //llamamos a los diferentes middlewares complementarios que están en otros js:
 const beachExists = require("./middlewares/beachExists");//si existe o no una playa
@@ -52,6 +53,9 @@ const getUserBeaches = require("./controllers/beachusers/getUserBeaches");
 
 const app = express();
 
+app.use(cors());
+app.use(express.static("static"));
+
 // Middlewares iniciales
 
 // Log de peticiones a la consola
@@ -73,12 +77,12 @@ app.get("/beaches", listBeaches);
 
 // Buscar playas, buscador avanzado por fecha, plazas y/u opciones
 // Público
-app.get("/beaches/search", searchBeaches);
+app.post("/beaches/search", searchBeaches);
 
 // Mostrar una sola playa
 // GET - /beaches/:id
 // Público
-app.get("/beaches/:id", beachExists, getBeach);
+app.post("/beaches/:id/show", beachExists, getBeach);
 //Incluye la disponibilidad en este momento o en la fecha que indique el usuario en el body
 
 // Ver votos de una playa

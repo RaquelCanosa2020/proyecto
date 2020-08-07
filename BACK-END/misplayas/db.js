@@ -23,6 +23,7 @@ async function getConnection() {
   }
 
   return await pool.getConnection();
+
 }
 
 module.exports = {
