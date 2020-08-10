@@ -7,7 +7,7 @@
       <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>|
       <router-link v-show="logged" :to="{name:'Usuario'}">Mi perfil</router-link>
       <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
-
+      <router-link :to="{name:'Prueba'}">Prueba</router-link>|
       <p v-show="logged">Hola {{username}}</p>
       <button v-show="logged" @click="logoutUser()">Logout</button>
     </div>
@@ -28,28 +28,29 @@ export default {
     };
   },
   methods: {
-    setUserName(userId) {
+    async setUserName(userId) {
       userId = getId();
-      var self = this;
-
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/beach/users/" + userId
+        );
 
-      axios
-        .get("http://localhost:3000/beach/users/" + userId)
-        .then(function (response) {
-          console.log(response.data.data);
-          self.username = response.data.data.name;
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+        this.username = response.data.data.name;
+      } catch (error) {
+        console.log(error);
+      }
     },
     logoutUser() {
       logout();
+      this.logged = false;
+      this.$router.push("/login");
+      /*setTimeout(() => {
+        location.reload();
 
-      this.$router.push("/");
-      location.reload();
+        // window.history.back();
+      }, 1000);*/
     },
     getLoging() {
       this.logged = isLoggedIn();

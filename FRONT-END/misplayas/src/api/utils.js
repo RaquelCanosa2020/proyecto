@@ -1,5 +1,7 @@
 import jwt from 'jwt-decode'
 import axios from 'axios'
+import { format } from "date-fns"
+import { es } from "date-fns/locale"
 
 
 
@@ -128,7 +130,11 @@ export function setServices(service) {
     else { return "No" }
 
 }
-
-
-
+//FUNCIÓN PARA DAR FORMATO AMIGABLE A LAS FECHAS QUE VE EL USUARIO
+export function formatDateToUser(date) {
+    let dateToUser = `${format(new Date(date), "EEEE, d 'de' MMMM 'de' yyyy", {
+        locale: es
+    })} a las ${format(new Date(date), "p")} horas`;
+    return dateToUser;
+}
 

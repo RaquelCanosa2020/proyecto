@@ -24,6 +24,9 @@ async function searchBeaches(req, res, next) {
     case "province":
       orderBy = "province";
       break;
+    case "voteAverage":
+      orderBy = "voteAverage";
+      break;
     default:
       orderBy = "name";
   }
@@ -80,9 +83,12 @@ async function searchBeaches(req, res, next) {
 
         params.push(`${places}`);
 
-        query = `SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free, beaches.image
+        query = `SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.capacity, 
+        beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, IFNULL(SUM(reservations.places),0) AS occupation,
+        (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free, beaches.image, ROUND(rating_beaches.voteAverage,1) AS voteAverage
         FROM beaches
         LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
+        LEFT OUTER JOIN rating_beaches ON beaches.id = rating_beaches.id
         WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month) AND active=1
         GROUP BY beaches.id
         HAVING capacity >= occupation + ? OR occupation IS NULL
@@ -141,9 +147,13 @@ async function searchBeaches(req, res, next) {
         }
         params.push(`${places}`);
 
-        query = `SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0)) AS free, beaches.image
+        query = `SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, 
+        beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, 
+        IFNULL(SUM(reservations.places),0) AS occupation, (beaches.capacity - IFNULL(SUM(reservations.places),0))
+        AS free, beaches.image, ROUND(rating_beaches.voteAverage,1) AS voteAverage
         FROM beaches
         LEFT OUTER JOIN reservations ON beaches.id = reservations.id_beach AND reservations.visit = ?
+        LEFT OUTER JOIN rating_beaches ON beaches.id = rating_beaches.id
         WHERE (? BETWEEN start_time AND end_time) AND (? BETWEEN start_month AND end_month)
         AND ${conditions.join(` AND `)} AND active = 1 GROUP BY beaches.id
         HAVING capacity >= occupation + ? OR occupation IS NULL
@@ -218,12 +228,16 @@ async function searchBeaches(req, res, next) {
           params.push(true);
         }
 
-        query = `SELECT id, name, municipality, province, description, capacity, start_time, end_time, start_month, end_month, image from beaches
-      WHERE ${conditions.join(` AND `)} AND active = 1 GROUP BY beaches.id
+        query = `SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.capacity, beaches.start_time,
+        beaches.end_time, beaches.start_month, beaches.end_month, beaches.image, ROUND(rating_beaches.voteAverage,1) AS voteAverage from beaches
+        LEFT OUTER JOIN rating_beaches ON beaches.id = rating_beaches.id
+      WHERE ${conditions.join(` AND `)} AND beaches.active = 1 GROUP BY beaches.id
       ORDER BY ${orderBy} ${orderDirection}`;
       } else {
         console.log("no se han indicado criterios de búsqueda");
-        query = `SELECT beaches.* 
+        query = `SELECT beaches.id, beaches.name, beaches.municipality, beaches.province,
+        beaches.description, beaches.capacity, beaches.start_time, beaches.end_time, beaches.start_month,
+        beaches.end_month, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
         FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
         LEFT JOIN ratings ON reservations.id = ratings.id_reservation
         WHERE beaches.active = 1

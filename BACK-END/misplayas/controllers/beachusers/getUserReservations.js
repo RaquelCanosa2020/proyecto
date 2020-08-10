@@ -24,9 +24,10 @@ async function getUserReservations(req, res, next) {
 
     const [result] = await connection.query(
       `
-      SELECT R.id, R.date, R.visit, R.places, R.id_beach, R.total_euros, IFNULL(ratings.value, "pendiente de valorar") AS value,IFNULL(ratings.comment, "sin comentar") AS comment 
+      SELECT R.id, R.date, R.visit, R.places, R.id_beach, B.name, R.total_euros, IFNULL(ratings.value, "pendiente de valorar") AS value,IFNULL(ratings.comment, "sin comentar") AS comment 
       FROM reservations R
       LEFT JOIN ratings ON R.id=ratings.id_reservation
+      INNER JOIN beaches B ON R.id_beach = B.id
       WHERE R.id_user = ?
       ORDER BY R.date DESC
     `,

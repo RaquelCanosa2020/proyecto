@@ -2,8 +2,6 @@
   <div class="beach">
     <vue-headful title="misplayas | Playa" />
     <section id="data">
-      <!--<beachcomponent :beach="beach" />--->
-
       <h1>INFORMACIÓN COMPLETA DE LA PLAYA</h1>
       <p>Id: {{$route.params.id}}.Nombre: {{name}}, Municipio: {{municipality}}</p>
       <p>Provincia: {{province}}</p>
@@ -17,19 +15,17 @@
       <p>Valoración media de usuarios usuarios: {{voteAverage}}</p>
       <p>Servicios:</p>
       <p>Salvamento: {{lifesaving}}, Parking: {{parking}}, WC: {{toilet}}, Hostelería: {{bar_restaurant}}, Acceso minusv: {{disabled_access}}</p>
-      <p>{{disponibilidad}}</p>
-      <p>{{aviso}}</p>
     </section>
     <input
       id="datetime"
       type="datetime-local"
       step="3600"
-      v-model="visit"
+      v-model="visitReservation"
       placeholder="fecha y hora"
     />
     <section id="select">
       <p>Número de plazas:</p>
-      <select v-model="places">
+      <select v-model="placesReservation">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -37,35 +33,30 @@
         <option value="5">5</option>
       </select>
     </section>
-    <button @click="showData(id)">Buscar</button>
+    <button @click="showData(id)">Buscar disponibilidad</button>
+
+    <p>{{disponibilidad}}</p>
+    <p>{{aviso}}</p>
 
     <router-link to="/" tag="button">Volver a Playas</router-link>
-    <router-link to="/search" tag="button">Busqueda avanzada</router-link>
+    <router-link to="/search" tag="button">Volver al Buscador</router-link>
 
-    <button>Reservar</button>
+    <button @click="verDatos()">Reservar</button>
+    <section id="reservation" v-show="reservation">
+      <p>
+        Condiciones generales de la reserva:
+        ........
+      </p>
+      <p>Id usuario</p>
+      <p>Nombre</p>
+      <p>Número de tarjeta de crédito</p>
+      <p>Importe: 3 euros (impuestos incluídos)</p>
 
-    <p>
-      Condiciones generales de la reserva:
-      ........
-    </p>
-    <p>Id usuario</p>
-    <p>Nombre</p>
-    <p>Número de tarjeta de crédito</p>
-    <p>Importe: 3 euros (impuestos incluídos)</p>
-
-    <button>Confirmar y pagar</button>
+      <button @click="fecha">Confirmar y pagar</button>
+      <button @click="reservation = false">cancelar</button>
+    </section>
 
     <p>Confirmation</p>
-
-    <input
-      id="datetime"
-      type="datetime-local"
-      step="3600"
-      v-model="visit"
-      placeholder="fecha y hora"
-    />
-
-    <button>Aceptar</button>
   </div>
 </template>
 
@@ -87,7 +78,9 @@ export default {
       //beach: {},
       id: null,
       visit: "",
+      visitReservation: "",
       places: "",
+      placesReservation: "",
       beachId: "",
       name: "",
       municipality: "",
@@ -108,6 +101,7 @@ export default {
       disponibilidad: "",
       aviso: "",
       visitFormat: "",
+      reservation: false,
     };
   },
   methods: {
@@ -121,8 +115,8 @@ export default {
         const response = await axios.post(
           `http://localhost:3000/beaches/${id}/show`,
           {
-            visit: this.visit,
-            places: this.places,
+            visit: this.visitReservation,
+            places: this.placesReservation,
           }
         );
 
@@ -152,6 +146,19 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+
+    verDatos() {
+      this.reservation = true;
+      console.log(this.visit, this.places);
+      this.visitReservation = this.visit;
+      this.placesReservation = this.places;
+      console.log(this.visit, this.places);
+    },
+
+    fecha() {
+      console.log(this.visit);
+      this.reservation = false;
     },
   },
   created() {

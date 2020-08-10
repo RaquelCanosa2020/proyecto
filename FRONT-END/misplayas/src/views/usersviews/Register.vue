@@ -47,18 +47,25 @@ export default {
       if (this.password1 !== this.password2) {
         alert("los campos de contraseña no coinciden");
       } else {
-        const response = await axios.post("http://localhost:3000/beach/users", {
-          name: this.name,
-          email: this.email,
-          password: this.password1,
-        });
+        try {
+          const response = await axios.post(
+            "http://localhost:3000/beach/users",
+            {
+              name: this.name,
+              email: this.email,
+              password: this.password1,
+            }
+          );
 
-        this.message = response.data.message;
+          this.message = response.data.message;
 
-        this.name = "";
-        this.email = "";
-        this.password1 = "";
-        this.password2 = "";
+          this.name = "";
+          this.email = "";
+          this.password1 = "";
+          this.password2 = "";
+        } catch (error) {
+          this.message = error.response.data.message;
+        }
       }
     },
   },

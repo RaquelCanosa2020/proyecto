@@ -68,6 +68,15 @@ const voteReservationSchema = Joi.object().keys({
         400
       )
     ),
+  comment: Joi.string()
+
+    .max(500)
+    .error(
+      generateError(
+        "El comentario no puede superar los 500 caracteres",
+        400
+      )
+    ),
 });
 
 module.exports = {

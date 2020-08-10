@@ -16,9 +16,9 @@ const routes = [
     component: () => import('../views/beachviews/Advancedsearch.vue')
   },
   {
-    path: '/beach/:id',
-    name: 'Playa',
-    component: () => import('../views/beachviews/Beach.vue')
+    path: '/prueba',
+    name: 'Prueba',
+    component: () => import('../views/prueba/Prueba.vue')
   },
   {
     path: '/about',

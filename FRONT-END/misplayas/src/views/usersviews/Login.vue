@@ -58,25 +58,31 @@ export default {
   methods: {
     //FUNCIÓN de LOGIN
 
-    loginUser() {
+    async loginUser() {
       if (this.email === "" || this.password === "") {
         alert("faltan datos");
       } else {
         try {
-          login(this.email, this.password);
           this.spinner = true;
+          await login(this.email, this.password);
+          //this.spinner = true;
+          //location.reload();
+          this.$router.push("/user");
+          setTimeout(() => {
+            location.reload();
+          }, 1000);
+          //this.window.history.back();
         } catch (error) {
+          //this.spinner = false
           this.error = true;
           console.log(error);
           this.message = error.response.data.message;
         }
         //ver vídeo tutoría Berto
       }
-      setTimeout(() => {
-        this.$router.push("/");
+      /*setTimeout(() => {
         location.reload();
-        // window.history.back();
-      }, 1000);
+      }, 1000);*/
     },
     //FUNCIÓN PARA ENVIAR EMAIL CÓDIGO DE RECUPERACIÓN DE CONSTRASEÑA
     //app.post("/beach/users/recover-password", recoverUserPassword);

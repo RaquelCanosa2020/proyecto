@@ -20,6 +20,9 @@ async function isActive(req, res, next) {
   `,
       [req.body.id_beach]
     );
+    console.log(req.body);
+    console.log(req.body.id_beach);
+    console.log(beach);
 
     if (beach[0].lentgh === 0 || beach[0].active === 0) {
       const error = new Error(

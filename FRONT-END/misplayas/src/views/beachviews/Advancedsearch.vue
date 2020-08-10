@@ -11,6 +11,7 @@
           <select v-model="order">
             <option value="municipality">Municipio</option>
             <option value="province">Provincia</option>
+            <option value="voteAverage">Valoración usuarios</option>
           </select>
         </div>
         <div>
@@ -22,8 +23,7 @@
         </div>
       </section>
 
-      <button @click="advanced =! advanced">AVANZADO</button>
-      <article v-show="advanced">
+      <article id="advanced">
         <section id="dateplaces">
           <input
             id="datetime"
@@ -45,24 +45,23 @@
 
         <section id="options">
           <label>Salvamento</label>
-          <input type="checkbox" value="lifesaving" v-model="lifesaving" />
+          <input type="checkbox" value="lifesaving" v-model="lifesavingSaved" />
 
           <label>Hostelería</label>
-          <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
+          <input type="checkbox" value="bar_restaurant" v-model="bar_restaurantSaved" />
 
           <label>Acceso d.funcional</label>
-          <input type="checkbox" value="disabled_access" v-model="disabled_access" />
+          <input type="checkbox" value="disabled_access" v-model="disabled_accessSaved" />
 
           <label>Parking</label>
-          <input type="checkbox" value="parking" v-model="parking" />
+          <input type="checkbox" value="parking" v-model="parkingSaved" />
 
           <label>WC</label>
-          <input type="checkbox" value="toilet" v-model="toilet" />
+          <input type="checkbox" value="toilet" v-model="toiletSaved" />
         </section>
       </article>
       <!--FIN BUSCADOR AVANZADO--->
 
-      <br />
       <button @click="searchBeaches()">Buscar</button>
 
       <!----MODAL DE NO HAY DATOS-->
@@ -75,9 +74,17 @@
       </div>
       <!---FIN CLASS MODAL--->
 
-      <searchbeachescomponent v-on:sendId="showData" :beaches="beaches" />
+      <searchbeachescomponent
+        v-on:sendIdShow="showData"
+        v-on:sendIdReserve="seeData"
+        :beaches="beaches"
+      />
+
+      <!---- <allbeachescomponent v-on:sendShow="showDat" v-on:sendReserve="verDat" />---->
     </div>
     <!---FIN ID LIST-BÚSQUEDA AVANZADA---->
+
+    <!----INICIO MOSTRAR DATOS DE LA PLAYA--->
 
     <div id="selected" v-show="selected">
       <h1>INFORMACIÓN COMPLETA DE LA PLAYA</h1>
@@ -96,20 +103,70 @@
 
       <p>{{disponibilidad}}</p>
 
-      <button @click="searchBeaches()">Volver</button>
+      <p>{{errorMessage}}</p>
+
+      <button @click="comeback()">Volver</button>
     </div>
     <!---FIN ID SELECTED----->
+
+    <!--INICIO RESERVA--->
+    <article id="reservation" v-show="reservation">
+      <p>Playa: {{beachId}}</p>
+      <section id="dateplaces">
+        <input
+          id="datetime"
+          type="datetime-local"
+          step="3600"
+          v-model="visitReservation"
+          placeholder="fecha y hora"
+        />
+
+        <p>Número de plazas:</p>
+        <select v-model="placesReservation">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </section>
+      <section id="conditions">
+        <p>Condiciones generales de la reserva:</p>
+
+        <p>Número de tarjeta de crédito</p>:
+        <input
+          id="ccNumber"
+          type="text"
+          v-model="ccNumber"
+          placeholder="Nº tarjeta crédito/débito"
+        />
+
+        <p>Importe: 3 euros (impuestos incluídos)</p>
+      </section>
+
+      <button @click="acceptReservation">Aceptar</button>
+      <button @click="searchBeaches">Cancelar</button>
+      <button @click="reservation = false, list = true">Volver</button>
+
+      <p>{{messageConfirm}}</p>
+
+      <p>{{errorMessage}}</p>
+    </article>
+
+    <!--FIN RESERVA--->
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import searchbeachescomponent from "../../components/beachcomponents/Searchbeachescomponent.vue";
-import { setServices } from "../../api/utils.js";
+//import allbeachescomponent from "../../components/beachcomponents/Allbeachescomponent.vue";
+import { getAuthToken, getId, setServices } from "../../api/utils";
 export default {
   name: "Advancedsearch",
   components: {
     searchbeachescomponent,
+    //allbeachescomponent,
   },
   data() {
     return {
@@ -117,12 +174,14 @@ export default {
       order: "",
       direction: "",
       list: true,
-      advanced: false,
       selected: false,
+      reservation: false,
       seeModal: false,
       visit: "",
+      visitReservation: "",
       places: "",
-      beachId: "",
+      placesReservation: "",
+      beachId: null,
       name: "",
       municipality: "",
       province: "",
@@ -134,23 +193,79 @@ export default {
       start_month: "",
       end_month: "",
       voteAverage: "",
-      lifesaving: "",
-      bar_restaurant: "",
-      disabled_access: "",
-      parking: "",
-      toilet: "",
+      lifesaving: false,
+      lifesavingSaved: false,
+      bar_restaurant: false,
+      bar_restaurantSaved: false,
+      disabled_access: false,
+      disabled_accessSaved: false,
+      parking: false,
+      parkingSaved: false,
+      toilet: false,
+      toiletSaved: false,
       disponibilidad: "",
       aviso: "",
+      ccNumber: "",
+      messageConfirm: "",
+      errorMessage: "",
     };
   },
   methods: {
+    //FUNCIÓN PARA  VOLVER DEL BUSCADOR
+    comeback() {
+      this.selected = false;
+      this.list = true;
+      this.lifesaving = this.lifesavingSaved;
+      this.bar_restaurant = this.bar_restaurantSaved;
+      this.disabled_access = this.disabled_accessSaved;
+      this.parking = this.parkingSaved;
+      this.toilet = this.toiletSaved;
+    },
+
+    seeData(beachId) {
+      this.list = false;
+      l;
+      this.reservation = true;
+      this.visitReservation = this.visit;
+      this.placesReservation = this.places;
+      this.beachId = beachId;
+    },
+
+    async acceptReservation(beachId) {
+      try {
+        const idUser = getId();
+        console.log(idUser);
+        const token = getAuthToken();
+
+        console.log(
+          `playa nº: ${this.beachId}, fecha ${this.visitReservation}, ${this.ccNumber}`
+        );
+
+        axios.defaults.headers.common["Authorization"] = `${token}`;
+        const response = await axios.post(
+          "http://localhost:3000/reservations",
+          {
+            visit: this.visitReservation,
+            places: this.placesReservation,
+            id_beach: this.beachId,
+            cc_number: this.ccNumber,
+          }
+        );
+        this.messageConfirm = response.data.message;
+      } catch (error) {
+        this.errorMessage = error.response.data.message;
+      }
+
+      this.selected = false;
+    },
     //FUNCION PARA PROCESAR opciones
 
     //FUNCIÓN PARA BUSCAR PLAYAS
     async searchBeaches() {
       console.log(this.visit);
-      this.selected = false;
 
+      this.selected = false;
+      this.reservation = false;
       this.list = true;
 
       //LLAMADA DE AXIOS A LA API
@@ -159,16 +274,15 @@ export default {
         const response = await axios.post(
           `http://localhost:3000/beaches/search?order=${this.order}&direction=${this.direction}`,
           {
-            lifesaving: this.lifesaving,
-            bar_restaurant: this.bar_restaurant,
-            disabled_access: this.disabled_access,
-            parking: this.parking,
-            toilet: this.toilet,
+            lifesaving: this.lifesavingSaved,
+            bar_restaurant: this.bar_restaurantSaved,
+            disabled_access: this.disabled_accessSaved,
+            parking: this.parkingSaved,
+            toilet: this.toiletSaved,
             visit: this.visit,
             places: this.places,
           }
         );
-
         this.beaches = response.data.data;
       } catch (error) {
         console.log(error);
@@ -181,6 +295,7 @@ export default {
 
       try {
         this.list = false;
+        this.reservation = false;
         this.selected = true;
 
         const response = await axios.post(
@@ -215,7 +330,7 @@ export default {
         this.disponibilidad = response.data.data.disponibilidad;
         this.aviso = response.data.data.aviso;
       } catch (error) {
-        console.log(error);
+        this.errorMessage = error.response.data.message;
       }
     },
   },
@@ -227,6 +342,10 @@ export default {
 <style scoped>
 input#datetime {
   width: 250px;
+  height: 20px;
+}
+input#ccNumber {
+  width: 500px;
   height: 20px;
 }
 input {
