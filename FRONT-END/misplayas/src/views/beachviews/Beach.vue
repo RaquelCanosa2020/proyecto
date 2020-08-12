@@ -16,47 +16,14 @@
       <p>Servicios:</p>
       <p>Salvamento: {{lifesaving}}, Parking: {{parking}}, WC: {{toilet}}, Hostelería: {{bar_restaurant}}, Acceso minusv: {{disabled_access}}</p>
     </section>
-    <input
-      id="datetime"
-      type="datetime-local"
-      step="3600"
-      v-model="visitReservation"
-      placeholder="fecha y hora"
-    />
-    <section id="select">
-      <p>Número de plazas:</p>
-      <select v-model="placesReservation">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </section>
-    <button @click="showData(id)">Buscar disponibilidad</button>
 
+    <p>{{$route.params.visit}}</p>,
+    <p>{{$route.params.places}}</p>
     <p>{{disponibilidad}}</p>
     <p>{{aviso}}</p>
 
     <router-link to="/" tag="button">Volver a Playas</router-link>
     <router-link to="/search" tag="button">Volver al Buscador</router-link>
-
-    <button @click="verDatos()">Reservar</button>
-    <section id="reservation" v-show="reservation">
-      <p>
-        Condiciones generales de la reserva:
-        ........
-      </p>
-      <p>Id usuario</p>
-      <p>Nombre</p>
-      <p>Número de tarjeta de crédito</p>
-      <p>Importe: 3 euros (impuestos incluídos)</p>
-
-      <button @click="fecha">Confirmar y pagar</button>
-      <button @click="reservation = false">cancelar</button>
-    </section>
-
-    <p>Confirmation</p>
   </div>
 </template>
 
@@ -65,13 +32,9 @@ import axios from "axios";
 
 import { setServices, getAuthToken, getId } from "../../api/utils";
 
-//import beachcomponent from "@/components/beachcomponents/Beachcomponent.vue";
-
 export default {
   name: "beach",
-  components: {
-    // beachcomponent,
-  },
+  components: {},
 
   data() {
     return {

@@ -1,38 +1,30 @@
 <template>
   <div>
-    <div>
-      <input type="search" v-model="search" placeholder="Busca por nombre" />
-      <!--pendiente orden---->
-      <section v-for="(beach,index) in filtered" :key="beach.id">
-        <p>{{beach.id}}</p>
-        <p>{{beach.name}}, {{beach.municipality}}</p>
-        <p>{{beach.province}}</p>
-        <p>{{beach.description}}</p>
-        <p>Capacidad: {{beach.capacity}} personas</p>
-        <p>Valoración media de usuarios: {{beach.voteAverage}}</p>
+    <input type="search" v-model="search" placeholder="Busca por nombre" />
+    <!--pendiente orden---->
+    <div v-for="(beach,index) in filtered" :key="beach.id">
+      <p>{{beach.id}}</p>
+      <p>{{beach.name}}, {{beach.municipality}}</p>
+      <p>{{beach.province}}</p>
+      <p>{{beach.description}}</p>
+      <p>Tipo: {{beach.type}} personas</p>
+      <p>Capacidad: {{beach.capacity}} personas</p>
+      <p>Valoración media de usuarios: {{beach.voteAverage}}</p>
+      <p>Hora inicio: {{beach.start_time}}</p>
+      <p>Hora fin: {{beach.end_time}}</p>
+      <p>Mes inicio: {{beach.start_month}}</p>
+      <p>Mes fin: {{beach.end_month}}</p>
+      <p>Valoración media de usuarios usuarios: {{beach.voteAverage}}</p>
+      <p>Servicios:</p>
+      <p>Salvamento: {{beach.lifesaving}}, Parking: {{beach.parking}}, WC: {{beach.toilet}}, Hostelería: {{beach.bar_restaurant}}, Acceso minusv: {{beach.disabled_access}}</p>
+      <p>Nº acumulado de reservas: {{beach.Nºreservas}}</p>
 
-        <!----  <button>
-          <router-link :to="{name:'Home', params:{id:beach.id}}">Reservar</router-link>
-        </button>--->
+      <p>Estado: {{getStatus(beach.active)}}</p>
 
-        <button @click="sendIdToShow(index)">Ver</button>
-        <button @click="toggleReserv">Reservar</button>
+      <img :scr="setImage(beach.image)" />
 
-        <div v-show="reserv">
-          <input
-            id="datetime"
-            type="datetime-local"
-            step="3600"
-            v-model="visit"
-            placeholder="fecha y hora"
-          />
-
-          <input type="text" placeholder="nº plazas" v-model="places" />
-          <input type="text" placeholder="nºtarjeta" v-model="ccNumber" />
-
-          <button @click="sendIdToConfirm(index)">Confirmar</button>-
-        </div>
-      </section>
+      <button @click="sendIdEdit(index)">Editar</button>
+      <button @click="sendIdToggle(index)">Cambiar estado</button>
     </div>
   </div>
 </template>
@@ -47,12 +39,6 @@ export default {
   data() {
     return {
       search: "",
-      confirm: false,
-      reserv: false,
-      beachId: null,
-      visit: "",
-      places: null,
-      ccNumber: "",
     };
   },
   computed: {
@@ -67,20 +53,29 @@ export default {
     },
   },
   methods: {
-    sendIdToShow(index) {
+    //FUNCIÓN PARA VER LAS IMÁGENES EN LA PLAYA (en el listado se aplica al componente)
+    setImage(img) {
+      return process.env.VUE_APP_STATIC + img;
+    },
+    //FUNCION PARA SABER ESTADO DE LA PLAYA
+    getStatus(value) {
+      if (value === 1) {
+        return "Activa";
+      } else {
+        return "Inactiva";
+      }
+    },
+
+    //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
+    sendIdEdit(index) {
       let beachId = this.beaches[index].id;
       //console.log(beachId);
-      this.$emit("sendShow", beachId);
+      this.$emit("sendEdit", beachId);
     },
-    toggleReserv() {
-      this.reserv = !this.reserv;
-      // this.see = false;
-    },
-
-    sendIdToConfirm(index) {
-      let reservData = this.beaches[index];
-
-      this.$emit("sendConfirm", reservData);
+    sendIdToggle(index) {
+      let beachId = this.beaches[index].id;
+      //console.log(beachId);
+      this.$emit("sendToggle", beachId);
     },
   },
 };

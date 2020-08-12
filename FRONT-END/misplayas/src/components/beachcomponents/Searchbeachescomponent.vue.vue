@@ -8,10 +8,14 @@
         <p>{{beach.province}}</p>
         <p>Descripción: {{beach.description}}</p>
         <p>Capacidad: {{beach.capacity}} personas</p>
-        <p>Valoración media de usuarios: {{beach.voteAverage}}</p>
+        <p>
+          Valoración media de usuarios:
+          <button id="rating">{{beach.voteAverage}}</button>
+        </p>
+        <img :src="setImage(beach.image)" />
 
-        <!---<button>
-          <router-link :to="{name:'Playa', params:{id:beach.id}}">Ver</router-link>
+        <!--- <button>
+          <router-link :to="{name:'Playa', params:{id:beach.id, visit:beach.visit}}">A la playa</router-link>
         </button>--->
 
         <button @click="sendBeachIdToShow(index)">Ver</button>
@@ -47,6 +51,11 @@ export default {
     },
   },
   methods: {
+    //FUNCIÓN PARA SACAR LA DIRECCIÓN DE LA IMAGEN ACTUAL
+    setImage(img) {
+      return process.env.VUE_APP_STATIC + img;
+    },
+
     sendBeachIdToShow(index) {
       let beachId = this.beaches[index].id;
       //console.log(beachId);
@@ -60,3 +69,19 @@ export default {
   },
 };
 </script>
+<style scoped>
+img {
+  width: 200px;
+}
+button#rating {
+  width: 50px;
+  height: 50px;
+  background-color: #4cbbb9;
+
+  border: none;
+  border-radius: 20%;
+  color: #353a64;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+</style>

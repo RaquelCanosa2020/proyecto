@@ -34,6 +34,7 @@ async function newUser(req, res, next) {
 
     const registration_code = randomString(40);
     const validationURL = `${process.env.PUBLIC_HOST}/beach/users/validate/${registration_code}`;
+    //process.env.FRONTEND_URL}/activar?
 
     //Enviamos la url anterior por mail
     try {

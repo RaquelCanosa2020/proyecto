@@ -40,6 +40,10 @@
     <button @click="seeReserv">Ver mis reservas</button>
     <button @click="seeBeaches">Ver mis playas</button>
 
+    <button>
+      <router-link to="/uploads">Subir fotos</router-link>
+    </button>
+
     <section v-show="showReserv">
       <button @click="showReserv = false">Volver</button>
       <listreservation :reservations="reservations" />
@@ -137,7 +141,7 @@ export default {
       }
     },
 
-    //FUNCIÓN PARA MOSTRAR IMAGEN
+    //FUNCIÓN PARA RECUPERAR IMAGEN QUE INCLUYE EL USUARIO
     uploadImage() {
       this.uploadedImage = this.$refs.uploadedImage.files[0];
       console.log(this.uploadedImage);
@@ -151,7 +155,6 @@ export default {
       axios.defaults.headers.common["Authorization"] = `${token}`;
       console.log(id);
 
-      //REVISAR, NO ME SUBE LA FOTO. 🏮
       try {
         let userNewData = new FormData();
         userNewData.append("name", this.newName);
@@ -263,8 +266,6 @@ export default {
       }
     },
   },
-
-  //raquelcanosara@gmail.com
 };
 </script>
 <style scoped>

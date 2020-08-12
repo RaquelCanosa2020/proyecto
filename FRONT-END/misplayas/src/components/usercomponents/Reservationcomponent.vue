@@ -17,6 +17,9 @@
       <input class="textarea" type="textarea" placeholder="Comentario" v-model="newComment" />
 
       <button @click="voteReserv">Aceptar</button>
+
+      <p>{{message}}</p>
+      <p>{{errorMessage}}</p>
     </section>
   </div>
 </template>
@@ -38,6 +41,8 @@ export default {
       newValue: "",
       newComment: "",
       vote: false,
+      errorMessage: "",
+      message: "",
     };
   },
 
@@ -47,17 +52,24 @@ export default {
       console.log(id);
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
+      let comment;
+      if (this.newComment === "") {
+        comment = "sin comentar";
+      } else {
+        comment = newComment;
+      }
 
       try {
         const response = await axios.post(
           `http://localhost:3000/reservations/${id}/votes`,
           {
             value: this.newValue,
-            comment: this.newComment,
+            comment: comment,
           }
         );
+        this.message = response.data.message;
       } catch (error) {
-        console.log(error);
+        this.errorMessage = error.response.data.message;
       }
     },
 

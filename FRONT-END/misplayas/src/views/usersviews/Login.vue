@@ -75,10 +75,9 @@ export default {
         } catch (error) {
           //this.spinner = false
           this.error = true;
-          console.log(error);
+          // console.log(error);
           this.message = error.response.data.message;
         }
-        //ver vídeo tutoría Berto
       }
       /*setTimeout(() => {
         location.reload();

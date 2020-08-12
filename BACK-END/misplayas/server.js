@@ -50,6 +50,7 @@ const recoverUserPassword = require("./controllers/beachusers/recoverUserPasswor
 const resetUserPassword = require("./controllers/beachusers/resetUserPassword");
 const getUserReservations = require("./controllers/beachusers/getUserReservations");
 const getUserBeaches = require("./controllers/beachusers/getUserBeaches");
+const listUsers = require("./controllers/beachusers/users");
 
 const app = express();
 
@@ -72,8 +73,8 @@ app.use(fileUpload());
 /** 🌅ENDPOINTS DE PLAYAS🌅 **/
 
 // Listar playas, incluidas búsquedas por nombre de playa o municipio
-// Público
-app.get("/beaches", listBeaches);
+// Listado para el administrador
+app.get("/beaches", isUser, isAdmin, listBeaches);
 
 // Buscar playas, buscador avanzado por fecha, plazas y/u opciones
 // Público
@@ -217,6 +218,11 @@ app.get("/beach/users/:id/reservations", isUser, getUserReservations); //
 // GET - //beach/users/:id/beaches
 // Sólo usuarios registrados, el autor o admin
 app.get("/beach/users/:id/beaches", isUser, getUserBeaches); //
+
+// Ver LISTA DE USUARIOS
+// GET - //beach/users
+// Sólo admin
+app.get("/beach/users", isUser, isAdmin, listUsers); //
 
 // Error middleware
 app.use((error, req, res, next) => {

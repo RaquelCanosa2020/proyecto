@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/beachviews/Home.vue'
+import Home from '../views/Home.vue'
 
 Vue.use(VueRouter)
 //PENDIENTE PROTEGER RUTAS
@@ -15,10 +15,21 @@ const routes = [
     name: 'Buscador',
     component: () => import('../views/beachviews/Advancedsearch.vue')
   },
+
   {
-    path: '/prueba',
-    name: 'Prueba',
-    component: () => import('../views/prueba/Prueba.vue')
+    path: '/lista Playas',
+    name: 'Listbeaches',
+    component: () => import('../views/beachviews/Listbeaches.vue')
+  },
+  {
+    path: '/lista Usuarios',
+    name: 'Listusers',
+    component: () => import('../views/usersviews/Listusers.vue')
+  },
+  {
+    path: '/playa/:id',
+    name: 'Playa',
+    component: () => import('../views/beachviews/Beach.vue')
   },
   {
     path: '/about',
@@ -39,6 +50,11 @@ const routes = [
     path: '/user',
     name: 'Usuario',
     component: () => import('../views/usersviews/User.vue')
+  },
+  {
+    path: '/uploads',
+    name: 'Uploads',
+    component: () => import('../views/beachviews/Uploadphoto.vue')
   },
 
 

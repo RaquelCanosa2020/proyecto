@@ -27,8 +27,11 @@ async function searchBeaches(req, res, next) {
     case "voteAverage":
       orderBy = "voteAverage";
       break;
-    default:
+    case "name":
       orderBy = "name";
+      break;
+    default:
+      orderBy = "id";
   }
 
 

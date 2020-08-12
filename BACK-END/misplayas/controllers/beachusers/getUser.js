@@ -1,5 +1,5 @@
 const { getConnection } = require("../../db");
-const { gnnerateError, generateError } = require("../../helpers");
+const { generateError } = require("../../helpers");
 
 async function getUser(req, res, next) {
   let connection;

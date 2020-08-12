@@ -27,43 +27,30 @@ async function listBeaches(req, res, next) {
       case "province":
         orderBy = "province";
         break;
-      default:
+      case "name":
         orderBy = "name";
+        break;
+      default:
+        orderBy = "id";
+
     }
 
     // Ejecuto la query en base a si existe querystring de search o no
-    let queryResults;
 
-    if (search) {
-      queryResults = await connection.query(
-        `
-        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
-        FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
-        LEFT JOIN ratings ON reservations.id = ratings.id_reservation
-        WHERE active=1 AND (name LIKE ? OR municipality LIKE ?)
-        GROUP BY beaches.id
-        ORDER BY ${orderBy} ${orderDirection}
-        `,
-        [`%${search}%`, `%${search}%`]
-      );
 
-      if (queryResults[0].length === 0) {
-        const error = new Error(`No hay resultados para la búsqueda`);
-        error.httpStatus = 400;
-        throw error;
-      }
-    } else {
-      queryResults = await connection.query(
-        `
-        SELECT beaches.id, beaches.name, beaches.municipality, beaches.province, beaches.description, beaches.start_time, beaches.end_time, beaches.start_month, beaches.end_month, beaches.image, ROUND(AVG(ratings.value),1) AS voteAverage
-        FROM beaches LEFT JOIN reservations ON beaches.id = reservations.id_beach
+
+    let queryResults = await connection.query(
+      `
+        SELECT beaches.*, ROUND(AVG(ratings.value),1) AS voteAverage, COUNT(reservations.id) AS Nºreservas, SUM(reservations.places) AS Nºpersonas
+        FROM beaches 
+        LEFT JOIN reservations ON beaches.id = reservations.id_beach
         LEFT JOIN ratings ON reservations.id = ratings.id_reservation
-        WHERE beaches.active=1
+        
         GROUP BY beaches.id
         
         ORDER BY ${orderBy} ${orderDirection}`
-      );
-    }
+    );
+
 
     // Extraigo los resultados reales del resultado de la query
     const [result] = queryResults;

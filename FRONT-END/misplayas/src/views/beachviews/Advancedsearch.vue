@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <vue-headful title="misplayas | Buscador" />
+    <img src="https://image.flaticon.com/icons/svg/3075/3075404.svg" />
 
     <!---INICIO PANTALLA BÚSQUEDA AVANZADA-->
     <div id="list" v-show="list">
@@ -9,6 +10,7 @@
         <div>
           <p>Ordenar por:</p>
           <select v-model="order">
+            <option value="name">Nombre</option>
             <option value="municipality">Municipio</option>
             <option value="province">Provincia</option>
             <option value="voteAverage">Valoración usuarios</option>
@@ -23,15 +25,22 @@
         </div>
       </section>
 
-      <article id="advanced">
+      <button @click="getNumber">Avanzado</button>
+
+      <article v-show="advanced" id="advanced">
         <section id="dateplaces">
-          <input
+          <!---<input
             id="datetime"
             type="datetime-local"
             step="3600"
             v-model="visit"
             placeholder="fecha y hora"
-          />
+          />--->
+          <input id="date" type="date" v-model="date" placeholder="fecha" />
+
+          <select id="hour" v-model="hour">
+            <option v-for="number in numbers" :key="number.id" :value="number">{{number}}</option>
+          </select>
 
           <p>Número de plazas:</p>
           <select v-model="places">
@@ -79,8 +88,6 @@
         v-on:sendIdReserve="seeData"
         :beaches="beaches"
       />
-
-      <!---- <allbeachescomponent v-on:sendShow="showDat" v-on:sendReserve="verDat" />---->
     </div>
     <!---FIN ID LIST-BÚSQUEDA AVANZADA---->
 
@@ -93,10 +100,8 @@
       <p>Tipo: {{type}}</p>
       <p>Descripción: {{description}}</p>
       <p>Capacidad: {{capacity}} personas</p>
-      <p>Hora inicio: {{start_time}}</p>
-      <p>Hora fin: {{end_time}}</p>
-      <p>Mes inicio: {{start_month}}</p>
-      <p>Mes fin: {{end_month}}</p>
+      <p>Horario: de {{start_time}} a {{end_time}}</p>
+      <p>Meses de reserva obligatoria: de {{nameMonth(start_month)}} a {{nameMonth(end_month)}}</p>
       <p>Valoración media de usuarios usuarios: {{voteAverage}}</p>
       <p>Servicios:</p>
       <p>Salvamento: {{lifesaving}}, Parking: {{parking}}, WC: {{toilet}}, Hostelería: {{bar_restaurant}}, Acceso minusv: {{disabled_access}}</p>
@@ -104,6 +109,22 @@
       <p>{{disponibilidad}}</p>
 
       <p>{{errorMessage}}</p>
+
+      <img :src="image" />
+
+      <!--COMPONENTE PARA VER RATINGS DE LA PLAYA--->
+      <h2>Valoraciones y comentarios de los usuarios</h2>
+
+      <ratingscomponent :global="global" :votes="votes" />
+      <p>{{errorMessageVotes}}</p>
+
+      <!--COMPONENTE PARA VER FOTOS DE LA PLAYA HECHAS POR USUARIOS--->
+      <h2>Fotos de los usuarios</h2>
+
+      <photoscomponent :global="global" :photos="photos" />
+      <p>{{errorMessagePhotos}}</p>
+
+      <!---<button @click="this.showPhotos()">Ver fotos de usuarios</button>--->
 
       <button @click="comeback()">Volver</button>
     </div>
@@ -160,20 +181,27 @@
 <script>
 import axios from "axios";
 import searchbeachescomponent from "../../components/beachcomponents/Searchbeachescomponent.vue";
-//import allbeachescomponent from "../../components/beachcomponents/Allbeachescomponent.vue";
+import photoscomponent from "../../components/beachcomponents/Photoscomponent.vue";
+import ratingscomponent from "../../components/beachcomponents/Ratingscomponent.vue";
+
 import { getAuthToken, getId, setServices } from "../../api/utils";
 export default {
   name: "Advancedsearch",
   components: {
     searchbeachescomponent,
-    //allbeachescomponent,
+    photoscomponent,
+    ratingscomponent,
   },
   data() {
     return {
       beaches: [],
+      votes: [],
+      global: "",
+      photos: [],
       order: "",
       direction: "",
       list: true,
+      advanced: false,
       selected: false,
       reservation: false,
       seeModal: false,
@@ -205,13 +233,70 @@ export default {
       toiletSaved: false,
       disponibilidad: "",
       aviso: "",
+      image: "",
       ccNumber: "",
       messageConfirm: "",
       errorMessage: "",
+      date: "",
+      dateReservation: "",
+      hourReservation: "",
+      hour: "",
+      numbers: [],
+      errorMessageVotes: "",
+      errorMessagePhotos: "",
     };
   },
   methods: {
-    //FUNCIÓN PARA  VOLVER DEL BUSCADOR
+    //FUNCIÓN PARA ASIGNAR NOMBRE A LOS MESES
+    nameMonth(number) {
+      const monthNames = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+
+      return monthNames[number - 1];
+    },
+
+    //FUNCIÓN PARA GENERAR LAS HORAS EN EL BUSCADOR
+    getNumber() {
+      let arrayNumber = [""];
+      for (let number = 0; number <= 24; number++) {
+        if (number < 10) {
+          number = "0" + number;
+        } else {
+          number = number;
+        }
+        arrayNumber.push(number);
+      }
+      this.numbers = arrayNumber;
+      console.log(this.numbers);
+      this.advanced = true;
+    },
+
+    //FUNCIÓN PARA CONSEGUIR VISIT A PARTIR DE FECHA Y HORA
+    getVisit(date, hour) {
+      let datehour = "";
+
+      if (date === "" || hour === "") {
+        datehour = "";
+      } else {
+        datehour = date + "T" + hour + ":" + "00";
+      }
+      console.log(datehour);
+      return datehour;
+    },
+
+    //FUNCIÓN PARA  VOLVER DEL BUSCADOR Y QUE SE GUARDEN LAS OPCIONES
     comeback() {
       this.selected = false;
       this.list = true;
@@ -222,14 +307,22 @@ export default {
       this.toilet = this.toiletSaved;
     },
 
+    //FUNCIÓN PARA COMENZAR LA RESERVA
+
     seeData(beachId) {
-      this.list = false;
-      l;
-      this.reservation = true;
-      this.visitReservation = this.visit;
-      this.placesReservation = this.places;
-      this.beachId = beachId;
+      const idUser = getId();
+      if (idUser === null) {
+        this.$router.push("/login");
+      } else {
+        this.list = false;
+        this.reservation = true;
+        this.visitReservation = this.getVisit(this.date, this.hour);
+        this.placesReservation = this.places;
+        this.beachId = beachId;
+      }
     },
+
+    //FUNCIÓN PARA PAGAR Y CONFIRMAR LA RESERVA
 
     async acceptReservation(beachId) {
       try {
@@ -258,11 +351,10 @@ export default {
 
       this.selected = false;
     },
-    //FUNCION PARA PROCESAR opciones
 
     //FUNCIÓN PARA BUSCAR PLAYAS
     async searchBeaches() {
-      console.log(this.visit);
+      let visit = this.getVisit(this.date, this.hour);
 
       this.selected = false;
       this.reservation = false;
@@ -279,7 +371,7 @@ export default {
             disabled_access: this.disabled_accessSaved,
             parking: this.parkingSaved,
             toilet: this.toiletSaved,
-            visit: this.visit,
+            visit: visit,
             places: this.places,
           }
         );
@@ -289,6 +381,13 @@ export default {
         this.seeModal = true;
       }
     },
+
+    //FUNCIÓN PARA VER LAS IMÁGENES EN LA PLAYA (en el listado se aplica al componente)
+    setImage(img) {
+      return process.env.VUE_APP_STATIC + img;
+    },
+
+    //FUNCIÓN PARA VER DATOS COMPLETOS DE UNA PLAYA
     async showData(beachId) {
       console.log(beachId);
       //const id = showId(beachId);
@@ -297,11 +396,12 @@ export default {
         this.list = false;
         this.reservation = false;
         this.selected = true;
+        let visit = this.getVisit(this.date, this.hour);
 
         const response = await axios.post(
           `http://localhost:3000/beaches/${beachId}/show`,
           {
-            visit: this.visit,
+            visit: visit,
             places: this.places,
           }
         );
@@ -329,10 +429,41 @@ export default {
         this.occupation = beachData.occupation;
         this.disponibilidad = response.data.data.disponibilidad;
         this.aviso = response.data.data.aviso;
+        console.log(response.data.data.info.image);
+        const imageName = response.data.data.info.image;
+        this.image = this.setImage(imageName);
       } catch (error) {
         this.errorMessage = error.response.data.message;
       }
+      try {
+        const id = this.beachId;
+        const response1 = await axios.get(
+          `http://localhost:3000/beaches/${id}/votes`
+        );
+        this.votes = response1.data.data;
+        this.global = response1.data.rating;
+      } catch (error) {
+        this.errorMessage = error.response1.data.message;
+      }
+      try {
+        const id = this.beachId;
+        const response2 = await axios.get(
+          `http://localhost:3000/beaches/${id}/photos`
+        );
+        this.photos = response2.data.data;
+        console.log(photos);
+      } catch (error) {
+        this.errorMessage = error.response2.data.message;
+      }
     },
+
+    //FUNCIÓN PARA VER LOS VOTOS DE LA PLAYA
+
+    // async showVotes() {
+
+    //FUNCIÓN PARA VER LAS FOTOS DE LA PLAYA SUBIDAS POR LOS USUARIOS
+
+    // async showPhotos() {
   },
   created() {
     this.searchBeaches();
@@ -340,7 +471,8 @@ export default {
 };
 </script>
 <style scoped>
-input#datetime {
+input#datetime,
+input#date {
   width: 250px;
   height: 20px;
 }
@@ -374,6 +506,14 @@ section#order,
 section#dateplaces {
   display: flex;
   justify-content: center;
+  margin: auto;
+}
+img {
+  width: 80px;
+}
+div#list {
+  background-color: #ebecf1;
+  width: 75%;
   margin: auto;
 }
 </style>

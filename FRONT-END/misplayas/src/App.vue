@@ -2,24 +2,31 @@
   <div id="app">
     <div id="nav">
       <router-link :to="{name:'Home'}">Home</router-link>|
+      <router-link :to="{name:'Listbeaches'}">Lista Playas</router-link>|
+      <router-link :to="{name:'Listusers'}">Lista Usuarios</router-link>|
       <router-link :to="{name:'Buscador'}">Buscador</router-link>|
       <router-link :to="{name:'About'}">About</router-link>|
       <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>|
       <router-link v-show="logged" :to="{name:'Usuario'}">Mi perfil</router-link>
       <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
-      <router-link :to="{name:'Prueba'}">Prueba</router-link>|
+
       <p v-show="logged">Hola {{username}}</p>
       <button v-show="logged" @click="logoutUser()">Logout</button>
     </div>
     <router-view />
+    <footercustom />
   </div>
 </template>
 
 <script>
 import { getAuthToken, getId, isLoggedIn, logout } from "./api/utils";
 import axios from "axios";
+import footercustom from "@/components/Footercustom.vue";
 
 export default {
+  components: {
+    footercustom,
+  },
   data() {
     return {
       userId: "",
@@ -70,7 +77,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #353a64;
-  background-color: #eff3c6;
+  background-image: url(./assets/sillas.jpg);
+  background-size: cover;
+  min-height: 100vh;
 }
 
 #nav {
@@ -79,7 +88,7 @@ export default {
 
 #nav a {
   font-weight: bold;
-  color: #4cbbb9;
+  color: #ebecf1;
   font-size: 1.3rem;
 }
 
