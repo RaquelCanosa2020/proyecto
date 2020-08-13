@@ -74,7 +74,7 @@ app.use(fileUpload());
 
 // Listar playas, incluidas búsquedas por nombre de playa o municipio
 // Listado para el administrador
-app.get("/beaches", isUser, isAdmin, listBeaches);
+app.get("/beaches", listBeaches);
 
 // Buscar playas, buscador avanzado por fecha, plazas y/u opciones
 // Público

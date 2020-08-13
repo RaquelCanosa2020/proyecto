@@ -12,9 +12,8 @@
         <button id="edit" @click="updateUser()">Aceptar cambios</button>
         <button id="cancel" @click="seeData = false">Cancelar</button>
       </p>
-      <p>Imagen</p>
 
-      <img :src="newAvatar" />
+      <img :src="setImage(newAvatar)" />
 
       <form name="subida-imagenes" type="POST" enctype="multipart/formdata">
         <input type="file" ref="uploadedImage" @change="uploadImage" />
@@ -27,8 +26,8 @@
     <button @click="seePassword =! seePassword">Cambiar contraseña</button>
     <section id="password" v-show="seePassword">
       <p>
-        <input type="text" placeholder="Contraseña actual" v-model="oldPassword" />
-        <input type="text" placeholder="Nueva contraseña" v-model="newPassword" />
+        <input type="password" placeholder="Contraseña actual" v-model="oldPassword" />
+        <input type="password" placeholder="Nueva contraseña" v-model="newPassword" />
 
         <button id="editPassword" @click="updatePassword()">Cambiar</button>
         <button id="cancel" @click="seePassword = false">Cancelar</button>
@@ -49,22 +48,6 @@
       <listreservation :reservations="reservations" />
       <p>{{message}}</p>
       <p>{{errorMessage}}</p>
-
-      <!----MODAL PARA VOTAR RESERVA-
-      <div v-show="vote" class="modal">
-        <div class="modalBox">
-          <h3>Valora la reserva</h3>
-
-          <p>ID reserva:{{idReserv}}</p>
-          <input type="text" placeholder="Valoración" v-model="newValue" />
-          <br />
-          <input class="textarea" type="textarea" placeholder="Comentario" v-model="newComment" />
-
-          <button @click="voteReserv()">Votar</button>
-
-          <button @click="vote =! vote">Cancelar</button>
-        </div>
-      </div>--->
     </section>
 
     <section v-show="showBeach">
@@ -78,6 +61,7 @@
 </template>
 <script>
 import { getAuthToken, getId } from "../../api/utils";
+import { logoutUser } from "../../App.vue";
 import axios from "axios";
 import listreservation from "../../components/usercomponents/Listreservation";
 import userbeachcomponent from "../../components/usercomponents/Userbeachcomponent";
@@ -100,6 +84,7 @@ export default {
       newEmail: "",
       newRole: "",
       newAvatar: "",
+
       oldPassword: "",
       newPassword: "",
       uploadedImage: "",
@@ -112,7 +97,12 @@ export default {
   methods: {
     //FUNCIÓN PARA SACAR LA DIRECCIÓN DE LA IMAGEN ACTUAL
     setImage(img) {
-      return process.env.VUE_APP_STATIC + img;
+      if (img === null) {
+        let avatar = "Avatar.jpg";
+        return process.env.VUE_APP_STATIC + avatar;
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
     },
 
     //FUNCIÓN PARA OBTENER LOS DATOS DEL USUARIO
@@ -123,21 +113,19 @@ export default {
 
       axios.defaults.headers.common["Authorization"] = `${token}`;
 
-      //FUNCIÓN PARA ACTUALIZAR LOS DATOS DEL USUARIO (EXCEPTO CONTRASEÑA)
-
       try {
         const response = await axios.get(
           "http://localhost:3000/beach/users/" + id
         );
-        console.log(response.data.data);
+        console.log(response.data.data.image);
         this.newName = response.data.data.name;
         this.newEmail = response.data.data.email;
         this.newRole = response.data.data.role;
-        let avatar1 = response.data.data.image;
-        this.newAvatar = this.setImage(avatar1);
+        this.newAvatar = response.data.data.image;
         this.userId = id;
       } catch (error) {
         this.errorMessage = error.response.data.message;
+        userbeaches;
       }
     },
 
@@ -191,12 +179,19 @@ export default {
           }
         );
         this.message = response.data.message;
+        alert(message);
         this.oldPassword = "";
         this.newPassword = "";
+        logoutUser();
       } catch (error) {
         this.errorMessage = error.response.data.message;
       }
     },
+
+    /*exit() {
+      const id = getId();
+      logoutUser(id);
+    },*/
 
     //FUNCIÓN PARA VER RESERVAS DEL USUARIO
 
@@ -215,6 +210,7 @@ export default {
         this.reservations = response.data.data;
       } catch (error) {
         this.errorMessage = error.response.data.message;
+        alert(this.errorMessage);
       }
     },
 
@@ -269,10 +265,14 @@ export default {
 };
 </script>
 <style scoped>
+div {
+  height: 100vh;
+}
 .textarea {
   width: 250px;
   height: 150px;
 }
+
 .modal {
   position: fixed;
   top: 0;
@@ -288,6 +288,10 @@ export default {
   padding: 3rem;
   width: 80%;
   border: 1px solid #888;
+}
+img {
+  width: 150px;
+  border-radius: 50%;
 }
 </style>
 

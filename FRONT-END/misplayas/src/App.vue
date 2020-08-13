@@ -2,8 +2,8 @@
   <div id="app">
     <div id="nav">
       <router-link :to="{name:'Home'}">Home</router-link>|
-      <router-link :to="{name:'Listbeaches'}">Lista Playas</router-link>|
-      <router-link :to="{name:'Listusers'}">Lista Usuarios</router-link>|
+      <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>|
+      <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>|
       <router-link :to="{name:'Buscador'}">Buscador</router-link>|
       <router-link :to="{name:'About'}">About</router-link>|
       <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>|
@@ -19,7 +19,13 @@
 </template>
 
 <script>
-import { getAuthToken, getId, isLoggedIn, logout } from "./api/utils";
+import {
+  getAuthToken,
+  getId,
+  checkIsAdmin,
+  isLoggedIn,
+  logout,
+} from "./api/utils";
 import axios from "axios";
 import footercustom from "@/components/Footercustom.vue";
 
@@ -32,6 +38,7 @@ export default {
       userId: "",
       logged: false,
       username: "",
+      admin: false,
     };
   },
   methods: {
@@ -49,6 +56,18 @@ export default {
         console.log(error);
       }
     },
+    getLoging() {
+      this.logged = isLoggedIn();
+    },
+
+    isAdmin(userId) {
+      userId = getId();
+      let log = isLoggedIn(userId);
+      let role = checkIsAdmin(userId);
+      if (log === true && role === true) {
+        this.admin = true;
+      }
+    },
     logoutUser() {
       logout();
       this.logged = false;
@@ -59,13 +78,11 @@ export default {
         // window.history.back();
       }, 1000);*/
     },
-    getLoging() {
-      this.logged = isLoggedIn();
-    },
   },
   created() {
     this.setUserName();
     this.getLoging();
+    this.isAdmin();
   },
 };
 </script>
@@ -79,7 +96,6 @@ export default {
   color: #353a64;
   background-image: url(./assets/sillas.jpg);
   background-size: cover;
-  min-height: 100vh;
 }
 
 #nav {
@@ -93,7 +109,7 @@ export default {
 }
 
 #nav a.router-link-exact-active {
-  color: #0779e4;
+  color: #086972;
 }
 input {
   background-color: #ebecf1;
@@ -131,6 +147,11 @@ button:hover {
   input {
     font-size: 1rem;
     margin: 1rem;
+  }
+  #nav a {
+    font-weight: bold;
+
+    font-size: 1.7rem;
   }
 }
 @media (min-width: 1000px) {

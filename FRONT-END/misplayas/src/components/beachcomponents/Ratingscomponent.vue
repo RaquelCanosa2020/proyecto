@@ -2,7 +2,7 @@
   <div>
     <div>
       <p>{{global}}</p>
-      <section v-for="vote in votes" :key="vote.id">
+      <section v-for="vote in votes" :key="vote.index">
         <p>Fecha: {{formatDateToUser(vote.date)}}</p>
         <p>Valoración:{{vote.value}}</p>
         <p>Comentario: {{vote.comment}}</p>
@@ -20,7 +20,7 @@ export default {
   name: "Ratingscomponent.vue",
   props: {
     votes: Array,
-    photos: Array,
+
     global: String,
   },
   methods: {
@@ -39,4 +39,8 @@ export default {
 </script>
 
 <style scoped>
+section {
+  background-color: #ebecf1;
+  margin-bottom: 1rem;
+}
 </style>

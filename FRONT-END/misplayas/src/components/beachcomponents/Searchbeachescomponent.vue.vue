@@ -8,6 +8,7 @@
         <p>{{beach.province}}</p>
         <p>Descripción: {{beach.description}}</p>
         <p>Capacidad: {{beach.capacity}} personas</p>
+        <p>Disponibilidad en fecha y hora indicada: {{beach.free}} plazas</p>
         <p>
           Valoración media de usuarios:
           <button id="rating">{{beach.voteAverage}}</button>
@@ -18,7 +19,12 @@
           <router-link :to="{name:'Playa', params:{id:beach.id, visit:beach.visit}}">A la playa</router-link>
         </button>--->
 
-        <button @click="sendBeachIdToShow(index)">Ver</button>
+        <!---<button @click="sendBeachIdToShow(index)">Ver</button>-->
+
+        <button>
+          <router-link :to="{name:'Playa', params: {id:beach.id}}">+ info</router-link>
+        </button>
+
         <button @click="sendBeachIdToReserve(index)">Reservar</button>
       </section>
     </div>
@@ -56,11 +62,6 @@ export default {
       return process.env.VUE_APP_STATIC + img;
     },
 
-    sendBeachIdToShow(index) {
-      let beachId = this.beaches[index].id;
-      //console.log(beachId);
-      this.$emit("sendIdShow", beachId);
-    },
     sendBeachIdToReserve(index) {
       let beachId = this.beaches[index].id;
       //console.log(beachId);
@@ -70,6 +71,10 @@ export default {
 };
 </script>
 <style scoped>
+section {
+  background-color: #ebecf1;
+  margin-bottom: 1rem;
+}
 img {
   width: 200px;
 }

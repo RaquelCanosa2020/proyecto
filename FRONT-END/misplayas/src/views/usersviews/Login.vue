@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login">
     <vue-headful title="Misplayas | Login" />
     <h1>Login de usuario</h1>
 
@@ -67,6 +67,8 @@ export default {
           await login(this.email, this.password);
           //this.spinner = true;
           //location.reload();
+
+          //this.$router.go(-1);
           this.$router.push("/user");
           setTimeout(() => {
             location.reload();
@@ -120,4 +122,7 @@ export default {
 </script>
 
 <style>
+div.login {
+  height: 100vh;
+}
 </style>

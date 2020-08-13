@@ -1,6 +1,8 @@
 <template>
   <div class="home">
     <vue-headful title="misplayas | Lista Playas" />
+
+    <h1>Listado de playas del Administrador</h1>
     <section id="order">
       <div>
         <p>Ordenar por:</p>
@@ -56,18 +58,12 @@ export default {
       start_month: "",
       end_month: "",
       voteAverage: "",
-      visit: "",
-
-      places: "",
-
       lifesaving: false,
       parking: false,
       toilet: false,
       bar_restaurant: false,
       disabled_access: false,
-      disponibilidad: "",
-      aviso: "",
-      visitFormat: "",
+      image: "",
     };
   },
   methods: {
@@ -97,7 +93,7 @@ export default {
         const response = await axios.delete(
           `http://localhost:3000/beaches/${beachId}`
         );
-        console.log(response.data);
+        alert(response.data.message);
 
         this.beaches = response.data.data;
         location.reload();

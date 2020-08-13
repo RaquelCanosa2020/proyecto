@@ -14,7 +14,7 @@ export default {
 </script>
 
 <style scoped>
-div {
+div.about {
   height: 100vh;
   width: 100vw;
   color: #222831;

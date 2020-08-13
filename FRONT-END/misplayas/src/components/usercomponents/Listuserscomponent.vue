@@ -2,26 +2,28 @@
   <div>
     <input type="search" v-model="search" placeholder="Busca por nombre" />
 
-    <div v-for="(user,index) in filtered" :key="user.id">
+    <div id="user" v-for="(user,index) in users" :key="user.id">
       <p>{{user.id}}</p>
       <p>{{user.name}}</p>
       <p>Rol: {{user.role}}</p>
       <p>{{user.email}}</p>
-      <p>Fecha de alta: {{user.registration_date}}</p>
-      <p>Nº de reservas: {{user.Nºreservas}} personas</p>
-      <p>Nº de plazas reservadas: {{user.Nºplazas}}</p>
-      <p>Última reserva: {{user.ultima_reserva}}</p>
+      <p>Fecha de alta: {{formatDateToUser(user.registration_date)}}</p>
+      <p>Nº de reservas: {{user.Nºreservas}}</p>
+      <p>Nº de plazas reservadas: {{user.Nºplazas}} personas</p>
+      <p>Última reserva: {{formatDateToUser(user.ultima_reserva)}}</p>
 
-      <img :scr="setImage(user.image)" />
+      <img :src="setImage(user.image)" />
 
-      <button @click="sendIdEdit(index)">Editar</button>
-      <button @click="sendIdErase(index)">Borrar</button>
+      <!--- <button @click="sendIdEdit(index)">Editar</button>
+      <button @click="sendIdErase(index)">Borrar</button>--->
     </div>
   </div>
 </template>
 
 
 <script>
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 export default {
   name: "Listuserscomponent",
   props: {
@@ -35,7 +37,6 @@ export default {
   computed: {
     filtered() {
       if (!this.search) {
-        //si search está vacío, devuelve useres tal cual
         return this.users;
       }
       return this.users.filter((item) =>
@@ -46,27 +47,49 @@ export default {
   methods: {
     //FUNCIÓN PARA VER LAS IMÁGENES EN LA PLAYA (en el listado se aplica al componente)
     setImage(img) {
-      return process.env.VUE_APP_STATIC + img;
+      if (img === null) {
+        let avatar = "Avatar.jpg";
+        return process.env.VUE_APP_STATIC + avatar;
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
     },
+
+    //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
+    /*  sendIdEdit(index) {
+      let userId = this.useres[index].id;
+      //console.log(userId);
+      this.$emit("sendEdit", userId);
+    },
+    sendIdErase(index) {
+      let userId = this.users[index].id;
+      //console.log(userId);
+      this.$emit("sendErase", userId);
+    },*/
+
     //FUNCION PARA FORMATEAR FECHA
-    formatDate(date) {
-      let formatDate = `${format(new Date(date), "d '/' M '/' Y", {
-        locale: es,
-      })} {format(new Date(date), "p")} horas`;
+    formatDateToUser(date) {
+      let dateToUser = `${format(
+        new Date(date),
+        "EEEE, d 'de' MMMM 'de' yyyy",
+        {
+          locale: es,
+        }
+      )} a las ${format(new Date(date), "p")} horas`;
       return dateToUser;
     },
   },
-
-  //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
-  sendIdEdit(index) {
-    let userId = this.useres[index].id;
-    //console.log(userId);
-    this.$emit("sendEdit", userId);
-  },
-  sendIdErase(index) {
-    let userId = this.users[index].id;
-    //console.log(userId);
-    this.$emit("sendErase", userId);
-  },
 };
 </script>
+<style scoped>
+div#user {
+  background-color: #ebecf1;
+  width: 60%;
+  margin: auto;
+}
+
+img {
+  width: 150px;
+  border-radius: 50%;
+}
+</style>

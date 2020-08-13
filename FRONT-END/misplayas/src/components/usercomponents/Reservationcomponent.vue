@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!---<section v-for="reservation in reservations" :key="reservation.id">--->
     <p>Id. de la reserva: {{reservation.id}}</p>
     <p>Fecha de la reserva: {{formatDateToUser(reservation.date)}}</p>
     <p>Fecha y hora reservada: {{formatDateToUser(reservation.visit)}}</p>
@@ -86,3 +87,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+div {
+  background-color: ivory;
+  width: 75%;
+  margin: auto;
+}
+</style>

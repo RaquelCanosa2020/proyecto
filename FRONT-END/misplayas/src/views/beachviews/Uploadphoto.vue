@@ -2,6 +2,8 @@
   <div class="upload">
     <vue-headful title="misplayas | Subir foto" />
 
+    <h1>Sube fotos de tus playas</h1>
+    <label>Elige la playa:u</label>
     <select v-model="selectedBeach">
       <option
         v-for="beach in beaches"
@@ -16,8 +18,8 @@
 
     <form name="subida-imagenes" type="POST" enctype="multipart/formdata">
       <input type="file" ref="uploadedImage" @change="uploadImage" />
-      <input type="submit" name="subir-imagen" value="Enviar imagen" @click="saveImage" />
     </form>
+    <input type="submit" name="subir-imagen" value="Enviar imagen" @click="saveImage" />
 
     <!---<img :src="setImage(uploadedImage)" />--->
     <p>{{messageImage}}</p>
@@ -76,6 +78,8 @@ export default {
       console.log(this.uploadedImage);
     },
 
+    //FUNCIÓN PARA GUARDAR IMAGEN QUE INCLUYE EL USUARIO
+
     async saveImage() {
       const id = this.selectedBeach;
       console.log(id);
@@ -110,7 +114,7 @@ export default {
 };
 </script>
 <style scoped>
-div.beach {
+div.upload {
   height: 100vh;
 }
 

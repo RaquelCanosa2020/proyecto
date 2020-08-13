@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="footer">
     <footer id="footer">Raquel Canosa Raña. 2020</footer>
   </div>
 </template>
@@ -11,8 +11,9 @@ export default {
 </script>
 
 <style scoped>
-#footer {
+footer {
   font-weight: bold;
-  color: #0779e4;
+  color: #ebecf1;
+  margin-bottom: 1.5rem;
 }
 </style>

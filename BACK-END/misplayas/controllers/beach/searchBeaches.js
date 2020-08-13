@@ -1,5 +1,6 @@
 const { getConnection } = require("../../db");
-const { formatDateToDB } = require("../../helpers");
+const { formatDateToDB, generateError } = require("../../helpers");
+const { addDays } = require("date-fns");
 
 
 //Nos da lista de playas según características y/o disponibilidad para una fecha y plazas determinadas.
@@ -55,6 +56,16 @@ async function searchBeaches(req, res, next) {
         parking,
         toilet,
       } = req.body;
+
+      const visitUtc = new Date(visit);
+      if (visitUtc <= new Date() || visitUtc >= addDays(new Date(), 5)) {
+        {
+          throw generateError(
+            "La fecha no es válida, la fecha de visita debe ser como mínimo hoy y como máximo dentro de 5 días",
+            403
+          );
+        }
+      }
 
       const visitDate = formatDateToDB(visit);
       const visitHour = new Date(visit).getHours();

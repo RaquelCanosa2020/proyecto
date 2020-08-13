@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="register">
     <vue-headful title="Misplayas | Registro" />
     <h1>Formulario de Registro</h1>
 
@@ -73,4 +73,7 @@ export default {
 </script>
 
 <style>
+div.register {
+  height: 100vh;
+}
 </style>

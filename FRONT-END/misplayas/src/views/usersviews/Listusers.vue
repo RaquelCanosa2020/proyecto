@@ -1,12 +1,14 @@
 <template>
   <div>
     <vue-headful title="misplayas | Lista Usuarios" />
+
+    <h1>Listado de usuarios del Administrador</h1>
     <section id="order">
       <div>
         <p>Ordenar por:</p>
         <select v-model="order">
           <option value="name">Nombre</option>
-          <option value="registration_date">Municipio</option>
+          <option value="registration_date">Fecha de registro</option>
         </select>
       </div>
       <div>
@@ -18,21 +20,21 @@
       </div>
     </section>
 
-    <!----<listuserscomponent :users="users" />--->
+    <listuserscomponent :users="users" />
   </div>
   <!---FIN ID LIST----->
 </template>
 
 <script>
 import axios from "axios";
-//import listuserscomponent from "../../components/userscomponents/Listuserscomponent.vue";
+import listuserscomponent from "../../components/usercomponents/Listuserscomponent.vue";
 import { setServices, getAuthToken, getId } from "../../api/utils";
 
 export default {
   name: "Listusers",
-  //components: {
-  //listuserscomponent,
-  //},
+  components: {
+    listuserscomponent,
+  },
   data() {
     return {
       users: [],
@@ -43,6 +45,7 @@ export default {
   methods: {
     //FUNCIÓN PARA LISTAR LOS CLIENTES
     async getUsers() {
+      console.log("hola");
       const token = getAuthToken();
 
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -60,7 +63,7 @@ export default {
     },
   },
   created() {
-    // this.getUsers;
+    this.getUsers();
   },
 };
 </script>

@@ -35,3 +35,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+div {
+  background-color: ivory;
+  width: 75%;
+  margin: auto;
+}
+</style>

@@ -2,7 +2,7 @@
   <div>
     <input type="search" v-model="search" placeholder="Busca por nombre" />
     <!--pendiente orden---->
-    <div v-for="(beach,index) in filtered" :key="beach.id">
+    <div id="beach" v-for="(beach,index) in filtered" :key="beach.id">
       <p>{{beach.id}}</p>
       <p>{{beach.name}}, {{beach.municipality}}</p>
       <p>{{beach.province}}</p>
@@ -21,9 +21,11 @@
 
       <p>Estado: {{getStatus(beach.active)}}</p>
 
-      <img :scr="setImage(beach.image)" />
+      <p>
+        <img :src="setImage(beach.image)" />
+      </p>
 
-      <button @click="sendIdEdit(index)">Editar</button>
+      <!--- <button @click="sendIdEdit(index)">Editar</button>--->
       <button @click="sendIdToggle(index)">Cambiar estado</button>
     </div>
   </div>
@@ -67,11 +69,11 @@ export default {
     },
 
     //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
-    sendIdEdit(index) {
+    /*sendIdEdit(index) {
       let beachId = this.beaches[index].id;
       //console.log(beachId);
       this.$emit("sendEdit", beachId);
-    },
+    },*/
     sendIdToggle(index) {
       let beachId = this.beaches[index].id;
       //console.log(beachId);
@@ -80,3 +82,13 @@ export default {
   },
 };
 </script>
+<style scoped>
+div#beach {
+  background-color: #ebecf1;
+  width: 60%;
+  margin: auto;
+}
+img {
+  width: 500px;
+}
+</style>

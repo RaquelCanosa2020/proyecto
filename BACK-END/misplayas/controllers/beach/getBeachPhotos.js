@@ -22,7 +22,7 @@ async function getBeachPhotos(req, res, next) {
     if (photos.length === 0) {
       throw generateError(
         "Todavía no hay ninguna foto de esta playa subida por los usuarios ",
-        401
+        404
       );
     }
 

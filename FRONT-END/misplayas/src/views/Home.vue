@@ -7,8 +7,6 @@
 </template>
 
 <script>
-//import HelloWorld from '@/components/HelloWorld.vue'
-
 export default {
   name: "Home",
   components: {},
@@ -16,6 +14,10 @@ export default {
 </script>
 
 <style scoped>
+div.home {
+  height: 70vh;
+}
+
 h1 {
   font-size: 4rem;
 }

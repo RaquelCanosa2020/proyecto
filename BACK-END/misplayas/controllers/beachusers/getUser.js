@@ -9,11 +9,15 @@ async function getUser(req, res, next) {
 
     const { id } = req.params;
 
+    if (Number(id) !== req.auth.id || req.auth.role !== "admin") {
+      generateError(403, "no autorizado")
+    }
+
     //query para obtener los datos
 
     const [result] = await connection.query(
       `
-      SELECT id, registration_date, email, role, IFNULL(name, "Anónimo") AS name, IFNULL(image, "vacío") AS avatar
+      SELECT id, registration_date, email, role, IFNULL(name, "Anónimo") AS name, image
       FROM users
       WHERE id=?
     `,
@@ -32,13 +36,12 @@ async function getUser(req, res, next) {
     const responseData = {
       registrationDate: userData.registration_date,
       name: userData.name,
-      image: userData.avatar,
+      email: userData.email,
+      role: userData.role,
+      image: userData.image,
     };
     //si el que consulta es el propio usuario o admin, damos más datos
-    if (userData.id === req.auth.id || req.auth.role === "admin") {
-      responseData.email = userData.email;
-      responseData.role = userData.role;
-    }
+
 
     res.send({
       status: "ok",

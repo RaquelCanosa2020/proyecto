@@ -89,7 +89,7 @@ export function getIsAdmin() {
 export function checkIsAdmin() {
     let role = null
     let admin = getIsAdmin()
-    if (admin === 'true') {
+    if (admin === 'admin') {
         role = true
     } else {
         role = false
