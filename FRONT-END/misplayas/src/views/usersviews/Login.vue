@@ -11,8 +11,6 @@
       <input v-model="password" type="password" required placeholder="Contraseña" />
     </p>
 
-    <p v-show="error">{{message}}</p>
-
     <button @click="loginUser()">Entrar</button>
 
     <p>
@@ -20,12 +18,10 @@
       <button @click="sendRecoverPassword">Pincha aquí</button>
     </p>
     <div v-show="recover">
-      <p>{{messageBefore}}</p>
       <input v-model="recoverCode" type="text" required placeholder="Código de recuperación" />
       <input v-model="newPassword" type="password" required placeholder="Nueva contraseña" />
       <button @click="resetPassword">Enviar</button>
     </div>
-    <p>{{messageAfter}}</p>
 
     <spinner v-show="spinner" />
   </div>
@@ -33,7 +29,7 @@
 
 <script>
 import axios from "axios";
-import { login } from "../../api/utils";
+import { login, sweetAlertOk, sweetAlertNotice } from "../../api/utils";
 import spinner from "@/components/Spinner.vue";
 
 export default {
@@ -47,12 +43,10 @@ export default {
       password: "",
       spinner: false,
       error: false,
-      message: "",
+
       recover: false,
       recoverCode: "",
       newPassword: "",
-      messageAfter: "",
-      messageBefore: "",
     };
   },
   methods: {
@@ -72,7 +66,7 @@ export default {
           this.$router.push("/user");
           setTimeout(() => {
             location.reload();
-          }, 1000);
+          }, 500);
           //this.window.history.back();
         } catch (error) {
           //this.spinner = false
@@ -95,26 +89,24 @@ export default {
           { email: this.email }
         );
         console.log(response.data);
-        this.messageBefore = response.data.message;
+        sweetAlertOk(response.data.message);
         this.recover = true;
       } catch (error) {
-        console.log(error);
+        sweetAlertNotice(error.response.data.message);
       }
     },
 
     //FUNCIÓN PARA PROCESAR CÓDIGO DE RECUPERACIÓN DE CONTRASEÑA
-    ///beach/users/reset-password",resetUserPassword
+
     async resetPassword() {
       try {
         const response = await axios.post(
           "http://localhost:3000/beach/users/reset-password",
           { recoverCode: this.recoverCode, newPassword: this.newPassword }
         );
-        this.messageAfter = response.data.message;
-        this.recoverCode = "";
-        this.newPassword = "";
+        sweetAlertOk(response.data.message);
       } catch (error) {
-        console.log(error);
+        sweetAlertNotice(error.response.data.message);
       }
     },
   },

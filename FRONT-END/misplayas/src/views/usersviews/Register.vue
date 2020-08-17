@@ -25,7 +25,8 @@
 
     <button @click="addUser()">Registrarse</button>
 
-    <p>{{message}}</p>
+    <p class="error" v-show="error">❌ {{messageError}}</p>
+    <p class="ok">{{message}}</p>
   </div>
 </template>
 
@@ -40,6 +41,8 @@ export default {
       password1: "",
       password2: "",
       message: "",
+      messageError: "",
+      error: false,
     };
   },
   methods: {
@@ -58,13 +61,14 @@ export default {
           );
 
           this.message = response.data.message;
-
+          this.error = false;
           this.name = "";
           this.email = "";
           this.password1 = "";
           this.password2 = "";
         } catch (error) {
-          this.message = error.response.data.message;
+          this.error = true;
+          this.messageError = error.response.data.message;
         }
       }
     },

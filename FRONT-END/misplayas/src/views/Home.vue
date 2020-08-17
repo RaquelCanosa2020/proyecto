@@ -15,7 +15,7 @@ export default {
 
 <style scoped>
 div.home {
-  height: 70vh;
+  height: 90vh;
 }
 
 h1 {

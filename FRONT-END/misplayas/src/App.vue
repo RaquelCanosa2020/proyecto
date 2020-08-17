@@ -72,11 +72,11 @@ export default {
       logout();
       this.logged = false;
       this.$router.push("/login");
-      /*setTimeout(() => {
+      setTimeout(() => {
         location.reload();
 
         // window.history.back();
-      }, 1000);*/
+      }, 500);
     },
   },
   created() {
@@ -136,6 +136,16 @@ button {
 }
 button:hover {
   border-style: none;
+}
+
+p.error {
+  font-size: 1.5rem;
+  color: brown;
+}
+
+p.ok {
+  font-size: 1.5rem;
+  color: green;
 }
 
 @media (min-width: 700px) {

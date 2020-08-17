@@ -23,6 +23,8 @@ async function validateUser(req, res, next) {
       );
     }
 
+
+
     // Actualizar la tabla de usuarios marcando como activo
     // el usuario que tenga el código de registro recibido
     await connection.query(

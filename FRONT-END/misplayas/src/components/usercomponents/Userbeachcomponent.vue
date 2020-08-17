@@ -4,7 +4,7 @@
       <section v-for="userbeach in userbeaches" :key="userbeach.id">
         <p>Playa id.: {{userbeach.id}}, {{userbeach.name}}, {{userbeach.municipality}}, {{userbeach.province}}</p>
         <p>Has ido: {{userbeach.numberOfReservations}} veces</p>
-        <p>Tu última visita fue el: {{formatDateToUser(userbeach.lastVisit)}}</p>
+        <p>Tu última visita: {{formatDateToUser(userbeach.lastVisit)}}</p>
         <p>Tu valoración media de esta playa: {{userbeach.yourAverageRating}}</p>
       </section>
     </div>

@@ -34,6 +34,7 @@ async function recoverUserPassword(req, res, next) {
 
     // Introducir en la fila del usuario un código aleatorio
     const recoverCode = randomString(40);
+    const recoverURL = `${process.env.FRONT_URL}/resetpassword?${recoverCode}`;
 
     await connection.query(
       `
@@ -51,8 +52,8 @@ async function recoverUserPassword(req, res, next) {
         title: "Código de reseteo de tu password",
         content: `
           Se ha solicitado código para recuperación de contraseña para tu cuenta en la web de reservas
-          de espacio en playas. El código es:
-          ${recoverCode}
+          de espacio en playas. Pincha aquí:
+          ${recoverURL}
 
           Si no fuiste tu quien solicitó esta recuperación, ignora este correo y revisa tu cuenta.
         `,

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!---<section v-for="reservation in reservations" :key="reservation.id">--->
     <p>Id. de la reserva: {{reservation.id}}</p>
     <p>Fecha de la reserva: {{formatDateToUser(reservation.date)}}</p>
     <p>Fecha y hora reservada: {{formatDateToUser(reservation.visit)}}</p>
@@ -8,9 +7,9 @@
     <p>Playa nº: {{reservation.id_beach}}, {{reservation.name}}</p>
     <p>Total euros: {{reservation.total_euros}}</p>
     <p>Valoración: {{reservation.value}}</p>
-    <p>Valoración: {{reservation.comment}}</p>
+    <p>Comentario: {{reservation.comment}}</p>
 
-    <button @click="vote =! vote">Votar</button>
+    <button @click="voteOption">Votar</button>
 
     <section v-show="vote">
       <input type="text" placeholder="Valoración" v-model="newValue" />
@@ -27,7 +26,7 @@
 
 
 <script>
-import { getAuthToken } from "../../api/utils";
+import { getAuthToken, sweetAlertNotice } from "../../api/utils";
 import axios from "axios";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -48,6 +47,15 @@ export default {
   },
 
   methods: {
+    voteOption() {
+      if (this.reservation.value === "pendiente de valorar") {
+        this.vote = true;
+      } else {
+        this.vote = false;
+        sweetAlertNotice("ya has votado esta reserva");
+      }
+    },
+
     async voteReserv() {
       let id = this.reservation.id;
       console.log(id);
@@ -70,7 +78,9 @@ export default {
         );
         this.message = response.data.message;
       } catch (error) {
-        this.errorMessage = error.response.data.message;
+        //this.errorMessage = error.response.data.message
+        sweetAlertNotice(error.response.data.message);
+        this.vote = false;
       }
     },
 

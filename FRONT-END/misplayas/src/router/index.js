@@ -47,6 +47,10 @@ const routes = [
     path: '/lista Usuarios',
     name: 'Listusers',
     component: () => import('../views/usersviews/Listusers.vue'),
+    meta: {
+      allowAnon: false,
+      onlyAdmin: true
+    },
     beforeEnter: (to, from, next) => {
       if (to.meta.onlyAdmin === true && !checkIsAdmin()) {
         next({
@@ -87,6 +91,34 @@ const routes = [
     path: '/Register',
     name: 'Registro',
     component: () => import('../views/usersviews/Register.vue'),
+    meta: {
+      allowAnon: true
+    },
+    beforeEnter: (to, from, next) => {
+      if (isLoggedIn()) {
+        next({
+          path: '/user',
+          query: { redirect: to.fullPath }
+        })
+      } else {
+        next()
+      }
+    }
+
+  },
+  {
+    path: '/validate',
+    name: 'Validate',
+    component: () => import('../views/usersviews/Validate.vue'),
+    meta: {
+      allowAnon: true
+    },
+
+  },
+  {
+    path: '/resetpassword',
+    name: 'Reset',
+    component: () => import('../views/usersviews/Reset.vue'),
     meta: {
       allowAnon: true
     },

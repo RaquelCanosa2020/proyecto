@@ -39,6 +39,10 @@ async function editUser(req, res, next) {
       throw generateError(`El usuario con id ${id} no existe`, 404);
     }
 
+    const previousEmail = currentUser[0].email; //creo esta variable para utilizarla en el front
+    //para que distinga si se ha cambiado el mail o no, ya que en caso afirmativo manda desloga al 
+    //usuario y lo manda al login.
+
     // Si mandamos imagen guardar avatar
 
     let savedFileName;
@@ -77,7 +81,7 @@ async function editUser(req, res, next) {
 
       // Verificamos de nuevo el email recibido
       const registration_code = randomString(40);
-      const validationURL = `${process.env.PUBLIC_HOST}/beach/users/validate/${registration_code}`;
+      const validationURL = `${process.env.FRONT_URL}/validate?${registration_code}`;
 
       //Enviamos la url anterior por mail
       try {
@@ -104,9 +108,10 @@ async function editUser(req, res, next) {
       res.send({
         status: "ok",
         message: "Usuario actualizado. Mira tu email para activarlo de nuevo.",
+        previousEmail: currentUser[0].email
       });
     } else {
-      // Actualizar usuario en la base de datos
+      // Actualizar usuario en la base de datos (sin cambio de email)
       await connection.query(
         `
       UPDATE users 
@@ -120,6 +125,8 @@ async function editUser(req, res, next) {
       res.send({
         status: "ok",
         message: "Usuario actualizado",
+        previousEmail: previousEmail //se envía para comprobación en el front.
+
       });
     }
   } catch (error) {

@@ -2,6 +2,8 @@ import jwt from 'jwt-decode'
 import axios from 'axios'
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
+import Swal from "sweetalert2";
+
 
 
 
@@ -136,5 +138,48 @@ export function formatDateToUser(date) {
         locale: es
     })} a las ${format(new Date(date), "p")} horas`;
     return dateToUser;
+}
+
+
+//ALERTA CUANDO LOS DATOS SON INCORRECTOS
+
+export function sweetAlertNotice(msg) {
+    Swal.fire({
+        title: "AVISO",
+        text: msg,
+        icon: "warning",
+        buttonsStyling: false,
+        confirmButtonText: "OK",
+    });
+}
+
+export function sweetAlertOk(msg) {
+    Swal.fire({
+        title: "OK",
+        text: msg,
+        icon: "success",
+        buttonsStyling: false,
+        confirmButtonText: "OK",
+    });
+}
+
+
+//Confirmación de borrado de registros:
+export function sweetAlertBorrar() {
+    Swal.fire({
+        title: "Confirma la acción",
+        text: "Confirma la eliminación de este registro",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirmado",
+    }).then((result) => {
+        if (result.value) {
+            Swal.fire("Registro eliminado");
+
+            location.reload();
+        }
+    });
 }
 

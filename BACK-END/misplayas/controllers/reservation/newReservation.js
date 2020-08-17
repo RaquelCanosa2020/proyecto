@@ -203,7 +203,8 @@ async function newReservation(req, res, next) {
       await sendMail({
         email: userEmail,
         title: "Reserva de espacio en playa.",
-        content: `Se confirma la reserva nº${reservationNumber} realizada con los siguientes datos:
+        content:
+          `Se confirma la reserva nº${reservationNumber} realizada con los siguientes datos:
        👣 Usuario: ${userName} (usuario nº: ${id_user}).
 
        🌅 Playa: ${beachName} (nº ${id_beach}).
@@ -225,19 +226,24 @@ async function newReservation(req, res, next) {
 
     res.send({
       status: "ok",
-      message: `Se guardó la reserva nº${reservationNumber}. Datos de la reserva:
+      message: {
+        info: `Se confirma la reserva nº${reservationNumber} realizada con los siguientes datos:`,
+        user: `👣 Usuario: ${userName} (usuario nº: ${id_user})`,
 
-       👣 Usuario: ${userName} (usuario nº: ${id_user}).
+        beach: `🌅 Playa: ${beachName} (nº ${id_beach})`,
 
-       🌅 Playa: ${beachName} (nº ${id_beach}).
+        visit: `📅 Fecha y hora: ${dateToUser} `,
 
-       📅 Fecha y hora: ${dateToUser} 
+        places: `👥 Plazas: ${places} personas`,
 
-       👥 Plazas: ${places} personas.
+        fee: "💶 Fianza de 3 euros (pagado)",
 
-       💶 Fianza de 3 euros (pagado).
-       
-       📨 Se ha enviado correo de confirmación.`,
+        payment: `Reserva confirmada y pagada el ${nowDateUser}`,
+
+        notice: "📨 Se ha enviado correo de confirmación."
+      }
+
+
     });
 
     //Falta: alguna comprobación más ( reservas y plazas máx; )

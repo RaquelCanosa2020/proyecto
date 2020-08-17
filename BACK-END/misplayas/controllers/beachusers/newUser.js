@@ -33,8 +33,10 @@ async function newUser(req, res, next) {
     // enviar un mensaje de confirmación de registro al email indicado
 
     const registration_code = randomString(40);
-    const validationURL = `${process.env.PUBLIC_HOST}/beach/users/validate/${registration_code}`;
-    //process.env.FRONTEND_URL}/activar?
+
+    const validationURL = `${process.env.FRONT_URL}/validate?${registration_code}`;
+    //`;
+    //process.env.PUBLIC_HOST}/beach/users/validate/${registration_code}
 
     //Enviamos la url anterior por mail
     try {
@@ -60,7 +62,7 @@ async function newUser(req, res, next) {
     res.send({
       status: "ok",
       message:
-        `Usuario registrado, nº${newUser.insertId} . Mira tu email para activarlo. Mira en la carpeta de SPAM si no lo encuentras`,
+        `Usuario registrado, nº${newUser.insertId} . Te hemos enviado un correo electrónico con un enlace para activar tu cuenta`,
     });
   } catch (error) {
     next(error);

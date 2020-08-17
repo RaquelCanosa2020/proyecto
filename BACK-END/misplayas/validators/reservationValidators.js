@@ -14,7 +14,7 @@ const newReservationSchema = Joi.object().keys({
     .max(5)
     .error(
       generateError(
-        "El campo places es obligatorio y debe estar entre 1 y 5",
+        "El campo 'nº de plazas' es obligatorio y debe estar entre 1 y 5",
         400
       )
     ),
@@ -50,7 +50,7 @@ const editReservationSchema = Joi.object().keys({
     .integer()
     .min(1)
     .max(5)
-    .error(generateError("El campo places debe estar entre 1 y 5", 400)),
+    .error(generateError("El campo 'nº de plazas' debe estar entre 1 y 5", 400)),
   id_beach: Joi.number()
     .integer()
     .required()
@@ -64,7 +64,7 @@ const voteReservationSchema = Joi.object().keys({
     .required()
     .error(
       generateError(
-        "El campo value debe existir y tener un valor entre 1 y 5 (incluídos)",
+        "El campo 'valoración' debe existir y tener un valor entre 1 y 5 (incluídos)",
         400
       )
     ),

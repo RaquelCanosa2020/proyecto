@@ -50,6 +50,7 @@ const recoverUserPassword = require("./controllers/beachusers/recoverUserPasswor
 const resetUserPassword = require("./controllers/beachusers/resetUserPassword");
 const getUserReservations = require("./controllers/beachusers/getUserReservations");
 const getUserBeaches = require("./controllers/beachusers/getUserBeaches");
+const getUserPhotos = require("./controllers/beachusers/getUserPhotos")
 const listUsers = require("./controllers/beachusers/users");
 
 const app = express();
@@ -105,9 +106,8 @@ app.post("/beaches/:id/photos", isUser, beachExists, uploadBeachPhotos);
 // POST - /beaches/:id/photos
 // Sólo usuarios registrados, el autor de la foto o admin
 app.delete(
-  "/beaches/:id/photos/:imageID",
+  "/beaches/photos/:imageID",
   isUser,
-  beachExists,
   deleteBeachPhoto
 );
 // INcluir una nueva playa
@@ -218,6 +218,11 @@ app.get("/beach/users/:id/reservations", isUser, getUserReservations); //
 // GET - //beach/users/:id/beaches
 // Sólo usuarios registrados, el autor o admin
 app.get("/beach/users/:id/beaches", isUser, getUserBeaches); //
+
+// Ver fotos de un usuario (id usuario)
+// GET - //beach/users/:id/photos
+// Sólo usuarios registrados, el autor o admin
+app.get("/beach/users/:id/photos", isUser, getUserPhotos); //
 
 // Ver LISTA DE USUARIOS
 // GET - //beach/users

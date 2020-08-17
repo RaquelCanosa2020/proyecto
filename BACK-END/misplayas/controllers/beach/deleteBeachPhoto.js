@@ -10,19 +10,21 @@ async function deleteBeachPhoto(req, res, next) {
   try {
     connection = await getConnection();
 
-    const { id, imageID } = req.params;
+    const { imageID } = req.params;
+
 
     // Seleccionar la foto
     const [current] = await connection.query(
       `
       SELECT id, link, id_user, id_beach
       FROM photos
-      WHERE id=? AND id_beach=?
+      WHERE id=?
     `,
-      [imageID, id]
+      [imageID]
     );
-    console.log(current);
+
     const [currentPhoto] = current;
+    //console.log(currentPhoto.id_user)
 
     // Comprobar que existe la foto
 
@@ -30,8 +32,9 @@ async function deleteBeachPhoto(req, res, next) {
       throw generateError("La imagen no existe", 404);
     }
 
+
     // Comprobar que el usuario puede editar esta foto
-    if (current.id_user !== req.auth.id && req.auth.role !== "admin") {
+    if (currentPhoto.id_user !== req.auth.id && req.auth.role !== "admin") {
       throw generateError(
         "No tienes permisos para borrar esta fotografía",
         403
@@ -42,9 +45,9 @@ async function deleteBeachPhoto(req, res, next) {
     await connection.query(
       `
       DELETE FROM photos
-      WHERE id=? AND id_beach=?
+      WHERE id=?
     `,
-      [imageID, id]
+      [imageID]
     );
 
     //Borrado del directorio static/uploads

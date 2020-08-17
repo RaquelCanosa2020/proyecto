@@ -1,7 +1,8 @@
 <template>
   <div>
     <div>
-      <input type="search" v-model="search" placeholder="Busca por nombre" />
+      <!--V-FOR PARA LISTAR LAS PLAYAS EN EL BUSCADOR---->
+      <input type="search" v-model="search" placeholder="Busca por palabras" />
       <section v-for="(beach,index) in filtered" :key="beach.id">
         <p>{{beach.id}}</p>
         <p>{{beach.name}}, {{beach.municipality}}</p>
@@ -15,17 +16,16 @@
         </p>
         <img :src="setImage(beach.image)" />
 
-        <!--- <button>
-          <router-link :to="{name:'Playa', params:{id:beach.id, visit:beach.visit}}">A la playa</router-link>
-        </button>--->
+        <!--BOTONES CON EVENTOS PARA LA VISTA, ENVÍAN EL ID DE LA PLAYA A VER O RESERVAR---->
 
-        <!---<button @click="sendBeachIdToShow(index)">Ver</button>-->
-
-        <button>
-          <router-link :to="{name:'Playa', params: {id:beach.id}}">+ info</router-link>
-        </button>
-
+        <button @click="sendBeachIdToShow(index)">Ver</button>
         <button @click="sendBeachIdToReserve(index)">Reservar</button>
+
+        <!--- <button>
+          <router-link :to="{name:'Playa', params: {id:beach.id}}">+ info</router-link>
+        </button>-
+        CAMBIO DE LA ED.O, NO ENVIAMOS A UNA NUEVA VISTA SI NO A ADVANCEDSEARCH
+        SI NO TENGO PROBLEMAS PARA TENER DISPONIBLES LOS DATOS-->
       </section>
     </div>
   </div>
@@ -37,8 +37,6 @@ export default {
   name: "Searchbeachescomponent",
   props: {
     beaches: Array,
-    visit: String,
-    places: Number,
   },
   data() {
     return {
@@ -46,13 +44,18 @@ export default {
     };
   },
   computed: {
+    //BUSCADOR POR PALABRAS
     filtered() {
       if (!this.search) {
         //si search está vacío, devuelve beaches tal cual
         return this.beaches;
       }
-      return this.beaches.filter((item) =>
-        item.name.toLowerCase().includes(this.search.toLowerCase())
+      return this.beaches.filter(
+        (item) =>
+          item.name.toLowerCase().includes(this.search.toLowerCase()) ||
+          item.municipality.toLowerCase().includes(this.search.toLowerCase()) ||
+          item.province.toLowerCase().includes(this.search.toLowerCase()) ||
+          item.description.toLowerCase().includes(this.search.toLowerCase())
       );
     },
   },
@@ -61,6 +64,16 @@ export default {
     setImage(img) {
       return process.env.VUE_APP_STATIC + img;
     },
+
+    //FUNCIÓN PARA ENVIAR EL ID DE LA PLAYA PARA MOSTRAR DATOS COMPLETOS
+
+    sendBeachIdToShow(index) {
+      let beachId = this.beaches[index].id;
+      //console.log(beachId);
+      this.$emit("sendIdShow", beachId);
+    },
+
+    //FUNCIÓN PARA ENVIAR EL ID DE LA PLAYA PARA COMENZAR UNA RESERVA
 
     sendBeachIdToReserve(index) {
       let beachId = this.beaches[index].id;

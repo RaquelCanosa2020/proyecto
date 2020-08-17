@@ -150,6 +150,8 @@ export default {
     setImage(img) {
       return process.env.VUE_APP_STATIC + img;
     },
+
+    //FUNCIÓN PARA VER LOS VOTOS DE UNA PLAYA
     async seeVotes(id) {
       id = this.$route.params.id;
       try {
@@ -163,7 +165,7 @@ export default {
         this.errorMessageVotes = error.response.data.message;
       }
     },
-
+    //FUNCIÓN PARA VER LAS FOTOS DE UNA PLAYA HECHAS POR USUARIOS
     async seePhotos(id) {
       id = this.$route.params.id;
       try {
