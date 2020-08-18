@@ -1,0 +1,10 @@
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('reserved', '2020/08/12', 19, 1, 3, 3, 19);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('reserved', '2020/08/18', 11, 4, 3, 2, 12);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('finished', '2019/08/21', 20, 2, 3, 5, 5);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('finished', '2019/08/10', 19, 4, 3, 3, 9);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('paid', '2020/08/07', 13, 4, 3, 5, 15);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('paid', '2020/08/09', 21, 2, 3, 1, 3);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('cancelled', '2019/08/06', 19, 2, 3, 5, 12);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('finished', '2019/08/19', 18, 2, 3, 4, 20);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('finished', '2019/08/02', 11, 2, 3, 2, 9);
+insert into reservations (state, visit_date, visit_hour, number_of_places, fee_euros, id_beach, id_user) values ('paid', '2020/08/02', 21, 4, 3, 1, 6);

@@ -21,7 +21,9 @@
 
       <img :src="setImage(newAvatar)" />
 
-      <form name="subida-imagenes" type="POST" enctype="multipart/formdata">
+      <button @click="upload =! upload">Cambiar foto</button>
+
+      <form v-show="upload" name="subida-imagenes" type="POST" enctype="multipart/formdata">
         <input type="file" ref="uploadedImage" />
         <input type="submit" name="subir-imagen" value="Enviar imagen" @click="uploadImage" />
       </form>
@@ -36,12 +38,13 @@
         <input type="password" placeholder="Nueva contraseña" v-model="newPassword" />
 
         <button id="editPassword" @click="updatePassword()">Cambiar</button>
-        <button id="cancel" @click="seePassword = false">Cancelar</button>
+        <button id="cancel" @click="seePassword = false, seeData = true">Cancelar</button>
       </p>
     </section>
 
     <section v-show="showReserv">
-      <p>{{errorMessage}}</p>
+      <button @click="showReserv = false, seeData=true">Volver</button>
+      <listreservation :reservations="reservations" />
     </section>
 
     <section v-show="showBeach">
@@ -62,7 +65,7 @@ import {
   getId,
   sweetAlertOk,
   sweetAlertNotice,
-  sweetAlertBorrar,
+  sweetAlertErase,
 } from "../../api/utils";
 
 import axios from "axios";
@@ -81,10 +84,11 @@ export default {
     return {
       seeData: true,
       seePassword: false,
-      showReserv: false,
+      showReserv: true,
       showBeach: false,
       showPhotos: false,
       vote: true,
+      upload: false,
       userId: "",
       newName: "",
       newEmail: "",
@@ -138,7 +142,7 @@ export default {
       }
     },
 
-    //FUNCIÓN PARA RECUPERAR IMAGEN QUE INCLUYE EL USUARIO
+    //FUNCIÓN PARA RECUPERAR IMAGEN QUE INCLUYE EL USUARIO <p>{{errorMessage}}</p>
     uploadImage() {
       this.uploadedImage = this.$refs.uploadedImage.files[0];
 
@@ -291,7 +295,7 @@ export default {
 
     async erasePhoto(Photoid) {
       console.log(Photoid);
-      sweetAlertBorrar();
+      sweetAlertErase();
 
       try {
         const response = await axios.delete(
@@ -309,8 +313,14 @@ export default {
 </script>
 <style scoped>
 div {
-  height: 100vh;
+  min-height: 100vh;
 }
+section#userdata {
+  background-color: #ebecf186;
+  width: 60%;
+  margin: auto;
+}
+
 .textarea {
   width: 250px;
   height: 150px;

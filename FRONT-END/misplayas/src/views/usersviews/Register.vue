@@ -23,15 +23,16 @@
       <input type="password" v-model="password2" placeholder="Repite Contraseña" />
     </p>
 
-    <button @click="addUser()">Registrarse</button>
+    <input type="checkbox" value="accept" v-model="accept" />
+    <span>Acepto la Política de Privacidad</span>
 
-    <p class="error" v-show="error">❌ {{messageError}}</p>
-    <p class="ok">{{message}}</p>
+    <button @click="addUser()">Registrarse</button>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+import { sweetAlertOk, sweetAlertNotice } from "../../api/utils";
 export default {
   name: "Register",
   data() {
@@ -40,9 +41,7 @@ export default {
       email: "",
       password1: "",
       password2: "",
-      message: "",
-      messageError: "",
-      error: false,
+      accept: false,
     };
   },
   methods: {
@@ -51,6 +50,14 @@ export default {
         alert("los campos de contraseña no coinciden");
       } else {
         try {
+          if (this.accept === false) {
+            const error = new Error();
+
+            sweetAlertNotice(
+              "Debes aceptar la Política de Privacidad para registrarte"
+            );
+            return error;
+          }
           const response = await axios.post(
             "http://localhost:3000/beach/users",
             {
@@ -60,15 +67,14 @@ export default {
             }
           );
 
-          this.message = response.data.message;
+          sweetAlertOk(response.data.message);
           this.error = false;
           this.name = "";
           this.email = "";
           this.password1 = "";
           this.password2 = "";
         } catch (error) {
-          this.error = true;
-          this.messageError = error.response.data.message;
+          sweetAlertNotice(error.response.data.message);
         }
       }
     },

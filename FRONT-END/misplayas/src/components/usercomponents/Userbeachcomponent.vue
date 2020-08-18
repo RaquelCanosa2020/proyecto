@@ -36,8 +36,8 @@ export default {
 };
 </script>
 <style scoped>
-div {
-  background-color: ivory;
+section {
+  background-color: #ebecf186;
   width: 75%;
   margin: auto;
 }

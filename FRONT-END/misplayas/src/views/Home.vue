@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <vue-headful title="misplayas | Home" />
-    <h1>Mis playas</h1>
-    <!--<img src="../assets/sillas.jpg" />-->
+    <h1>Galiplaya</h1>
+    <!-----<img src="https://image.flaticon.com/icons/svg/3075/3075404.svg" />----->
   </div>
 </template>
 
@@ -19,6 +19,6 @@ div.home {
 }
 
 h1 {
-  font-size: 4rem;
+  font-size: 6rem;
 }
 </style>

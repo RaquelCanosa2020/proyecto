@@ -7,6 +7,7 @@
       <p>{{user.name}}</p>
       <p>Rol: {{user.role}}</p>
       <p>{{user.email}}</p>
+      <p>Activo: {{user.active}}</p>
       <p>Fecha de alta: {{formatDateToUser(user.registration_date)}}</p>
       <p>Nº de reservas: {{user.Nºreservas}}</p>
       <p>Nº de plazas reservadas: {{user.Nºplazas}} personas</p>
@@ -14,8 +15,8 @@
 
       <img :src="setImage(user.image)" />
 
-      <!--- <button @click="sendIdEdit(index)">Editar</button>
-      <button @click="sendIdErase(index)">Borrar</button>--->
+      <button @click="sendIdEdit(index)">Editar</button>
+      <button @click="sendIdErase(index)">Borrar</button>
     </div>
   </div>
 </template>
@@ -56,16 +57,16 @@ export default {
     },
 
     //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
-    /*  sendIdEdit(index) {
-      let userId = this.useres[index].id;
-      //console.log(userId);
-      this.$emit("sendEdit", userId);
+    sendIdEdit(index) {
+      let userData = this.users[index];
+
+      this.$emit("sendEdit", userData);
     },
     sendIdErase(index) {
       let userId = this.users[index].id;
-      //console.log(userId);
+
       this.$emit("sendErase", userId);
-    },*/
+    },
 
     //FUNCION PARA FORMATEAR FECHA
     formatDateToUser(date) {

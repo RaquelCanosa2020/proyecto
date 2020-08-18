@@ -1,18 +1,21 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link :to="{name:'Home'}">Home</router-link>|
-      <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>|
-      <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>|
-      <router-link :to="{name:'Buscador'}">Buscador</router-link>|
-      <router-link :to="{name:'About'}">About</router-link>|
-      <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>|
+      <router-link :to="{name:'Home'}">Home</router-link>
+      <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>
+      <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>
+      <router-link :to="{name:'Buscador'}">Busca y Reserva</router-link>
+      <router-link :to="{name:'About'}">About</router-link>
+      <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
       <router-link v-show="logged" :to="{name:'Usuario'}">Mi perfil</router-link>
       <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
-
-      <p v-show="logged">Hola {{username}}</p>
-      <button v-show="logged" @click="logoutUser()">Logout</button>
     </div>
+
+    <section id="header">
+      <p v-show="logged">Hola {{username}}</p>
+      <button id="logout" v-show="logged" @click="logoutUser()">Logout</button>
+    </section>
+
     <router-view />
     <footercustom />
   </div>
@@ -88,8 +91,9 @@ export default {
 </script>
 
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Delius, Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -98,14 +102,24 @@ export default {
   background-size: cover;
 }
 
+section#header {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 3rem;
+  margin-top: -5rem;
+  font-size: 1.7rem;
+  font-weight: bold;
+}
+
 #nav {
-  padding: 30px;
+  padding: 30px 0 100px 0;
 }
 
 #nav a {
   font-weight: bold;
   color: #ebecf1;
   font-size: 1.3rem;
+  padding: 1rem;
 }
 
 #nav a.router-link-exact-active {
@@ -136,6 +150,12 @@ button {
 }
 button:hover {
   border-style: none;
+}
+
+button#logout {
+  position: relative;
+  margin-top: 1rem;
+  margin-right: 2rem;
 }
 
 p.error {

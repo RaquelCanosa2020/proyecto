@@ -62,14 +62,6 @@ const routes = [
       }
     }
   },
-  {
-    path: '/playa/:id',
-    name: 'Playa',
-    component: () => import('../views/beachviews/Beach.vue'),
-    meta: {
-      allowAnon: true
-    }
-  },
 
   {
     path: '/about',

@@ -10,6 +10,7 @@
     <p>Comentario: {{reservation.comment}}</p>
 
     <button @click="voteOption">Votar</button>
+    <button @click="eraseReserv">Anular reserva</button>
 
     <section v-show="vote">
       <input type="text" placeholder="Valoración" v-model="newValue" />
@@ -17,16 +18,18 @@
       <input class="textarea" type="textarea" placeholder="Comentario" v-model="newComment" />
 
       <button @click="voteReserv">Aceptar</button>
-
-      <p>{{message}}</p>
-      <p>{{errorMessage}}</p>
     </section>
   </div>
 </template>
 
 
 <script>
-import { getAuthToken, sweetAlertNotice } from "../../api/utils";
+import {
+  getAuthToken,
+  sweetAlertNotice,
+  sweetAlertErase,
+  sweetAlertOk,
+} from "../../api/utils";
 import axios from "axios";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -41,8 +44,6 @@ export default {
       newValue: "",
       newComment: "",
       vote: false,
-      errorMessage: "",
-      message: "",
     };
   },
 
@@ -76,11 +77,31 @@ export default {
             comment: comment,
           }
         );
-        this.message = response.data.message;
+        sweetAlertOk(response.data.message);
       } catch (error) {
         //this.errorMessage = error.response.data.message
         sweetAlertNotice(error.response.data.message);
         this.vote = false;
+      }
+    },
+
+    async eraseReserv() {
+      let id = this.reservation.id;
+      console.log(id);
+      const token = getAuthToken();
+      axios.defaults.headers.common["Authorization"] = `${token}`;
+      sweetAlertErase;
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/reservations/${id}`
+        );
+
+        sweetAlertOk(response.data.message);
+        setTimeout(() => {
+          location.reload();
+        }, 2000);
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
       }
     },
 
@@ -99,7 +120,7 @@ export default {
 </script>
 <style scoped>
 div {
-  background-color: ivory;
+  background-color: #ebecf186;
   width: 75%;
   margin: auto;
 }

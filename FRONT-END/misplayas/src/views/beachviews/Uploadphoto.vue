@@ -3,7 +3,7 @@
     <vue-headful title="misplayas | Subir foto" />
 
     <h1>Sube fotos de tus playas</h1>
-    <label>Elige la playa:u</label>
+    <label>Elige la playa:</label>
     <select v-model="selectedBeach">
       <option
         v-for="beach in beaches"

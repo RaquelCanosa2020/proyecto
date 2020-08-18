@@ -1,7 +1,6 @@
 <template>
   <div class="home">
     <vue-headful title="misplayas | Buscador" />
-    <img src="https://image.flaticon.com/icons/svg/3075/3075404.svg" />
 
     <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
     <div id="list" v-show="list">
@@ -30,7 +29,7 @@
 
       <!-----BUSCADOR AVANZADO (FECHA Y Nº DE PLAZAS A RESERVAR)--->
 
-      <button @click="getNumber">Avanzado</button>
+      <button @click="getAdvanced">Avanzado</button>
 
       <article v-show="advanced" id="advanced">
         <section id="dateplaces">
@@ -53,6 +52,32 @@
         </section>
 
         <!-----AVANZADO (OPCIONES Y SERVICIOS DE LAS PLAYAS)--->
+        <section id="location">
+          <p>Tipo de playa:</p>
+          <select id="type" v-model="type">
+            <option value="Urbana">Urbana</option>
+            <option value="Semiurbana">Semiurbana</option>
+            <option value="Aislada">Aislada</option>
+          </select>
+
+          <p>Provincia:</p>
+          <select id="province" v-model="province">
+            <option value="A Coruña">A Coruña</option>
+            <option value="Lugo">Lugo</option>
+            <option value="Ourense">Ourense</option>
+            <option value="Pontevedra">Pontevedra</option>
+          </select>
+
+          <p>Municipio:</p>
+          <select id="municipality" v-model="municipality">
+            <option
+              :class="{hidden: province !== muni.province}"
+              v-for="muni in beachesMun"
+              :key="muni.id"
+              :value="muni.municipality"
+            >{{muni.municipality}}</option>
+          </select>
+        </section>
 
         <section id="options">
           <label>Salvamento</label>
@@ -70,7 +95,9 @@
           <label>WC</label>
           <input type="checkbox" value="toilet" v-model="toiletSaved" />
         </section>
+        <button @click="hide">Volver a sencillo</button>
       </article>
+
       <!--------FIN BUSCADOR AVANZADO--->
 
       <button @click="searchBeaches()">Buscar</button>
@@ -214,6 +241,7 @@ import {
   getId,
   setServices,
   sweetAlertNotice,
+  sweetAlertOk,
 } from "../../api/utils";
 export default {
   name: "Advancedsearch",
@@ -225,6 +253,7 @@ export default {
   data() {
     return {
       beaches: [],
+      beachesMun: [],
       order: "",
       direction: "",
       list: true,
@@ -300,20 +329,35 @@ export default {
       return monthNames[number - 1];
     },
 
-    //FUNCIÓN PARA GENERAR LAS HORAS EN EL BUSCADOR
-    getNumber() {
-      let arrayNumber = [""];
-      for (let number = 0; number <= 24; number++) {
-        if (number < 10) {
-          number = "0" + number;
-        } else {
-          number = number;
+    //FUNCIÓN PARA GENERAR LAS HORAS EN EL BUSCADOR Y
+
+    //PARA CONSEGUIR MUNICIPIOS DE LAS PLAYAS EN LA BD
+
+    async getAdvanced() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/beaches/municipalities"
+        );
+        this.beachesMun = response.data.data.info;
+
+        console.log(response.data.data.info);
+
+        let arrayNumber = [""];
+
+        for (let number = 0; number <= 24; number++) {
+          if (number < 10) {
+            number = "0" + number;
+          } else {
+            number = number;
+          }
+          arrayNumber.push(number);
         }
-        arrayNumber.push(number);
+        this.numbers = arrayNumber;
+
+        this.advanced = true;
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
       }
-      this.numbers = arrayNumber;
-      console.log(this.numbers);
-      this.advanced = true;
     },
 
     //FUNCIÓN PARA CONSEGUIR VISIT A PARTIR DE FECHA Y HORA
@@ -329,6 +373,12 @@ export default {
       return datehour;
     },
 
+    //FUNCIÓN PARA  OCULTAR BÚSQUEDA AVANZADA, Y QUE BORRE LAS OPCIONES
+    hide() {
+      this.advanced = false;
+      location.reload();
+    },
+
     //FUNCIÓN PARA  VOLVER DEL BUSCADOR, QUE BORRE EL AVISO DE LA RESERVA
     //Y QUE SE GUARDEN LAS OPCIONES DEL BUSCADOR
     comeback() {
@@ -340,11 +390,16 @@ export default {
       this.photos = [];
       this.errorMessageVotes = "";
       this.errorMessagePhotos = "";
-      //PARA QUE OCULTE LA INFO DE LA PLAYA Y VUELVA A LA LISTA
+      //PARA QUE OCULTE LA INFO DE LA RESERVA Y VUELVA A LA LISTA
       this.reservation = false;
       this.notice = false;
       this.info = false;
       this.list = true;
+      this.visitReservation = "";
+      this.placesReservation = "";
+      this.ccNumber = "";
+      this.reservInfo = "";
+
       //PARA QUE GUARDE LAS OPCIONES QUE SELECCIONÓ EL USUARIO ANTES DE PASAR DE PANTALLA
       this.lifesaving = this.lifesavingSaved;
       this.bar_restaurant = this.bar_restaurantSaved;
@@ -406,6 +461,7 @@ export default {
         this.list = false;
         this.info = false;
         this.reservation = true;
+        this.pending = true;
         //SE GENERAN LAS HORAS
         this.getNumber();
         //SI HAY FECHA, HORA Y PLAZAS EN EL BUSCADOR, SE PASAN A LA RESERVA (SE PUEDEN CAMBIAR)
@@ -447,7 +503,7 @@ export default {
         );
         this.reservInfo = true;
         this.pending = false;
-        this.messageConfirm = response.data.message;
+        sweetAlertOk(response.data.message);
         //UNA VEZ ACEPTADA, VACIAMOS LOS CAMPOS
         this.dateReservation = "";
         this.hourReservation = "";
@@ -456,6 +512,20 @@ export default {
       } catch (error) {
         //this.notice = true;
         //this.errorMessage = error.response.data.message;
+        sweetAlertNotice(error.response.data.message);
+      }
+    },
+
+    //FUNCIÓN PARA CONSEGUIR MUNICIPIOS DE LAS PLAYAS EN LA BD
+
+    async getMunic() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/beaches/municipalities"
+        );
+        this.beachesMun = response.data.info;
+        console.log(response.data);
+      } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
     },
@@ -481,11 +551,14 @@ export default {
             toilet: this.toiletSaved,
             visit: visit,
             places: this.places,
+            type: this.type,
+            municipality: this.municipality,
+            province: this.province,
           }
         );
         this.beaches = response.data.data;
       } catch (error) {
-        console.log(error);
+        sweetAlertNotice(error.response.data.message);
         this.seeModal = true;
       }
     },
@@ -505,7 +578,7 @@ export default {
         this.global = response.data.rating;
       } catch (error) {
         console.log(error);
-        this.errorMessageVotes = error.response.data.message;
+        sweetAlertNotice(error.response.data.message);
       }
     },
     //FUNCIÓN PARA VER LAS FOTOS DE UNA PLAYA HECHAS POR USUARIOS
@@ -517,7 +590,7 @@ export default {
         this.photos = response.data.data;
       } catch (error) {
         console.log(error);
-        this.errorMessagePhotos = error.response.data.message;
+        sweetAlertNotice(error.response.data.message);
       }
     },
   },
@@ -541,11 +614,19 @@ input#ccNumber {
   width: 500px;
   height: 20px;
 }
+
+article#advanced select {
+  height: 20px;
+}
 input {
   width: 10px;
   height: 10px;
   font-size: 1rem;
   margin: 1rem;
+}
+
+.hidden {
+  display: none;
 }
 .modal {
   position: fixed;
@@ -564,7 +645,8 @@ input {
   border: 1px solid #888;
 }
 section#order,
-section#dateplaces {
+section#dateplaces,
+section#location {
   display: flex;
   justify-content: center;
   margin: auto;

@@ -1,0 +1,56 @@
+TABLAS: todas llevan además la fecha de creación/actualización.
+
+1. beaches (#id, name, type, municipality, utm, description, start_time, end_time, capacity, lifesaving, blue_flag, sea_conditions, bar_restaurant, toilet, showers, access, disabled_access, public_transport, green_area, pets_area, sports, average_rating, available_places)
+
+2. users (#id, first_name, last_name, id_number, date_of_birth, email, password, nickname, country, profile_picture)
+
+3. reservations (#id, state, visit_date, visit_hour, number_of_places, fee_euros, -id_beach, -id_user) 
+
+4. payments (#id, code, payment_dayhour, entity, user_name, concept, total_euros, credit_card_owner, credit_card_number, credit_car_expire_date, -id_reservation) 
+
+5.ratings (#id, rating_value, comment, favorite_beach, type_of_visit, -id_reservation) 
+
+6. photographs (#id, link, description, -id_beach, -id_user)
+
+
+NOTAS:
+
+He considerado el caso más sencillo, para cada reserva hay que efectuar un pago. La reserva se efectúa a nombre de un usuario, que debe estar registrado. Puede reservar hasta 5 plazas por reserva. 
+
+Cada playa tiene una serie de características, por las que el usuario podrá buscar la que le convenga, si es que hay sitio para la hora que desea. 
+
+En la info de la playa la idea es que también aparezca siempre las plazas disponibles y la valoración media de los usuarios (serán campos calculados).
+
+En "payments" el user_name y concept se sacarán de los datos del usuario y de la reserva, pero entiendo que deben quedar grabados en cada pago, por si hay modificaciones posteriores en los datos de usuario, tarifa... Me he inventado una entidad que es la que cobra, para que aparezca en el pago/justificante de la reserva (playas de Galicia).
+
+Los usuarios evalúan cada reserva. La idea es que para la valoración media de cada playa se tenga en cuenta la última valoración de cada usuario para esa playa (ya que un usuario puede ir varias veces a la misma playa y su valoración puede cambiar). Cada usuario puede marcar la playa como favorita (más adelante se podría incluir un campo sobre el número de usuarios que tienen cada playa como favorita).
+
+Los usuarios pueden subir fotografías de las playas. Cada playa puede tener una o varias fotos, bien subidas por los usuarios o bien subidas por la entidad.
+
+
+
+intento de bajar datos de playas de API puedo bajar datos por provincia pej dataLugo, así como buscar los datos que me interesan (aunque no se corresponden exactamente a mi BBDD) haciendo map.
+
+async function getData() {
+  const requestData = await fetch('https://opendata.arcgis.com/datasets/84ddbc8cf4104a579d579f6441fcaa8a_0.geojson');
+  const data = await requestData.json();
+  const dataKeys = data.features;
+
+ const dataLugo = dataKeys.filter((value) => value.properties.Provincia === 'Lugo');
+  console.log(dataLugo);
+
+dataLugo.map((value) => {
+    console.log(`coordenadas ${value.geometry.coordinates}, 
+      acceso a discapacitados ${value.properties.Acceso_dis}`);
+  });
+}
+getData();
+
+Datos BEACHES. Correspondencia con API (..properties., excepto geometry.coordinates):
+
+name: Nombre
+type: Grado_urba, municipality, utm, description, start_time, end_time, capacity, lifesaving, blue_flag, sea_conditions, bar_restaurant, toilet, showers, access, disabled_access, public_transport, green_area, pets_area, sports, average_rating, available_places)
+
+
+     OJO, CAMBIAR FECHA Y HORA VISITA POR UN SOLO CAMPO DATETIME (OBS. DE SANTI)
+

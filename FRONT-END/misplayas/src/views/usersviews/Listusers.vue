@@ -18,17 +18,44 @@
           <option value="desc">Descendente</option>
         </select>
       </div>
+      <button @click="getUsers">Ordenar</button>
     </section>
 
-    <listuserscomponent :users="users" />
+    <listuserscomponent v-on:sendEdit="showData" v-on:sendErase="eraseUser" :users="users" />
+
+    <!---FIN ID LIST----->
+
+    <!----MODAL PARA ACTUALIZAR CLIENTE-->
+    <div v-show="seeModal" class="modal">
+      <div class="modalBox">
+        <h3>Editar datos</h3>
+        <p>{{id}}</p>
+        <input type="text" placeholder="Nombre del cliente" v-model="name" />
+        <br />
+        <input type="text" placeholder="Rol" v-model="role" />
+        <br />
+        <input type="text" placeholder="Email" v-model="email" />
+        <br />
+        <input type="number" placeholder="Activo" v-model="active" />
+        <img :src="setImage(image)" />
+        <br />
+        <button @click="updateUser()">Actualizar cliente</button>
+
+        <button @click="seeModal =! seeModal">Cancelar</button>
+      </div>
+    </div>
   </div>
-  <!---FIN ID LIST----->
 </template>
 
 <script>
 import axios from "axios";
 import listuserscomponent from "../../components/usercomponents/Listuserscomponent.vue";
-import { setServices, getAuthToken, getId } from "../../api/utils";
+import {
+  getAuthToken,
+  sweetAlertOk,
+  sweetAlertNotice,
+  sweetAlertErase,
+} from "../../api/utils";
 
 export default {
   name: "Listusers",
@@ -40,14 +67,19 @@ export default {
       users: [],
       order: "",
       direction: "",
+      id: null,
+      name: "",
+      role: "",
+      email: "",
+      active: "",
+      image: "",
+      seeModal: false,
     };
   },
   methods: {
     //FUNCIÓN PARA LISTAR LOS CLIENTES
     async getUsers() {
-      console.log("hola");
       const token = getAuthToken();
-
       axios.defaults.headers.common["Authorization"] = `${token}`;
 
       try {
@@ -58,7 +90,70 @@ export default {
 
         this.users = response.data.data;
       } catch (error) {
-        console.log(error);
+        sweetAlertNotice(error.response.data.message);
+      }
+    },
+    showData(userData) {
+      this.seeModal = true;
+      this.id = userData.id;
+      this.name = userData.name;
+      this.role = userData.role;
+      this.email = userData.email;
+      this.active = userData.active;
+      this.image = userData.image;
+    },
+
+    async updateUser() {
+      const token = getAuthToken();
+      axios.defaults.headers.common["Authorization"] = `${token}`;
+
+      try {
+        let userNewData = new FormData();
+        userNewData.append("name", this.name);
+        userNewData.append("email", this.email);
+        userNewData.append("role", this.role);
+        userNewData.append("active", this.active);
+        userNewData.append("avatar", this.image);
+
+        const response = await axios.put(
+          "http://localhost:3000/beach/users/" + this.id,
+
+          userNewData,
+          { header: { "Content-Type": "multipart/form-data" } }
+        );
+        sweetAlertOk(response.data.message);
+
+        setTimeout(() => {
+          this.seeModal = false;
+          location.reload();
+        }, 2000);
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
+      }
+    },
+    setImage(img) {
+      if (img === null) {
+        let avatar = "Avatar.jpg";
+        return process.env.VUE_APP_STATIC + avatar;
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
+    },
+
+    async eraseUser(userId) {
+      const token = getAuthToken();
+      axios.defaults.headers.common["Authorization"] = `${token}`;
+      sweetAlertErase();
+
+      try {
+        const response = await axios.delete(
+          "http://localhost:3000/beach/users/" + userId
+        );
+
+        sweetAlertOk(response.data.message);
+        location.reload();
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
       }
     },
   },
