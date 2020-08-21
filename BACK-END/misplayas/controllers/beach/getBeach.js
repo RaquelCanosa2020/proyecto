@@ -2,6 +2,7 @@ const { getConnection } = require("../../db");
 const { setMinutes, setSeconds } = require("date-fns");
 const { formatDateToDB, formatDateToUser, setZero } = require("../../helpers");
 
+
 async function getBeach(req, res, next) {
   let connection;
 
@@ -91,12 +92,15 @@ async function getBeach(req, res, next) {
       aviso = "playa inactiva en la web de reservas. Pregunte disponibilidad en el correspondiente Ayuntamiento."
     }
 
+
+
     res.send({
       status: "ok",
       data: {
         info: result[0],
         disponibilidad: `plazas disponibles actualmente para la fecha ${visitUser}: ${free} plazas`,
         aviso, //aviso en caso de que hora o mes no se corresponda
+
       },
     });
   } catch (error) {

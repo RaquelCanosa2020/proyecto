@@ -23,6 +23,14 @@ const routes = [
       allowAnon: true
     }
   },
+  {
+    path: '/beach/:id',
+    name: 'Playa',
+    component: () => import('../views/beachviews/Onebeachview.vue'),
+    meta: {
+      allowAnon: true
+    }
+  },
 
   {
     path: '/lista Playas',

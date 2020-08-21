@@ -7,7 +7,7 @@
       <router-link :to="{name:'Buscador'}">Busca y Reserva</router-link>
       <router-link :to="{name:'About'}">About</router-link>
       <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
-      <router-link v-show="logged" :to="{name:'Usuario'}">Mi perfil</router-link>
+      <router-link v-show="logged" :to="{name:'Usuario'}">Tus cosas</router-link>
       <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
     </div>
 
@@ -16,7 +16,7 @@
       <button id="logout" v-show="logged" @click="logoutUser()">Logout</button>
     </section>
 
-    <router-view />
+    <router-view @login="setUserName" />
     <footercustom />
   </div>
 </template>
@@ -46,17 +46,25 @@ export default {
   },
   methods: {
     async setUserName(userId) {
-      userId = getId();
-      const token = getAuthToken();
-      axios.defaults.headers.common["Authorization"] = `${token}`;
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/beach/users/" + userId
-        );
+      //incluyo este ifelse, para que en la parte pública no pida el nombre del usuario,
+      //para que no de error en la consola (ya que no encuentra al usuario id null)
+      this.getLoging();
+      if (this.logged === false) {
+        console.log("usuario no registrado");
+      } else {
+        userId = getId();
+        const token = getAuthToken();
+        axios.defaults.headers.common["Authorization"] = `${token}`;
+        try {
+          const response = await axios.get(
+            "http://localhost:3000/beach/users/" + userId
+          );
 
-        this.username = response.data.data.name;
-      } catch (error) {
-        console.log(error);
+          this.username = response.data.data.name;
+          this.isAdmin();
+        } catch (error) {
+          console.log(error);
+        }
       }
     },
     getLoging() {
@@ -73,13 +81,10 @@ export default {
     },
     logoutUser() {
       logout();
+      this.username = "";
       this.logged = false;
+      this.admin = false;
       this.$router.push("/login");
-      setTimeout(() => {
-        location.reload();
-
-        // window.history.back();
-      }, 500);
     },
   },
   created() {

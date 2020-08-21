@@ -69,7 +69,7 @@ const voteReservationSchema = Joi.object().keys({
       )
     ),
   comment: Joi.string()
-
+    .min(0)
     .max(500)
     .error(
       generateError(

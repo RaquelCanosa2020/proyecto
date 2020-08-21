@@ -54,14 +54,14 @@
         <!-----AVANZADO (OPCIONES Y SERVICIOS DE LAS PLAYAS)--->
         <section id="location">
           <p>Tipo de playa:</p>
-          <select id="type" v-model="type">
+          <select id="type" v-model="typeSaved">
             <option value="Urbana">Urbana</option>
             <option value="Semiurbana">Semiurbana</option>
             <option value="Aislada">Aislada</option>
           </select>
 
           <p>Provincia:</p>
-          <select id="province" v-model="province">
+          <select id="province" v-model="provinceSaved">
             <option value="A Coruña">A Coruña</option>
             <option value="Lugo">Lugo</option>
             <option value="Ourense">Ourense</option>
@@ -71,7 +71,7 @@
           <p>Municipio:</p>
           <select id="municipality" v-model="municipality">
             <option
-              :class="{hidden: province !== muni.province}"
+              :class="{hidden: provinceSaved !== muni.province}"
               v-for="muni in beachesMun"
               :key="muni.id"
               :value="muni.municipality"
@@ -80,19 +80,29 @@
         </section>
 
         <section id="options">
-          <label>Salvamento</label>
+          <label>
+            <img src="@/assets/lifesaving.png" />
+          </label>
           <input type="checkbox" value="lifesaving" v-model="lifesavingSaved" />
 
-          <label>Hostelería</label>
+          <label>
+            <img src="@/assets/bar_restaurant.png" />
+          </label>
           <input type="checkbox" value="bar_restaurant" v-model="bar_restaurantSaved" />
 
-          <label>Acceso d.funcional</label>
+          <label>
+            <img src="@/assets/disabled_access.png" />
+          </label>
           <input type="checkbox" value="disabled_access" v-model="disabled_accessSaved" />
 
-          <label>Parking</label>
+          <label>
+            <img src="@/assets/parking.png" />
+          </label>
           <input type="checkbox" value="parking" v-model="parkingSaved" />
 
-          <label>WC</label>
+          <label>
+            <img src="@/assets/toilet.png" />
+          </label>
           <input type="checkbox" value="toilet" v-model="toiletSaved" />
         </section>
         <button @click="hide">Volver a sencillo</button>
@@ -105,7 +115,7 @@
       <!----MODAL DE NO HAY DATOS-->
       <div v-show="seeModal" class="modal">
         <div class="modalBox">
-          <h3>No hay datos con los criterios de búsqueda</h3>
+          <h3>{{errorMessage}}</h3>
 
           <button @click="seeModal =! seeModal">Aceptar</button>
         </div>
@@ -116,7 +126,7 @@
       ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
 
       <searchbeachescomponent
-        v-on:sendIdReserve="seeData"
+        v-on:sendDataReserve="seeData"
         v-on:sendIdShow="showData"
         :beaches="beaches"
       />
@@ -133,13 +143,33 @@
           <p>Tipo: {{type}}</p>
           <p>Descripción: {{description}}</p>
           <p>Capacidad: {{capacity}} personas</p>
+          <p>{{disponibilidad}}</p>
           <p>Horario: de {{start_time}} a {{end_time}}</p>
           <p>Meses de reserva obligatoria: de {{nameMonth(start_month)}} a {{nameMonth(end_month)}}</p>
           <p>Valoración media de usuarios usuarios: {{voteAverage}}</p>
           <p>Servicios:</p>
-          <p>Salvamento: {{lifesaving}}, Parking: {{parking}}, WC: {{toilet}}, Hostelería: {{bar_restaurant}}, Acceso minusv: {{disabled_access}}</p>
-
-          <p class="error">{{errorMessageData}}</p>
+          <ul>
+            <li>
+              <img src="@/assets/lifesaving.png" />
+              {{lifesaving}}
+            </li>
+            <li>
+              <img src="@/assets/parking.png" />
+              {{parking}}
+            </li>
+            <li>
+              <img src="@/assets/toilet.png" />
+              {{toilet}}
+            </li>
+            <li>
+              <img src="@/assets/bar_restaurant.png" />
+              {{bar_restaurant}}
+            </li>
+            <li>
+              <img src="@/assets/disabled_access.png" />
+              {{disabled_access}}
+            </li>
+          </ul>
 
           <img id="principal" :src="setImage(image)" />
           <button @click="comeback()">Volver al Buscador</button>
@@ -152,7 +182,6 @@
 
           <!--IMPORTAMOS COMPONENTE DE FOTOS--->
           <photoscomponent :photos="photos" />
-          <p class="error">{{errorMessagePhotos}}</p>
         </section>
       </article>
 
@@ -164,7 +193,6 @@
           <!--IMPORTAMOS COMPONENTE DE RATINGS--->
 
           <ratingscomponent :global="global" :votes="votes" />
-          <p class="error">{{errorMessageVotes}}</p>
         </section>
       </article>
     </div>
@@ -173,7 +201,8 @@
 
     <!-------⌚-INICIO RESERVA--->
     <div id="reservation" v-show="reservation">
-      <p>Playa: {{beachId}}</p>
+      <p>Playa: Nº.{{beachId}}, {{name}}</p>
+      <p>Municipio: {{municipality}}, Provincia: {{province}}</p>
 
       <!-------FECHA Y Nº DE PLAZAS A RESERVAR--->
       <section id="dateplaces">
@@ -220,8 +249,7 @@
         <li>{{messageConfirm.notice}}</li>
       </ul>
 
-      <!----<p class="error" id="reserv" v-show="notice">{{errorMessage}}</p>--->
-      <button v-show="pending" @click="acceptReservation">Aceptar</button>
+      <button @click="acceptReservation">Confirmar y pagar</button>
 
       <button @click="comeback()">Volver</button>
     </div>
@@ -232,7 +260,7 @@
 
 <script>
 import axios from "axios";
-
+import spinner from "@/components/Spinner.vue";
 import searchbeachescomponent from "../../components/beachcomponents/Searchbeachescomponent.vue";
 import photoscomponent from "../../components/beachcomponents/Photoscomponent.vue";
 import ratingscomponent from "../../components/beachcomponents/Ratingscomponent.vue";
@@ -249,6 +277,7 @@ export default {
     searchbeachescomponent,
     photoscomponent,
     ratingscomponent,
+    spinner,
   },
   data() {
     return {
@@ -268,10 +297,16 @@ export default {
       beachId: null,
       name: "",
       municipality: "",
+      municipalitySaved: "",
       province: "",
+      provinceSaved: "",
       description: "",
       type: "",
+      typeSaved: "",
       capacity: "",
+      free: "",
+      disponibilidad: "",
+      aviso: "",
       start_time: "",
       end_time: "",
       start_month: "",
@@ -288,7 +323,6 @@ export default {
       toilet: false,
       toiletSaved: false,
       disponibilidad: "",
-      aviso: "",
       image: "",
       ccNumber: "",
       messageConfirm: {},
@@ -301,36 +335,13 @@ export default {
       global: "",
       votes: [],
       photos: [],
-      errorMessageData: "",
-      errorMessageVotes: "",
-      errorMessagePhotos: "",
+      errorMessage: "",
       reservInfo: false,
-      pending: "true",
+      spinner: true,
     };
   },
+
   methods: {
-    //FUNCIÓN PARA ASIGNAR NOMBRE A LOS MESES
-    nameMonth(number) {
-      const monthNames = [
-        "enero",
-        "febrero",
-        "marzo",
-        "abril",
-        "mayo",
-        "junio",
-        "julio",
-        "agosto",
-        "septiembre",
-        "octubre",
-        "noviembre",
-        "diciembre",
-      ];
-
-      return monthNames[number - 1];
-    },
-
-    //FUNCIÓN PARA GENERAR LAS HORAS EN EL BUSCADOR Y
-
     //PARA CONSEGUIR MUNICIPIOS DE LAS PLAYAS EN LA BD
 
     async getAdvanced() {
@@ -339,28 +350,30 @@ export default {
           "http://localhost:3000/beaches/municipalities"
         );
         this.beachesMun = response.data.data.info;
-
         console.log(response.data.data.info);
 
-        let arrayNumber = [""];
-
-        for (let number = 0; number <= 24; number++) {
-          if (number < 10) {
-            number = "0" + number;
-          } else {
-            number = number;
-          }
-          arrayNumber.push(number);
-        }
-        this.numbers = arrayNumber;
-
+        this.getNumber();
         this.advanced = true;
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
     },
 
-    //FUNCIÓN PARA CONSEGUIR VISIT A PARTIR DE FECHA Y HORA
+    //FUNCIÓN PARA GENERAR LAS HORAS EN EL BUSCADOR
+    getNumber() {
+      let arrayNumber = [""];
+      for (let number = 0; number <= 24; number++) {
+        if (number < 10) {
+          number = "0" + number;
+        } else {
+          number = number;
+        }
+        arrayNumber.push(number);
+      }
+      this.numbers = arrayNumber;
+    },
+
+    //FUNCIÓN PARA CONSEGUIR VISIT A PARTIR DE FECHA Y HORA QUE INTRODUZCA EL USUARIO
     getVisit(date, hour) {
       let datehour = "";
 
@@ -379,17 +392,46 @@ export default {
       location.reload();
     },
 
-    //FUNCIÓN PARA  VOLVER DEL BUSCADOR, QUE BORRE EL AVISO DE LA RESERVA
-    //Y QUE SE GUARDEN LAS OPCIONES DEL BUSCADOR
+    //FUNCIÓN PARA BUSCAR PLAYAS CON/SIN CRITERIOS DE BÚSQUEDA
+    async searchBeaches() {
+      let visit = this.getVisit(this.date, this.hour); //MONTAMOS VISIT
+      this.info = false;
+      this.reservation = false;
+      this.list = true; //PARA QUE SOLO SE VEA LA LISTA
+
+      //LLAMADA DE AXIOS A LA API
+
+      try {
+        const response = await axios.post(
+          `http://localhost:3000/beaches/search?order=${this.order}&direction=${this.direction}`,
+          {
+            lifesaving: this.lifesavingSaved,
+            bar_restaurant: this.bar_restaurantSaved,
+            disabled_access: this.disabled_accessSaved,
+            parking: this.parkingSaved,
+            toilet: this.toiletSaved,
+            visit: visit,
+            places: this.places,
+            type: this.type,
+            municipality: this.municipality,
+            province: this.province,
+          }
+        );
+        this.beaches = response.data.data;
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
+        this.seeModal = true;
+      }
+    },
+
+    //FUNCIÓN PARA  VOLVER AL BUSCADOR, QUE SÓLO SE VEA EL LISTADO ,
+    //QUE BORRE EL AVISO DE LA RESERVA, DATOS Y TARJETA
+    //Y QUE SE MANTENGAN LAS OPCIONES DEL BUSCADOR
     comeback() {
-      console.log("antes");
-      //location.reload();
-      //console.log("reload");
       //BORRAR FOTOS Y VOTOS Y MENSAJES DE LA PLAYA QUE ACABA DE MOSTRAR (SI NO, APARECE LO DEL ANTERIOR):
       this.votes = [];
       this.photos = [];
-      this.errorMessageVotes = "";
-      this.errorMessagePhotos = "";
+
       //PARA QUE OCULTE LA INFO DE LA RESERVA Y VUELVA A LA LISTA
       this.reservation = false;
       this.notice = false;
@@ -400,17 +442,53 @@ export default {
       this.ccNumber = "";
       this.reservInfo = "";
 
-      //PARA QUE GUARDE LAS OPCIONES QUE SELECCIONÓ EL USUARIO ANTES DE PASAR DE PANTALLA
+      //PARA QUE GUARDE LAS OPCIONES QUE SELECCIONÓ EL USUARIO ANTES VER O RESREVAR PLAYA
       this.lifesaving = this.lifesavingSaved;
       this.bar_restaurant = this.bar_restaurantSaved;
       this.disabled_access = this.disabled_accessSaved;
       this.parking = this.parkingSaved;
       this.toilet = this.toiletSaved;
-      console.log("final");
+      this.type = this.typeSaved;
+      this.province = this.provinceSaved;
+      this.municipality = this.municipalitySaved;
     },
 
-    //FUNCIÓN PARA VER LOS DATOS DE UNA PLAYA
+    /* async getMeteo() {
+      axios.defaults.headers.common["Access-Control-Allow-Origin"] =
+        "http://servizos.meteogalicia.es";
+      axios.defaults.headers.common["Access-Control-Allow-Headers"] =
+        "Origin, X-Requested-With, Content-Type, Accept";
+      axios.defaults.headers.common["Access-Control-Allow-Methods"] =
+        "GET, POST, PUT, DELETE";
+      const response = await axios.get(
+        "http://servizos.meteogalicia.es/apiv3/findPlaces?types=beach&location=" +
+          `${name}` +
+          "&API_KEY=" +
+          `${process.env.VUE_APP_meteoKey}`
+      );
+
+      const id = await response.data.features[0].properties.id;
+      console.log(id);
+
+      const response1 = await axios.get(
+        "http://servizos.meteogalicia.es/apiv3/getNumericForecastInfo?startTime=2020-08-23T12:00:00&endTime=2020-08-23T12:00:00&locationIds=" +
+          `${id}` +
+          "&variables=temperature,sky_state&API_KEY=" +
+          `${process.env.VUE_APP_meteoKey}`
+      );
+      const info =
+        response1.data.features[0].properties.days[0].variables[0].values[0]
+          .iconURL;
+      const info2 =
+        response1.data.features[0].properties.days[0].variables[1].values[0]
+          .value;
+      console.log(info);
+      console.log(info2);
+    },*/
+
+    //FUNCIÓN PARA VER LOS DATOS DE UNA PLAYA CON/SIN DISPONIBILIDAD
     async showData(beachId) {
+      let visit = this.getVisit(this.date, this.hour);
       this.list = false;
       this.info = true;
       this.reservation = false;
@@ -418,8 +496,7 @@ export default {
         const response = await axios.post(
           `http://localhost:3000/beaches/${beachId}/show`,
           {
-            visit: this.visitReservation,
-            places: this.placesReservation,
+            visit: visit,
           }
         );
 
@@ -444,16 +521,37 @@ export default {
         this.bar_restaurant = setServices(beachData.bar_restaurant);
         this.disabled_access = setServices(beachData.disabled_access);
         this.image = beachData.image;
+        this.disponibilidad = response.data.data.disponibilidad;
       } catch (error) {
-        this.errorMessageData = error.response.data.message;
+        sweetAlertNotice(error.response.data.message);
       }
       this.seeVotes(beachId);
       this.seePhotos(beachId);
+      //this.getMeteo();
+    },
+    //FUNCIÓN PARA ASIGNAR NOMBRE A LOS MESES EN LA INFO DE LA PLAYA
+    nameMonth(number) {
+      const monthNames = [
+        "enero",
+        "febrero",
+        "marzo",
+        "abril",
+        "mayo",
+        "junio",
+        "julio",
+        "agosto",
+        "septiembre",
+        "octubre",
+        "noviembre",
+        "diciembre",
+      ];
+
+      return monthNames[number - 1];
     },
 
     //FUNCIÓN PARA COMENZAR LA RESERVA
 
-    seeData(beachId) {
+    seeData(beachData) {
       const idUser = getId();
       if (idUser === null) {
         this.$router.push("/login"); //SI NO ESTÁ LOGEADO, LO MANDA AL LOGIN
@@ -461,14 +559,16 @@ export default {
         this.list = false;
         this.info = false;
         this.reservation = true;
-        this.pending = true;
         //SE GENERAN LAS HORAS
         this.getNumber();
         //SI HAY FECHA, HORA Y PLAZAS EN EL BUSCADOR, SE PASAN A LA RESERVA (SE PUEDEN CAMBIAR)
         this.dateReservation = this.date;
         this.hourReservation = this.hour;
         this.placesReservation = this.places;
-        this.beachId = beachId;
+        this.beachId = beachData.id;
+        this.name = beachData.name;
+        this.municipality = beachData.municipality;
+        this.province = beachData.province;
       }
     },
 
@@ -502,17 +602,15 @@ export default {
           }
         );
         this.reservInfo = true;
-        this.pending = false;
-        sweetAlertOk(response.data.message);
+        this.messageConfirm = response.data.message;
+        console.log(response.message);
         //UNA VEZ ACEPTADA, VACIAMOS LOS CAMPOS
         this.dateReservation = "";
         this.hourReservation = "";
         this.placesReservation = "";
         this.ccNumber = "";
       } catch (error) {
-        //this.notice = true;
-        //this.errorMessage = error.response.data.message;
-        sweetAlertNotice(error.response.data.message);
+        this.messageConfirm = error.response.data.message;
       }
     },
 
@@ -530,42 +628,14 @@ export default {
       }
     },
 
-    //FUNCIÓN PARA BUSCAR PLAYAS
-    async searchBeaches() {
-      let visit = this.getVisit(this.date, this.hour);
-
-      this.info = false;
-      this.reservation = false;
-      this.list = true;
-
-      //LLAMADA DE AXIOS A LA API
-
-      try {
-        const response = await axios.post(
-          `http://localhost:3000/beaches/search?order=${this.order}&direction=${this.direction}`,
-          {
-            lifesaving: this.lifesavingSaved,
-            bar_restaurant: this.bar_restaurantSaved,
-            disabled_access: this.disabled_accessSaved,
-            parking: this.parkingSaved,
-            toilet: this.toiletSaved,
-            visit: visit,
-            places: this.places,
-            type: this.type,
-            municipality: this.municipality,
-            province: this.province,
-          }
-        );
-        this.beaches = response.data.data;
-      } catch (error) {
-        sweetAlertNotice(error.response.data.message);
-        this.seeModal = true;
-      }
-    },
-
     //FUNCIÓN PARA VER LA IMAGEN PRINCIPAL (en las de usuarios se aplica al componente)
     setImage(img) {
-      return process.env.VUE_APP_STATIC + img;
+      if (!img) {
+        return this.spinner; //esto lo incluyo para que no de error en consola, ya que debe tardar
+        //algo en cargar las fotos y de primeras da 404 (aunque no se llega a ver el spinner)
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
     },
 
     //FUNCIÓN PARA VER LOS VOTOS DE UNA PLAYA
@@ -654,6 +724,11 @@ section#location {
 img {
   width: 80px;
 }
+
+label > img,
+p > img {
+  width: 30px;
+}
 div#list {
   width: 75%;
   margin: auto;
@@ -668,10 +743,19 @@ article#reservation {
   padding-top: 2rem;
 }
 
-ul#reserv {
+ul {
   background-color: #ebecf1;
   list-style: none;
   width: 50%;
+  margin: auto;
+}
+section#data > ul {
+  display: flex;
+  justify-content: space-around;
+}
+
+section#data > img {
+  width: 1000px;
   margin: auto;
 }
 

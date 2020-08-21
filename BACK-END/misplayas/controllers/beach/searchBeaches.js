@@ -269,9 +269,8 @@ async function searchBeaches(req, res, next) {
     console.log(req.body);
 
     if (queryResults.length === 0) {
-      const error = new Error("No hay resultados para la búsqueda");
-      error.httpStatus = 400;
-      throw error;
+      throw generateError("No hay resultados para la búsqueda", 400);
+
     }
     // Extraigo los resultados del resultado de la query
     //const [result] = queryResults;

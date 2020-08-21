@@ -8,6 +8,7 @@ const bodyParser = require("body-parser");
 const fileUpload = require("express-fileupload");
 const cors = require('cors');
 
+
 //llamamos a los diferentes middlewares complementarios que están en otros js:
 const beachExists = require("./middlewares/beachExists");//si existe o no una playa
 const isActive = require("./middlewares/isActive");//si la playa está activa o no
@@ -57,6 +58,7 @@ const listUsers = require("./controllers/beachusers/users");
 const app = express();
 
 app.use(cors());
+
 app.use(express.static("static"));
 
 // Middlewares iniciales
@@ -257,3 +259,6 @@ const port = process.env.PORT;
 app.listen(port, () => {
   console.log(`API funcionando en http://localhost:${port} 🌀`);
 });
+
+
+

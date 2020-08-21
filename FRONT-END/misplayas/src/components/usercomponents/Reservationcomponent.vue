@@ -9,15 +9,22 @@
     <p>Valoración: {{reservation.value}}</p>
     <p>Comentario: {{reservation.comment}}</p>
 
-    <button @click="voteOption">Votar</button>
-    <button @click="eraseReserv">Anular reserva</button>
+    <button
+      :class="{hidden: new Date(reservation.visit) <= new Date()}"
+      @click="eraseReserv"
+    >Anular reserva</button>
 
-    <section v-show="vote">
-      <input type="text" placeholder="Valoración" v-model="newValue" />
-      <br />
-      <input class="textarea" type="textarea" placeholder="Comentario" v-model="newComment" />
+    <section
+      :class="{hidden: reservation.value !== 'pendiente de valorar'|| new Date() < new Date(reservation.visit)}"
+    >
+      <button @click="seeVote">Votar</button>
+      <section v-show="vote">
+        <input type="text" placeholder="Valoración" v-model="newValue" />
+        <br />
+        <input class="textarea" type="textarea" placeholder="Comentario" v-model="newComment" />
 
-      <button @click="voteReserv">Aceptar</button>
+        <button @click="voteReserv">Aceptar</button>
+      </section>
     </section>
   </div>
 </template>
@@ -38,6 +45,7 @@ export default {
   name: "Reservationcomponent",
   props: {
     reservation: Object,
+    index: Number,
   },
   data() {
     return {
@@ -48,17 +56,22 @@ export default {
   },
 
   methods: {
-    voteOption() {
-      if (this.reservation.value === "pendiente de valorar") {
-        this.vote = true;
-      } else {
-        this.vote = false;
-        sweetAlertNotice("ya has votado esta reserva");
-      }
+    seeVote() {
+      this.vote = true;
+      console.log(new Date(), new Date(this.reservation.visit));
     },
 
-    async voteReserv() {
-      let id = this.reservation.id;
+    voteReserv() {
+      let voteInfo = {
+        id: this.reservation.id,
+        value: this.newValue,
+        comment: this.newComment,
+        index: this.index,
+      };
+      this.$emit("sendIdVote", voteInfo);
+
+      this.vote = false;
+      /* let id = this.reservation.id;
       console.log(id);
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -82,7 +95,7 @@ export default {
         //this.errorMessage = error.response.data.message
         sweetAlertNotice(error.response.data.message);
         this.vote = false;
-      }
+      }*/
     },
 
     async eraseReserv() {
@@ -123,5 +136,8 @@ div {
   background-color: #ebecf186;
   width: 75%;
   margin: auto;
+}
+.hidden {
+  display: none;
 }
 </style>

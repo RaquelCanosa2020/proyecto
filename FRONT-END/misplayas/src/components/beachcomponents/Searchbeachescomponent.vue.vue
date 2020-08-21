@@ -23,7 +23,7 @@
           <!--BOTONES CON EVENTOS PARA LA VISTA, ENVÍAN EL ID DE LA PLAYA A VER O RESERVAR---->
 
           <button @click="sendBeachIdToShow(index)">Ver</button>
-          <button @click="sendBeachIdToReserve(index)">Reservar</button>
+          <button @click="sendBeachDataToReserve(index)">Reservar</button>
         </div>
 
         <div id="right">
@@ -54,6 +54,7 @@ export default {
   name: "Searchbeachescomponent",
   props: {
     beaches: Array,
+    beach: Object,
   },
   data() {
     return {
@@ -92,10 +93,10 @@ export default {
 
     //FUNCIÓN PARA ENVIAR EL ID DE LA PLAYA PARA COMENZAR UNA RESERVA
 
-    sendBeachIdToReserve(index) {
-      let beachId = this.beaches[index].id;
+    sendBeachDataToReserve(index) {
+      let beachData = this.beaches[index];
       //console.log(beachId);
-      this.$emit("sendIdReserve", beachId);
+      this.$emit("sendDataReserve", beachData);
     },
   },
 };

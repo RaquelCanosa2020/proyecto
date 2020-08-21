@@ -12,6 +12,7 @@
     </p>
 
     <button @click="loginUser()">Entrar</button>
+    <p v-show="error">{{message}}</p>
 
     <p>
       Si has olvidado tu contraseña.
@@ -43,7 +44,7 @@ export default {
       password: "",
       spinner: false,
       error: false,
-
+      message: "",
       recover: false,
       recoverCode: "",
       newPassword: "",
@@ -59,25 +60,18 @@ export default {
         try {
           this.spinner = true;
           await login(this.email, this.password);
-          //this.spinner = true;
-          //location.reload();
 
+          this.$emit("login");
           //this.$router.go(-1);
           this.$router.push("/user");
-          setTimeout(() => {
-            location.reload();
-          }, 500);
+
           //this.window.history.back();
         } catch (error) {
-          //this.spinner = false
           this.error = true;
-          // console.log(error);
+
           this.message = error.response.data.message;
         }
       }
-      /*setTimeout(() => {
-        location.reload();
-      }, 1000);*/
     },
     //FUNCIÓN PARA ENVIAR EMAIL CÓDIGO DE RECUPERACIÓN DE CONSTRASEÑA
     //app.post("/beach/users/recover-password", recoverUserPassword);
