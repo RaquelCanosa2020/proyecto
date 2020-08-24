@@ -27,6 +27,11 @@ async function deleteUser(req, res, next) {
       throw generateError(`No existe ningún usuario con id ${id} en la base de datos`, 404)
 
     }
+
+    if (id === '1') {
+      throw generateError(`No se puede eliminar al administrador`, 403)
+
+    }
     const [currentAvatar] = current;
 
     //Borramos su imagen en uploads, si la había

@@ -85,7 +85,9 @@ const routes = [
     component: () => import('../views/usersviews/Login.vue'),
     meta: {
       allowAnon: true
-    }
+    },
+
+
   },
   {
     path: '/Register',

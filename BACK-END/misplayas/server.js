@@ -29,6 +29,7 @@ const editBeach = require("./controllers/beach/editBeach");
 const deleteBeachPhoto = require("./controllers/beach/deleteBeachPhoto");
 const setBeachStatus = require("./controllers/beach/setBeachStatus");
 const getMunicipalities = require("./controllers/beach/getMunicipalities")
+const getMeteo = require("./controllers/beach/meteo")
 
 //Reservations controllers:
 
@@ -57,7 +58,15 @@ const listUsers = require("./controllers/beachusers/users");
 
 const app = express();
 
+
 app.use(cors());
+app.all('/', function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "http://servizos.meteogalicia.es");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
+  next()
+});
+
+
 
 app.use(express.static("static"));
 
@@ -131,6 +140,8 @@ app.put("/beaches/:id", isUser, isAdmin, beachExists, editBeach);
 // DELETE - /beaches
 // Sólo administrador
 app.delete("/beaches/:id", isUser, isAdmin, beachExists, setBeachStatus);
+
+app.get("/beach/meteo", getMeteo);
 
 /** ⌚ENDPOINTS DE RESERVAS⌚*/
 

@@ -21,7 +21,7 @@
     </form>
     <input type="submit" name="subir-imagen" value="Enviar imagen" @click="saveImage" />
 
-    <!---<img :src="setImage(uploadedImage)" />--->
+    <!--- <img :src="setImage(uploadedImage)" />---->
     <p>{{messageImage}}</p>
 
     <button>
@@ -32,7 +32,7 @@
 
 <script>
 import axios from "axios";
-
+import spinner from "@/components/Spinner.vue";
 import { getAuthToken } from "../../api/utils";
 
 export default {
@@ -49,7 +49,8 @@ export default {
       date: "",
       description: "",
       message: "",
-
+      see: false,
+      spinner: false,
       errorMessage: "",
       messageImage: "",
     };
@@ -57,7 +58,12 @@ export default {
   methods: {
     //FUNCIÓN PARA VER IMAGEN
     setImage(img) {
-      return process.env.VUE_APP_STATIC + img;
+      if (!img) {
+        return this.spinner; //esto lo incluyo para que no de error en consola, ya que debe tardar
+        //algo en cargar las fotos y de primeras da 404 (aunque no se llega a ver el spinner)
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
     },
 
     //FUNCIÓN PARA OBTENER LOS DATOS DE LA PLAYA
@@ -76,6 +82,7 @@ export default {
     uploadImage() {
       this.uploadedImage = /*this.$refs.uploadedImage*/ event.target.files[0];
       console.log(this.uploadedImage);
+      this.see = true;
     },
 
     //FUNCIÓN PARA GUARDAR IMAGEN QUE INCLUYE EL USUARIO
@@ -99,12 +106,14 @@ export default {
           { header: { "Content-Type": "multipart/form-data" } }
         );
 
-        console.log(response);
-
+        this.see = true;
+        console.log(response.data.data);
+        //this.uploadedImage = response.data.data.nombre;
         this.messageImage = response.data.data.nºfoto;
       } catch (error) {
         this.errorMessage = error.response.data.message;
         alert(this.errorMessage);
+        this.see = false;
       }
     },
   },

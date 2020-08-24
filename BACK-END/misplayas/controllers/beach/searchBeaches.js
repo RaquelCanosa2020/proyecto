@@ -267,6 +267,7 @@ async function searchBeaches(req, res, next) {
     console.log(query, params);
     console.log(req.params);
     console.log(req.body);
+    console.log(process.env.SENDGRID_FROM)
 
     if (queryResults.length === 0) {
       throw generateError("No hay resultados para la búsqueda", 400);
@@ -276,6 +277,7 @@ async function searchBeaches(req, res, next) {
     //const [result] = queryResults;
 
     // Mando la respuesta
+
     res.send({
       status: "ok",
       data: queryResults,

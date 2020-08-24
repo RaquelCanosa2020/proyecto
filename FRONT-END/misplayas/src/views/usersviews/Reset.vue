@@ -5,7 +5,7 @@
 
     <p>
       <span>Obligatorio</span>
-      <input type="password" v-model="password1" placeholder="Contraseña" />
+      <input type="password" v-model="password1" placeholder="Nueva Contraseña" />
     </p>
 
     <p>

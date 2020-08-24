@@ -98,7 +98,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
 #app {
-  font-family: Delius, Arial, Helvetica, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

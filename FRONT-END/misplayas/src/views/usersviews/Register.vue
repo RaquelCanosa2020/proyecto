@@ -73,6 +73,7 @@ export default {
           this.email = "";
           this.password1 = "";
           this.password2 = "";
+          this.accept = false;
         } catch (error) {
           sweetAlertNotice(error.response.data.message);
         }

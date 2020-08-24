@@ -37,7 +37,7 @@ async function listUsers(req, res, next) {
 
         let queryResults = await connection.query(
             `
-        SELECT users.id, users.name, users.role, users.email, users.registration_date, users.image, COUNT(reservations.id) AS Nºreservas, SUM(reservations.places) AS Nºplazas, MAX(reservations.date) AS ultima_reserva
+        SELECT users.id, users.name, users.role, users.email, users.active, users.registration_date, users.image, COUNT(reservations.id) AS Nºreservas, SUM(reservations.places) AS Nºplazas, MAX(reservations.date) AS ultima_reserva
 FROM users
 LEFT JOIN reservations ON users.id = reservations.id_user
 GROUP BY users.id

@@ -18,11 +18,6 @@
       Si has olvidado tu contraseña.
       <button @click="sendRecoverPassword">Pincha aquí</button>
     </p>
-    <div v-show="recover">
-      <input v-model="recoverCode" type="text" required placeholder="Código de recuperación" />
-      <input v-model="newPassword" type="password" required placeholder="Nueva contraseña" />
-      <button @click="resetPassword">Enviar</button>
-    </div>
 
     <spinner v-show="spinner" />
   </div>
@@ -62,12 +57,14 @@ export default {
           await login(this.email, this.password);
 
           this.$emit("login");
+
           //this.$router.go(-1);
           this.$router.push("/user");
 
           //this.window.history.back();
         } catch (error) {
           this.error = true;
+          this.spinner = false;
 
           this.message = error.response.data.message;
         }
@@ -84,21 +81,8 @@ export default {
         );
         console.log(response.data);
         sweetAlertOk(response.data.message);
-        this.recover = true;
-      } catch (error) {
-        sweetAlertNotice(error.response.data.message);
-      }
-    },
-
-    //FUNCIÓN PARA PROCESAR CÓDIGO DE RECUPERACIÓN DE CONTRASEÑA
-
-    async resetPassword() {
-      try {
-        const response = await axios.post(
-          "http://localhost:3000/beach/users/reset-password",
-          { recoverCode: this.recoverCode, newPassword: this.newPassword }
-        );
-        sweetAlertOk(response.data.message);
+        this.email = "";
+        this.password = "";
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }

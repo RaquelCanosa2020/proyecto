@@ -178,7 +178,7 @@ export function sweetAlertErase() {
         if (result.value) {
             Swal.fire("Registro eliminado");
 
-            location.reload();
+
         }
     });
 }

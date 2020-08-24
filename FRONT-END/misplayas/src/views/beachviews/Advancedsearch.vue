@@ -55,6 +55,7 @@
         <section id="location">
           <p>Tipo de playa:</p>
           <select id="type" v-model="typeSaved">
+            <option value></option>
             <option value="Urbana">Urbana</option>
             <option value="Semiurbana">Semiurbana</option>
             <option value="Aislada">Aislada</option>
@@ -62,6 +63,7 @@
 
           <p>Provincia:</p>
           <select id="province" v-model="provinceSaved">
+            <option value></option>
             <option value="A Coruña">A Coruña</option>
             <option value="Lugo">Lugo</option>
             <option value="Ourense">Ourense</option>
@@ -69,7 +71,7 @@
           </select>
 
           <p>Municipio:</p>
-          <select id="municipality" v-model="municipality">
+          <select id="municipality" v-model="municipalitySaved">
             <option
               :class="{hidden: provinceSaved !== muni.province}"
               v-for="muni in beachesMun"
@@ -112,16 +114,6 @@
 
       <button @click="searchBeaches()">Buscar</button>
 
-      <!----MODAL DE NO HAY DATOS-->
-      <div v-show="seeModal" class="modal">
-        <div class="modalBox">
-          <h3>{{errorMessage}}</h3>
-
-          <button @click="seeModal =! seeModal">Aceptar</button>
-        </div>
-      </div>
-      <!---FIN CLASS MODAL--->
-
       <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS
       ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
 
@@ -144,6 +136,7 @@
           <p>Descripción: {{description}}</p>
           <p>Capacidad: {{capacity}} personas</p>
           <p>{{disponibilidad}}</p>
+          <p>{{notice}}</p>
           <p>Horario: de {{start_time}} a {{end_time}}</p>
           <p>Meses de reserva obligatoria: de {{nameMonth(start_month)}} a {{nameMonth(end_month)}}</p>
           <p>Valoración media de usuarios usuarios: {{voteAverage}}</p>
@@ -172,8 +165,11 @@
           </ul>
 
           <img id="principal" :src="setImage(image)" />
+          <p>
+            <img id="sky" :src="skyState" />
+          </p>
+          <p>{{temperature}} ºC</p>
           <button @click="comeback()">Volver al Buscador</button>
-          <button @click="seeData(beachId)">Reservar</button>
         </section>
 
         <!-------📸-SECCIÓN DE FOTOS DE LA PLAYA HECHAS POR USUARIOS--->
@@ -182,6 +178,7 @@
 
           <!--IMPORTAMOS COMPONENTE DE FOTOS--->
           <photoscomponent :photos="photos" />
+          <p>{{errorMessagePhotos}}</p>
         </section>
       </article>
 
@@ -193,6 +190,8 @@
           <!--IMPORTAMOS COMPONENTE DE RATINGS--->
 
           <ratingscomponent :global="global" :votes="votes" />
+
+          <p>{{errorMessageVotes}}</p>
         </section>
       </article>
     </div>
@@ -249,7 +248,7 @@
         <li>{{messageConfirm.notice}}</li>
       </ul>
 
-      <button @click="acceptReservation">Confirmar y pagar</button>
+      <button v-show="beforeConfirm" @click="acceptReservation">Confirmar y pagar</button>
 
       <button @click="comeback()">Volver</button>
     </div>
@@ -289,7 +288,6 @@ export default {
       advanced: false,
       info: false,
       reservation: false,
-      seeModal: false,
       visit: "",
       visitReservation: "",
       places: "",
@@ -306,7 +304,7 @@ export default {
       capacity: "",
       free: "",
       disponibilidad: "",
-      aviso: "",
+      notice: "",
       start_time: "",
       end_time: "",
       start_month: "",
@@ -335,9 +333,13 @@ export default {
       global: "",
       votes: [],
       photos: [],
-      errorMessage: "",
+      errorMessagePhotos: "",
+      errorMessageVotes: "",
       reservInfo: false,
       spinner: true,
+      beforeConfirm: false,
+      skyState: "",
+      temperature: "",
     };
   },
 
@@ -412,15 +414,14 @@ export default {
             toilet: this.toiletSaved,
             visit: visit,
             places: this.places,
-            type: this.type,
-            municipality: this.municipality,
-            province: this.province,
+            type: this.typeSaved,
+            municipality: this.municipalitySaved,
+            province: this.provinceSaved,
           }
         );
         this.beaches = response.data.data;
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
-        this.seeModal = true;
       }
     },
 
@@ -431,6 +432,8 @@ export default {
       //BORRAR FOTOS Y VOTOS Y MENSAJES DE LA PLAYA QUE ACABA DE MOSTRAR (SI NO, APARECE LO DEL ANTERIOR):
       this.votes = [];
       this.photos = [];
+      this.errorMessagePhotos = "";
+      this.errorMessageVotes = "";
 
       //PARA QUE OCULTE LA INFO DE LA RESERVA Y VUELVA A LA LISTA
       this.reservation = false;
@@ -452,39 +455,6 @@ export default {
       this.province = this.provinceSaved;
       this.municipality = this.municipalitySaved;
     },
-
-    /* async getMeteo() {
-      axios.defaults.headers.common["Access-Control-Allow-Origin"] =
-        "http://servizos.meteogalicia.es";
-      axios.defaults.headers.common["Access-Control-Allow-Headers"] =
-        "Origin, X-Requested-With, Content-Type, Accept";
-      axios.defaults.headers.common["Access-Control-Allow-Methods"] =
-        "GET, POST, PUT, DELETE";
-      const response = await axios.get(
-        "http://servizos.meteogalicia.es/apiv3/findPlaces?types=beach&location=" +
-          `${name}` +
-          "&API_KEY=" +
-          `${process.env.VUE_APP_meteoKey}`
-      );
-
-      const id = await response.data.features[0].properties.id;
-      console.log(id);
-
-      const response1 = await axios.get(
-        "http://servizos.meteogalicia.es/apiv3/getNumericForecastInfo?startTime=2020-08-23T12:00:00&endTime=2020-08-23T12:00:00&locationIds=" +
-          `${id}` +
-          "&variables=temperature,sky_state&API_KEY=" +
-          `${process.env.VUE_APP_meteoKey}`
-      );
-      const info =
-        response1.data.features[0].properties.days[0].variables[0].values[0]
-          .iconURL;
-      const info2 =
-        response1.data.features[0].properties.days[0].variables[1].values[0]
-          .value;
-      console.log(info);
-      console.log(info2);
-    },*/
 
     //FUNCIÓN PARA VER LOS DATOS DE UNA PLAYA CON/SIN DISPONIBILIDAD
     async showData(beachId) {
@@ -522,12 +492,14 @@ export default {
         this.disabled_access = setServices(beachData.disabled_access);
         this.image = beachData.image;
         this.disponibilidad = response.data.data.disponibilidad;
+        this.notice = response.data.data.aviso;
+        this.skyState = response.data.data.estado;
+        this.temperature = response.data.data.temperatura;
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
       this.seeVotes(beachId);
       this.seePhotos(beachId);
-      //this.getMeteo();
     },
     //FUNCIÓN PARA ASIGNAR NOMBRE A LOS MESES EN LA INFO DE LA PLAYA
     nameMonth(number) {
@@ -559,6 +531,7 @@ export default {
         this.list = false;
         this.info = false;
         this.reservation = true;
+        this.beforeConfirm = true;
         //SE GENERAN LAS HORAS
         this.getNumber();
         //SI HAY FECHA, HORA Y PLAZAS EN EL BUSCADOR, SE PASAN A LA RESERVA (SE PUEDEN CAMBIAR)
@@ -581,36 +554,36 @@ export default {
         const token = getAuthToken();
 
         if (!this.dateReservation || !this.hourReservation) {
-          this.sweetAlertNotice("Debes indicar fecha y hora");
-          const error = new Error();
-          throw error;
-        }
-        this.visitReservation = this.getVisit(
-          this.dateReservation,
-          this.hourReservation
-        );
-        console.log(this.visitReservation);
+          sweetAlertNotice("Debes indicar fecha y hora");
+        } else {
+          this.visitReservation = this.getVisit(
+            this.dateReservation,
+            this.hourReservation
+          );
+          console.log(this.visitReservation);
 
-        axios.defaults.headers.common["Authorization"] = `${token}`;
-        const response = await axios.post(
-          "http://localhost:3000/reservations",
-          {
-            visit: this.visitReservation,
-            places: this.placesReservation,
-            id_beach: this.beachId,
-            cc_number: this.ccNumber,
-          }
-        );
-        this.reservInfo = true;
-        this.messageConfirm = response.data.message;
-        console.log(response.message);
-        //UNA VEZ ACEPTADA, VACIAMOS LOS CAMPOS
-        this.dateReservation = "";
-        this.hourReservation = "";
-        this.placesReservation = "";
-        this.ccNumber = "";
+          axios.defaults.headers.common["Authorization"] = `${token}`;
+          const response = await axios.post(
+            "http://localhost:3000/reservations",
+            {
+              visit: this.visitReservation,
+              places: this.placesReservation,
+              id_beach: this.beachId,
+              cc_number: this.ccNumber,
+            }
+          );
+          this.reservInfo = true;
+          this.messageConfirm = response.data.message;
+          console.log(response.message);
+          //UNA VEZ ACEPTADA, VACIAMOS LOS CAMPOS
+          this.dateReservation = "";
+          this.hourReservation = "";
+          this.placesReservation = "";
+          this.ccNumber = "";
+          this.beforeConfirm = false;
+        }
       } catch (error) {
-        this.messageConfirm = error.response.data.message;
+        sweetAlertNotice(error.response.data.message);
       }
     },
 
@@ -648,7 +621,7 @@ export default {
         this.global = response.data.rating;
       } catch (error) {
         console.log(error);
-        sweetAlertNotice(error.response.data.message);
+        this.errorMessageVotes = error.response.data.message;
       }
     },
     //FUNCIÓN PARA VER LAS FOTOS DE UNA PLAYA HECHAS POR USUARIOS
@@ -660,7 +633,7 @@ export default {
         this.photos = response.data.data;
       } catch (error) {
         console.log(error);
-        sweetAlertNotice(error.response.data.message);
+        this.errorMessagePhotos = error.response.data.message;
       }
     },
   },
@@ -698,22 +671,7 @@ input {
 .hidden {
   display: none;
 }
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.5);
-}
-.modalBox {
-  background-color: #fefefe;
-  margin: 2% auto;
-  padding: 3rem;
-  width: 80%;
-  border: 1px solid #888;
-}
+
 section#order,
 section#dateplaces,
 section#location {
@@ -723,6 +681,11 @@ section#location {
 }
 img {
   width: 80px;
+}
+
+img#sky {
+  width: 70px;
+  height: 70px;
 }
 
 label > img,

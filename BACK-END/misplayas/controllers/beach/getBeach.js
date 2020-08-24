@@ -1,7 +1,7 @@
 const { getConnection } = require("../../db");
 const { setMinutes, setSeconds } = require("date-fns");
 const { formatDateToDB, formatDateToUser, setZero } = require("../../helpers");
-
+const axios = require("axios");
 
 async function getBeach(req, res, next) {
   let connection;
@@ -28,6 +28,7 @@ async function getBeach(req, res, next) {
     const startMonth = result[0].start_month;
     const endMonth = result[0].end_month;
     console.log(startHour, endHour, startMonth, endMonth);
+    const name = result[0].name;
 
     //Si el usuario no indica nada en body, se da la disponibilidad en el momento actual
     //PUede incluir una fecha en el body (visit) y se calcula la disponibilidad para esa fecha
@@ -92,6 +93,36 @@ async function getBeach(req, res, next) {
       aviso = "playa inactiva en la web de reservas. Pregunte disponibilidad en el correspondiente Ayuntamiento."
     }
 
+    //OBTENEMOS EL PARTE METEOROLÓGICO DE METEOGALICIA
+
+    //Para los nombres con espacios debemos cambiarlos por _, como está en esta api.
+    const nameLetters = name.split(" ");
+    const nameMeteo = nameLetters.join('_');
+
+    const response = await axios.get(
+      "http://servizos.meteogalicia.es/apiv3/findPlaces?types=beach&location=" + `${nameMeteo}` + "&API_KEY=" +
+      `${process.env.METEOKEY}`
+    );
+
+    const idMeteo = await response.data.features[0].properties.id;
+
+    console.log(id);
+
+    const response1 = await axios.get(
+      "http://servizos.meteogalicia.es/apiv3/getNumericForecastInfo?startTime=2020-08-25T00:00:00&endTime=2020-08-25T01:00:00&locationIds=" +
+      `${idMeteo}` +
+      "&variables=temperature,sky_state&API_KEY=" +
+      `${process.env.METEOKEY}`
+    );
+    const info1 =
+      response1.data.features[0].properties.days[0].variables[0].values[0]
+        .iconURL;
+    const info2 =
+      response1.data.features[0].properties.days[0].variables[1].values[0]
+        .value;
+
+
+
 
 
     res.send({
@@ -99,7 +130,9 @@ async function getBeach(req, res, next) {
       data: {
         info: result[0],
         disponibilidad: `plazas disponibles actualmente para la fecha ${visitUser}: ${free} plazas`,
-        aviso, //aviso en caso de que hora o mes no se corresponda
+        aviso: aviso, //aviso en caso de que hora o mes no se corresponda
+        estado: info1,
+        temperatura: info2
 
       },
     });

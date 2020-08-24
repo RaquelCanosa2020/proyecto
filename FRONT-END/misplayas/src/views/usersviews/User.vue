@@ -72,6 +72,7 @@ import axios from "axios";
 import listreservation from "../../components/usercomponents/Listreservation";
 import userbeachcomponent from "../../components/usercomponents/Userbeachcomponent";
 import userphotocomponent from "../../components/usercomponents/Userphotocomponent";
+import spinner from "@/components/Spinner.vue";
 
 export default {
   name: "User",
@@ -108,8 +109,13 @@ export default {
     //FUNCIÓN PARA SACAR LA DIRECCIÓN DE LA IMAGEN ACTUAL
     setImage(img) {
       if (img === null) {
-        let avatar = "Avatar.jpg";
-        return process.env.VUE_APP_STATIC + avatar;
+        {
+          let avatar = "Avatar.jpg";
+          return process.env.VUE_APP_STATIC + avatar;
+        }
+      } else if (!img) {
+        return this.spinner; //esto lo incluyo para que no de error en consola, ya que debe tardar
+        //algo en cargar las fotos y de primeras da 404 (aunque no se llega a ver el spinner)
       } else {
         return process.env.VUE_APP_STATIC + img;
       }
@@ -295,7 +301,6 @@ export default {
 
     async erasePhoto(Photoid) {
       console.log(Photoid);
-      sweetAlertErase();
 
       try {
         const response = await axios.delete(
