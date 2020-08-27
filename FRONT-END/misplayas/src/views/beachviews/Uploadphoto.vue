@@ -15,6 +15,7 @@
     <input type="datetime-local" placeholder="Fecha" v-model="date" />
     <br />
     <input class="comment" type="textarea" placeholder="Comentario" v-model="description" />
+    <img :src="setImage(messageLink)" />
 
     <form name="subida-imagenes" type="POST" enctype="multipart/formdata">
       <input type="file" ref="uploadedImage" @change="uploadImage" />
@@ -53,6 +54,7 @@ export default {
       spinner: false,
       errorMessage: "",
       messageImage: "",
+      messageLink: "",
     };
   },
   methods: {
@@ -66,7 +68,7 @@ export default {
       }
     },
 
-    //FUNCIÓN PARA OBTENER LOS DATOS DE LA PLAYA
+    //FUNCIÓN PARA OBTENER LOS DATOS DE LAS PLAYAS
 
     async getBeaches() {
       try {
@@ -108,8 +110,9 @@ export default {
 
         this.see = true;
         console.log(response.data.data);
-        //this.uploadedImage = response.data.data.nombre;
         this.messageImage = response.data.data.nºfoto;
+        this.messageLink = response.data.data.nombre;
+        console.log(this.messageLink);
       } catch (error) {
         this.errorMessage = error.response.data.message;
         alert(this.errorMessage);
@@ -130,5 +133,9 @@ div.upload {
 select {
   width: 300px;
   height: 50px;
+}
+
+img {
+  width: 200px;
 }
 </style>

@@ -31,7 +31,12 @@
 //import HelloWorld from '@/components/HelloWorld.vue'
 import axios from "axios";
 import allbeachescomponent from "../../components/beachcomponents/Allbeachescomponent.vue";
-import { setServices, getAuthToken, getId } from "../../api/utils";
+import {
+  setServices,
+  getAuthToken,
+  getId,
+  sweetAlertNotice,
+} from "../../api/utils";
 
 export default {
   name: "Listbeaches",
@@ -98,7 +103,7 @@ export default {
         this.beaches = response.data.data;
         location.reload();
       } catch (error) {
-        console.log(error);
+        sweetAlertNotice(error.response.data.message);
       }
     },
   },

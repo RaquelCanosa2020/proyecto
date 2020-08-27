@@ -141,6 +141,7 @@ app.put("/beaches/:id", isUser, isAdmin, beachExists, editBeach);
 // Sólo administrador
 app.delete("/beaches/:id", isUser, isAdmin, beachExists, setBeachStatus);
 
+//endpoint de prueba:
 app.get("/beach/meteo", getMeteo);
 
 /** ⌚ENDPOINTS DE RESERVAS⌚*/

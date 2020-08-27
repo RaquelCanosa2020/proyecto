@@ -38,10 +38,10 @@
           ></pie-chart>
         </div>
 
-        <!--- <button>
+        <button>
           <router-link :to="{name:'Playa', params: {id:beach.id}}">+ info</router-link>
-        </button>-
-        CAMBIO DE LA ED.O, NO ENVIAMOS A UNA NUEVA VISTA SI NO A ADVANCEDSEARCH
+        </button>
+        <!--- CAMBIO DE LA ED.O, NO ENVIAMOS A UNA NUEVA VISTA SI NO A ADVANCEDSEARCH
         SI NO TENGO PROBLEMAS PARA TENER DISPONIBLES LOS DATOS-->
       </section>
     </div>

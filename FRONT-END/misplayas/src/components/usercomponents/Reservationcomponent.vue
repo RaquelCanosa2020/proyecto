@@ -11,7 +11,7 @@
 
     <button
       :class="{hidden: new Date(reservation.visit) <= new Date()}"
-      @click="eraseReserv"
+      @click="eraseInfo"
     >Anular reserva</button>
 
     <section
@@ -71,37 +71,17 @@ export default {
       this.$emit("sendIdVote", voteInfo);
 
       this.vote = false;
-      /* let id = this.reservation.id;
-      console.log(id);
-      const token = getAuthToken();
-      axios.defaults.headers.common["Authorization"] = `${token}`;
-      let comment;
-      if (this.newComment === "") {
-        comment = "sin comentar";
-      } else {
-        comment = newComment;
-      }
-
-      try {
-        const response = await axios.post(
-          `http://localhost:3000/reservations/${id}/votes`,
-          {
-            value: this.newValue,
-            comment: comment,
-          }
-        );
-        sweetAlertOk(response.data.message);
-      } catch (error) {
-        //this.errorMessage = error.response.data.message
-        sweetAlertNotice(error.response.data.message);
-        this.vote = false;
-      }*/
     },
 
-    async eraseReserv() {
-      let id = this.reservation.id;
-      console.log(id);
-      const token = getAuthToken();
+    async eraseInfo() {
+      let eraseInfo = {
+        id: this.reservation.id,
+        index: this.index,
+      };
+
+      this.$emit("sendIdErase", eraseInfo);
+
+      /*const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
       sweetAlertErase;
       try {
@@ -115,7 +95,7 @@ export default {
         }, 2000);
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
-      }
+      }*/
     },
 
     formatDateToUser(date) {

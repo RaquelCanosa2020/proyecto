@@ -7,6 +7,7 @@
         :index="index"
         :reservation="reservation"
         @sendIdVote="voteReserv"
+        @sendIdErase="eraseReserv"
       />
     </section>
   </div>
@@ -63,6 +64,23 @@ export default {
         this.reservations[voteInfo.index].comment = comment;
       } catch (error) {
         //this.errorMessage = error.response.data.message
+        sweetAlertNotice(error.response.data.message);
+      }
+    },
+
+    async eraseReserv(eraseInfo) {
+      const id = eraseInfo.id;
+      const token = getAuthToken();
+      axios.defaults.headers.common["Authorization"] = `${token}`;
+      //sweetAlertErase;
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/reservations/${id}`
+        );
+
+        sweetAlertOk(response.data.message);
+        this.reservations[eraseInfo.index] = "";
+      } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
     },

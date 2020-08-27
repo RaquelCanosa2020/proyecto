@@ -5,7 +5,7 @@ import { isLoggedIn } from '../api/utils.js'
 import { checkIsAdmin } from '../api/utils.js'
 
 Vue.use(VueRouter)
-//PENDIENTE PROTEGER RUTAS
+
 const routes = [
   {
     path: '/',
@@ -30,6 +30,16 @@ const routes = [
     meta: {
       allowAnon: true
     }
+  },
+
+  {
+    path: '/reservation',
+    name: 'Reserva',
+    component: () => import('../views/beachviews/Reservationview.vue'),
+    meta: {
+      allowAnon: false
+    },
+
   },
 
   {
@@ -115,6 +125,16 @@ const routes = [
     meta: {
       allowAnon: true
     },
+    beforeEnter: (to, from, next) => {
+      if (isLoggedIn()) {
+        next({
+          path: '/user',
+          query: { redirect: to.fullPath }
+        })
+      } else {
+        next()
+      }
+    }
 
   },
   {
@@ -124,6 +144,16 @@ const routes = [
     meta: {
       allowAnon: true
     },
+    beforeEnter: (to, from, next) => {
+      if (isLoggedIn()) {
+        next({
+          path: '/user',
+          query: { redirect: to.fullPath }
+        })
+      } else {
+        next()
+      }
+    }
 
   },
   {
@@ -165,7 +195,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (!to.meta.allowAnon && !isLoggedIn()) {
     next({
-      path: '/',
+      path: '/login',
       query: { redirect: to.fullPath }
     })
   } else {

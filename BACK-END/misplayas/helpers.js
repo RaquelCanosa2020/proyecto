@@ -43,6 +43,15 @@ function formatDateToUser(date) {
   })} a las ${format(new Date(date), "p")} horas`;
   return dateToUser;
 }
+//1.C usamos date-fns para dar transformar fechas UTC en el formato que requiere la api Meteogalicia (en getBeach.js)
+
+function formatNowToMeteo(date) {
+  let nowToMeteo = `${format(new Date(date), "yyyy'-'MM'-'dd", {
+    locale: es,
+  })}T${format(new Date(date), "HH")}:00:00`;
+  return nowToMeteo;
+}
+
 
 //2. función para procesar y guardar imágenes:
 
@@ -126,6 +135,7 @@ function generateError(message, code = 500) {
 module.exports = {
   formatDateToDB,
   formatDateToUser,
+  formatNowToMeteo,
   processAndSaveImage,
   deleteUpload,
   randomString,

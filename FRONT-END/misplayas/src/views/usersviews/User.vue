@@ -44,6 +44,7 @@
 
     <section v-show="showReserv">
       <button @click="showReserv = false, seeData=true">Volver</button>
+      <button @click="seeReserv">Refrescar</button>
       <listreservation :reservations="reservations" />
     </section>
 
@@ -183,14 +184,15 @@ export default {
         if (this.newEmail !== response.data.previousEmail) {
           logout();
           this.$router.push("/login");
-          setTimeout(() => {
+          /*setTimeout(() => {
             location.reload();
-          }, 2000);
+          }, 2000);*/
         } else {
           //si no se ha cambiado, sólo recargamos la página
-          setTimeout(() => {
+          /*setTimeout(() => {
             location.reload();
-          }, 2000);
+          }, 2000);*/
+          this.getUserData();
         }
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
@@ -219,9 +221,10 @@ export default {
         this.newPassword = "";
         logout();
         this.$router.push("/login");
-        setTimeout(() => {
+        /*setTimeout(() => {
           location.reload();
-        }, 1000);
+        }, 1000);*/
+        this.getUserData();
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
@@ -306,6 +309,8 @@ export default {
         const response = await axios.delete(
           `http://localhost:3000/beaches/photos/${Photoid}`
         );
+        this.showPhotos = false;
+        this.seePhotos();
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }

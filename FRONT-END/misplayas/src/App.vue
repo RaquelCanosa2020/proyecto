@@ -4,19 +4,27 @@
       <router-link :to="{name:'Home'}">Home</router-link>
       <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>
       <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>
-      <router-link :to="{name:'Buscador'}">Busca y Reserva</router-link>
+      <router-link :to="{name:'Buscador'}">Buscar</router-link>
+      <router-link v-show="logged" :to="{name:'Reserva'}">Reservar</router-link>
+
       <router-link :to="{name:'About'}">About</router-link>
       <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
-      <router-link v-show="logged" :to="{name:'Usuario'}">Tus cosas</router-link>
+      <router-link v-show="logged" :to="{name:'Usuario'}">Tu espacio</router-link>
       <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
     </div>
 
     <section id="header">
-      <p v-show="logged">Hola {{username}}</p>
+      <p id="username" v-show="logged">Hola {{username}}</p>
       <button id="logout" v-show="logged" @click="logoutUser()">Logout</button>
     </section>
 
-    <router-view @login="setUserName" />
+    <router-view
+      @login="setUserName"
+      @getInfo="saveInfo"
+      :info="info"
+      @sendToReserve="saveData"
+      :data="data"
+    />
     <footercustom />
   </div>
 </template>
@@ -42,9 +50,18 @@ export default {
       logged: false,
       username: "",
       admin: false,
+      optionssaved: {},
+      info: {},
+      data: {},
     };
   },
   methods: {
+    saveInfo(infoOptions) {
+      this.info = infoOptions;
+    },
+    saveData(beachdata) {
+      this.data = beachdata;
+    },
     async setUserName(userId) {
       //incluyo este ifelse, para que en la parte pública no pida el nombre del usuario,
       //para que no de error en la consola (ya que no encuentra al usuario id null)
@@ -59,7 +76,7 @@ export default {
           const response = await axios.get(
             "http://localhost:3000/beach/users/" + userId
           );
-
+          this.userId = userId;
           this.username = response.data.data.name;
           this.isAdmin();
         } catch (error) {
@@ -103,8 +120,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #353a64;
-  background-image: url(./assets/sillas.jpg);
-  background-size: cover;
+  background-color: #353a64;
 }
 
 section#header {
@@ -128,7 +144,7 @@ section#header {
 }
 
 #nav a.router-link-exact-active {
-  color: #086972;
+  color: #ffaa71;
 }
 input {
   background-color: #ebecf1;
@@ -146,11 +162,11 @@ input::placeholder {
 button {
   width: 50px;
   height: 20px;
-  margin: 2rem 1rem;
+
   border-style: none;
   border-radius: 2em;
-  color: #ebecf1;
-  background-color: #0779e4;
+  color: #353a64;
+  background-color: #ffaa71;
   font-size: 0.5rem;
 }
 button:hover {
@@ -161,6 +177,15 @@ button#logout {
   position: relative;
   margin-top: 1rem;
   margin-right: 2rem;
+}
+
+p {
+  color: #ffaa71;
+}
+
+p#username {
+  color: #ffaa71;
+  padding-right: 1rem;
 }
 
 p.error {

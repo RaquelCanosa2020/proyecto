@@ -58,8 +58,8 @@ export default {
 
           this.$emit("login");
 
-          //this.$router.go(-1);
-          this.$router.push("/user");
+          this.$router.go(-1);
+          //this.$router.push("/user");
 
           //this.window.history.back();
         } catch (error) {

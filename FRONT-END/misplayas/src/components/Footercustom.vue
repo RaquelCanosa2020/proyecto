@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <footer id="footer">Raquel Canosa Raña. 2020</footer>
+    <footer id="footer">Raquel Canosa Raña. 2020 | Política de Privacidad</footer>
   </div>
 </template>
 
