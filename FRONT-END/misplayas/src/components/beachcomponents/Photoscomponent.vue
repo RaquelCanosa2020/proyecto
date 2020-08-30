@@ -2,11 +2,10 @@
   <div>
     <div>
       <section v-for="photo in photos" :key="photo.id">
-        <p>{{photo.id}}</p>
+        <p>Id. {{photo.id}}</p>
         <img :src="setImage(photo.link)" />
         <p>{{photo.description}}</p>
-        <p>{{formatDateToUser(photo.date)}}</p>
-        <p>{{photo.name}}</p>
+        <p>{{formatDateToUser(photo.date)}}. Usuario: {{photo.name}}</p>
       </section>
     </div>
   </div>
@@ -39,7 +38,16 @@ export default {
 };
 </script>
 <style scoped>
+div {
+  display: flex;
+  flex-wrap: wrap;
+}
+section {
+  text-align: center;
+  background-color: #ebecf1;
+}
 img {
-  width: 400px;
+  width: 500px;
+  border-radius: 2em;
 }
 </style>

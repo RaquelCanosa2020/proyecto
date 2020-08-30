@@ -1,6 +1,6 @@
 <template>
   <div>
-    <input type="search" v-model="search" placeholder="Busca por palabras" />
+    <input type="search" v-model="search" placeholder="Busca rápida por palabras" />
     <onebeachcomponent
       v-for="(beach,index) in filtered"
       :key="beach.id"
@@ -53,3 +53,17 @@ export default {
   },
 };
 </script>
+<style scoped>
+input {
+  width: 300px;
+  height: 40px;
+  border-radius: 2em;
+  margin: 0;
+}
+ul {
+  display: flex;
+}
+.active {
+  background-color: #4cbbb9;
+}
+</style>

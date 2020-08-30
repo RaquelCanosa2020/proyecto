@@ -1,9 +1,13 @@
 <template>
   <div class="validate">
     <vue-headful title="Misplayas | Validar usuario" />
-    <h1>Validación de usuario</h1>
 
-    <button @click="validateUser()">Validar</button>
+    <section id="up">
+      <h1>Validación de usuario</h1>
+
+      <button id="validate" @click="validateUser()">Validar</button>
+    </section>
+    <section id="down"></section>
   </div>
 </template>
 
@@ -33,5 +37,34 @@ export default {
 <style scoped>
 div.validate {
   height: 100vh;
+  background-color: #ebecf1;
+  display: flex;
+  flex-direction: column;
+}
+
+section#up {
+  margin: auto;
+}
+h1 {
+  font-size: 3rem;
+}
+
+p {
+  font-size: 1.5rem;
+}
+button.validate {
+  font-size: 1.5rem;
+  width: 150px;
+  height: 40px;
+}
+input {
+  width: 300px;
+  height: 60px;
+  font-size: 1.5rem;
+}
+section#down {
+  background-image: url(https://media.giphy.com/media/l4hLyOGRJWNSR8QQ8/giphy.gif);
+  background-size: cover;
+  height: 50vh;
 }
 </style>

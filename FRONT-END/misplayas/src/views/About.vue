@@ -10,8 +10,7 @@
       Iconos diseñados por
       <a href="https://www.flaticon.es/autores/freepik" title="Freepik">Freepik</a> from
       <a href="https://www.flaticon.es/" title="Flaticon">www.flaticon.es</a>
-    </div>
-y pixabay.
+    </div>y pixabay.
     <h2>Mis datos (pendiente)</h2>
     <h2>Política privacidad (pendiente)</h2>
   </div>
@@ -20,5 +19,6 @@ y pixabay.
 <style scoped>
 div.about {
   height: 100vh;
+  background-color: #ebecf1;
 }
 </style>

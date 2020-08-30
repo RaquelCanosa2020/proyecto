@@ -52,6 +52,10 @@ export default {
 section {
   background-color: #ebecf186;
   width: 75%;
+  height: 200vh;
   margin: auto;
+}
+img {
+  max-width: 300px;
 }
 </style>

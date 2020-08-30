@@ -17,7 +17,7 @@
     <section
       :class="{hidden: reservation.value !== 'pendiente de valorar'|| new Date() < new Date(reservation.visit)}"
     >
-      <button @click="seeVote">Votar</button>
+      <button @click="vote =!vote">Votar</button>
       <section v-show="vote">
         <input type="text" placeholder="Valoración" v-model="newValue" />
         <br />
@@ -56,11 +56,6 @@ export default {
   },
 
   methods: {
-    seeVote() {
-      this.vote = true;
-      console.log(new Date(), new Date(this.reservation.visit));
-    },
-
     voteReserv() {
       let voteInfo = {
         id: this.reservation.id,
@@ -73,7 +68,7 @@ export default {
       this.vote = false;
     },
 
-    async eraseInfo() {
+    eraseInfo() {
       let eraseInfo = {
         id: this.reservation.id,
         index: this.index,
@@ -112,12 +107,18 @@ export default {
 };
 </script>
 <style scoped>
-div {
-  background-color: #ebecf186;
-  width: 75%;
-  margin: auto;
-}
 .hidden {
   display: none;
+}
+div {
+  margin-bottom: 3rem;
+  border-style: solid;
+  border-width: 0.1rem;
+  width: 75%;
+  margin: 2rem auto;
+  border-color: #59405c;
+  padding: 1rem;
+  background-color: #ebecf1;
+  border-radius: 1em;
 }
 </style>

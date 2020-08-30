@@ -1,123 +1,142 @@
 <template>
   <div class="all">
-    <vue-headful title="misplayas | Buscador" />
+    <div id="left">
+      <vue-headful title="misplayas | Buscador" />
 
-    <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
-    <div id="list">
+      <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
+
       <h1>BUSCA TU PLAYA</h1>
 
-      <!-----OPCIONES PARA ORDENAR LAS PLAYAS--->
-      <section id="order">
-        <div>
-          <p>Ordenar por:</p>
-          <select v-model="order">
-            <option value></option>
-            <option value="name">Nombre</option>
-            <option value="municipality">Municipio</option>
-            <option value="province">Provincia</option>
-            <option value="voteAverage">Valoración usuarios</option>
-          </select>
-        </div>
-        <div>
-          <p>Orden asc/desc:</p>
-          <select v-model="direction">
-            <option value="asc">Ascendente</option>
-            <option value="desc">Descendente</option>
-          </select>
-        </div>
-      </section>
+      <!--BUSCADOR INICIO----->
 
-      <!-----BUSCADOR AVANZADO (FECHA Y Nº DE PLAZAS A RESERVAR)--->
-
-      <article id="advanced">
+      <div class="options">
+        <!-----SECCIÓN ELEGIR FECHA-Y PLAZAS-->
         <section id="dateplaces">
-          <p>Fecha:</p>
-          <input id="date" type="date" v-model="date" placeholder="fecha" />
-
-          <p>Hora (formato 24 horas):</p>
-          <select id="hour" v-model="hour">
-            <option v-for="number in numbers" :key="number.id" :value="number">{{number}}</option>
-          </select>
-
-          <p>Número de plazas:</p>
-          <select id="places" v-model="places">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
+          <label>DISPONIBILIDAD</label>
+          <p>
+            Fecha
+            <input id="date" type="date" v-model="date" placeholder="fecha" />
+          </p>
+          <p>
+            0-24h
+            <select id="hour" v-model="hour">
+              <option v-for="number in numbers" :key="number.id" :value="number">{{number}}</option>
+            </select>
+          </p>
+          <p>
+            Plazas
+            <select id="places" v-model="places">
+              <option value></option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </p>
         </section>
 
-        <!-----AVANZADO (OPCIONES Y SERVICIOS DE LAS PLAYAS)--->
+        <!-----SECCIÓN ELEGIR TIPO Y LOCALIZACIÓN PLAYA--->
         <section id="location">
-          <p>Tipo de playa:</p>
-          <select id="type" v-model="type">
-            <option value></option>
-            <option value="Urbana">Urbana</option>
-            <option value="Semiurbana">Semiurbana</option>
-            <option value="Aislada">Aislada</option>
-          </select>
-
-          <p>Provincia:</p>
-          <select id="province" v-model="province">
-            <option value></option>
-            <option value="A Coruña">A Coruña</option>
-            <option value="Lugo">Lugo</option>
-            <option value="Ourense">Ourense</option>
-            <option value="Pontevedra">Pontevedra</option>
-          </select>
-
-          <p>Municipio:</p>
-          <select id="municipality" v-model="municipality">
-            <option
-              :class="{hidden: province !== muni.province}"
-              v-for="muni in beachesMun"
-              :key="muni.id"
-              :value="muni.municipality"
-            >{{muni.municipality}}</option>
-          </select>
+          <label>UBICACIÓN</label>
+          <p>
+            Tipo de playa
+            <select id="type" v-model="type">
+              <option value></option>
+              <option value="Urbana">Urbana</option>
+              <option value="Semiurbana">Semiurbana</option>
+              <option value="Aislada">Aislada</option>
+            </select>
+          </p>
+          <p>
+            Provincia
+            <select id="province" v-model="province">
+              <option value></option>
+              <option value="A Coruña">A Coruña</option>
+              <option value="Lugo">Lugo</option>
+              <option value="Ourense">Ourense</option>
+              <option value="Pontevedra">Pontevedra</option>
+            </select>
+          </p>
+          <p>
+            Municipio
+            <select id="municipality" v-model="municipality">
+              <option value></option>
+              <option
+                :class="{hidden: province !== muni.province}"
+                v-for="muni in beachesMun"
+                :key="muni.id"
+                :value="muni.municipality"
+              >{{muni.municipality}}</option>
+            </select>
+          </p>
         </section>
 
-        <section id="options">
+        <!-----SECCIÓN ELEGIR POR SERVICIOS--->
+
+        <section id="services">
+          <label id="labelservices">SERVICIOS</label>
           <label>
             <img src="@/assets/lifesaving.png" />
+            <input type="checkbox" value="lifesaving" v-model="lifesaving" />
           </label>
-          <input type="checkbox" value="lifesaving" v-model="lifesaving" />
 
           <label>
             <img src="@/assets/bar_restaurant.png" />
+            <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
           </label>
-          <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
 
           <label>
             <img src="@/assets/disabled_access.png" />
+            <input type="checkbox" value="disabled_access" v-model="disabled_access" />
           </label>
-          <input type="checkbox" value="disabled_access" v-model="disabled_access" />
 
           <label>
             <img src="@/assets/parking.png" />
+            <input type="checkbox" value="parking" v-model="parking" />
           </label>
-          <input type="checkbox" value="parking" v-model="parking" />
-
           <label>
             <img src="@/assets/toilet.png" />
+            <input type="checkbox" value="toilet" v-model="toilet" />
           </label>
-          <input type="checkbox" value="toilet" v-model="toilet" />
         </section>
-        <button @click="hide">Borrar criterios</button>
-      </article>
+
+        <!-----ELEGIR CRITERIOS Y DIRECCIÓN DE ORDENACIÓN--->
+        <div id="end">
+          <section id="order">
+            <p>Ordenar por:</p>
+            <select v-model="order">
+              <option value></option>
+              <option value="name">Nombre</option>
+              <option value="municipality">Municipio</option>
+              <option value="province">Provincia</option>
+              <option value="voteAverage">Valoración usuarios</option>
+            </select>
+            <button class="direction" @click="direction = 'asc'">&#8679;</button>
+            <button class="direction" @click="direction = 'desc'">&#8681;</button>
+          </section>
+          <!---BOTONES--->
+          <section id="button">
+            <button @click="searchBeaches()">BUSCAR</button>
+            <button @click="hide">Borrar criterios</button>
+          </section>
+        </div>
+      </div>
 
       <!--------FIN BUSCADOR AVANZADO--->
 
-      <button @click="searchBeaches()">Buscar</button>
-
       <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS
       ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
+      <div id="list" v-if="isLoaded">
+        <onelistcomponent :beaches="beaches" />
+      </div>
+      <div v-else>
+        <spinner />
+      </div>
 
-      <onelistcomponent :beaches="beaches" />
+      <!------🔍-FIN ID LIST-BÚSQUEDA AVANZADA---->
     </div>
-    <!------🔍-FIN ID LIST-BÚSQUEDA AVANZADA---->
+    <div id="right"></div>
   </div>
 </template>
 
@@ -149,7 +168,7 @@ export default {
 
   data() {
     return {
-      beaches: [],
+      beaches: null,
       beachesMun: [],
       order: "",
       direction: "",
@@ -204,13 +223,21 @@ export default {
     getVisit() {
       let datehour = "";
 
-      if (this.date === "" || this.hour === "") {
+      if (
+        this.date === "" ||
+        this.hour === "" ||
+        this.date === undefined ||
+        this.hour === undefined
+      ) {
         datehour = "";
       } else {
         datehour = this.date + "T" + this.hour + ":" + "00";
       }
       console.log(datehour);
       return datehour;
+    },
+    isLoaded() {
+      return this.beaches !== null;
     },
   },
 
@@ -343,7 +370,7 @@ export default {
         const response = await axios.post(
           `http://localhost:3000/beaches/${beachId}/show`,
           {
-            visit: visit,
+            visit: this.visit,
           }
         );
 
@@ -456,43 +483,95 @@ export default {
 </script>
 <style scoped>
 div.all {
-  background-image: url("../../assets/Orilla.jpg");
+  display: flex;
 }
+div#right {
+  background-image: url(../../assets/steps.jpg);
+  background-size: cover;
+  width: 15%;
+}
+div#left {
+  width: 85%;
+  background-color: #ebecf1;
+}
+
+div.options,
+div#list {
+  width: 80%;
+  margin: auto;
+}
+div.options {
+  display: flex;
+  justify-content: center;
+}
+section {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #353a64;
+  padding: 10px;
+  border-radius: 2em;
+}
+section#dateplaces,
+section#location,
+section#services {
+  background-color: #ebecf1;
+}
+
+div.options p {
+  color: #353a64;
+  margin-right: 1rem;
+}
+
+input,
+select {
+  width: 150px;
+  height: 30px;
+  border-radius: 2em;
+  margin: 0;
+}
+select#hour,
+select#places {
+  width: 40px;
+}
+
+article,
+section {
+  margin-bottom: 1rem;
+}
+
+div#end {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+section#order,
+section#button {
+  display: flex;
+  flex-direction: row;
+  border: none;
+  justify-content: space-around;
+}
+
 h1 {
   font-size: 3rem;
+  padding: 2rem;
 }
 
-input#datetime,
-input#date {
-  width: 250px;
-  height: 20px;
-}
-input#ccNumber {
-  width: 500px;
-  height: 20px;
-}
+button.direction {
+  width: 40px;
 
-article#advanced select {
-  height: 20px;
-}
-input {
-  width: 10px;
-  height: 10px;
-  font-size: 1rem;
-  margin: 1rem;
+  background-color: white;
+  border-radius: 0;
+  border-color: #353a64 solid;
+  border-style: solid;
+  margin-left: 0.5rem;
 }
 
 .hidden {
   display: none;
 }
 
-section#order,
-section#dateplaces,
-section#location {
-  display: flex;
-  justify-content: center;
-  margin: auto;
-}
 img {
   width: 80px;
 }
@@ -502,23 +581,24 @@ img#sky {
   height: 70px;
 }
 
-label > img,
-p > img {
+section#services img {
   width: 30px;
+}
+
+section#services input {
+  width: 20px;
+  margin-left: 1rem;
+}
+label {
+  text-align: center;
+  font-weight: 600;
+}
+label#labelservices {
+  margin-bottom: 1rem;
 }
 div#list {
   width: 75%;
   margin: auto;
-}
-article {
-  background-color: #ebecf1;
-  width: 75%;
-  margin: auto;
-  border-radius: 2em;
-}
-
-article#reservation {
-  padding-top: 2rem;
 }
 
 ul {
@@ -539,5 +619,9 @@ section#data > img {
 
 li {
   margin-bottom: 1rem;
+}
+label {
+  display: flex;
+  margin-top: 1rem;
 }
 </style>

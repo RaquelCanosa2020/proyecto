@@ -1,25 +1,33 @@
 <template>
   <div class="login">
     <vue-headful title="Misplayas | Login" />
-    <h1>Login de usuario</h1>
+    <section id="left">
+      <p></p>
+    </section>
+    <section id="right">
+      <h1>Login de usuario</h1>
 
-    <p>
-      <input v-model="email" type="email" required placeholder="Email" />
-    </p>
+      <p>
+        <input v-model="email" type="email" required placeholder="Email" />
+      </p>
 
-    <p>
-      <input v-model="password" type="password" required placeholder="Contraseña" />
-    </p>
+      <p>
+        <input v-model="password" type="password" required placeholder="Contraseña" />
+      </p>
 
-    <button @click="loginUser()">Entrar</button>
-    <p v-show="error">{{message}}</p>
+      <button class="login" @click="loginUser()">Entrar</button>
+      <p v-show="error">{{message}}</p>
 
-    <p>
-      Si has olvidado tu contraseña.
-      <button @click="sendRecoverPassword">Pincha aquí</button>
-    </p>
+      <p>
+        Si has olvidado tu contraseña...
+        <button
+          class="login"
+          @click="sendRecoverPassword"
+        >Pincha aquí</button>
+      </p>
 
-    <spinner v-show="spinner" />
+      <spinner v-show="spinner" />
+    </section>
   </div>
 </template>
 
@@ -91,8 +99,39 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 div.login {
+  display: flex;
+  background-color: #ebecf1;
+  min-height: 100vh;
+}
+
+section#right {
+  width: 50%;
+  margin: auto;
+}
+h1 {
+  font-size: 3rem;
+}
+
+p {
+  font-size: 1.5rem;
+}
+button.login {
+  font-size: 1.5rem;
+  width: 150px;
+  height: 40px;
+}
+section#left {
+  background-image: url("../../assets/neno.jpg");
+  background-size: cover;
+  width: 50%;
   height: 100vh;
+}
+
+input {
+  width: 300px;
+  height: 60px;
+  font-size: 1.5rem;
 }
 </style>

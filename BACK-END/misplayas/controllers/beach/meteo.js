@@ -16,9 +16,9 @@ async function getMeteo(req, res, next) {
         console.log(response.data.features[0].properties);
 
         const response1 = await axios.get(
-            "http://servizos.meteogalicia.es/apiv3/getNumericForecastInfo?startTime=2020-08-25T15:00:00&endTime=2020-08-25T16:00:00&locationIds=" +
+            "http://servizos.meteogalicia.es/apiv3/getNumericForecastInfo?startTime=2020-08-30T15:00:00&endTime=2020-08-30T16:00:00&locationIds=" +
             `${id}` +
-            "&variables=temperature,sky_state&API_KEY=" +
+            "&variables=temperature,sky_state,wind&API_KEY=" +
             `${process.env.METEOKEY}`
         );
         const info =
@@ -27,9 +27,13 @@ async function getMeteo(req, res, next) {
         const info2 =
             response1.data.features[0].properties.days[0].variables[1].values[0]
                 .value;
+        const info3 =
+            response1.data.features[0].properties.days[0].variables[2].values[0].iconURL;
 
 
-        res.send({ estado: info, temperatura: info2 })
+
+
+        res.send({ estado: info, temperatura: info2, viento: info3 })
     } catch (error) {
         console.log(error)
     }

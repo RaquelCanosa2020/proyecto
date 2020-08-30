@@ -1,19 +1,22 @@
 <template>
   <div class="reset">
-    <vue-headful title="Misplayas | Recuperación contraseña" />
-    <h1>Recuperación de contraseña</h1>
+    <section id="up">
+      <vue-headful title="Misplayas | Recuperación contraseña" />
+      <h1>Recuperación de contraseña</h1>
 
-    <p>
-      <span>Obligatorio</span>
-      <input type="password" v-model="password1" placeholder="Nueva Contraseña" />
-    </p>
+      <p>
+        <span>Obligatorio</span>
+        <input type="password" v-model="password1" placeholder="Nueva Contraseña" />
+      </p>
 
-    <p>
-      <span>Obligatorio</span>
-      <input type="password" v-model="password2" placeholder="Repite Contraseña" />
-    </p>
+      <p>
+        <span>Obligatorio</span>
+        <input type="password" v-model="password2" placeholder="Repite Contraseña" />
+      </p>
 
-    <button @click="resertPassword()">Validar</button>
+      <button @click="resertPassword()">Validar</button>
+    </section>
+    <section id="down"></section>
   </div>
 </template>
 
@@ -61,5 +64,34 @@ export default {
 <style scoped>
 div.reset {
   height: 100vh;
+  background-color: #ebecf1;
+  display: flex;
+  flex-direction: column;
+}
+
+section#up {
+  margin: auto;
+}
+h1 {
+  font-size: 3rem;
+}
+
+p {
+  font-size: 1.5rem;
+}
+button.login {
+  font-size: 1.5rem;
+  width: 150px;
+  height: 40px;
+}
+input {
+  width: 300px;
+  height: 60px;
+  font-size: 1.5rem;
+}
+section#down {
+  background-image: url(https://media.giphy.com/media/l4hLyOGRJWNSR8QQ8/giphy.gif);
+  background-size: cover;
+  height: 50vh;
 }
 </style>

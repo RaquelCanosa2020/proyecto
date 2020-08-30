@@ -58,6 +58,7 @@ async function searchBeaches(req, res, next) {
       } = req.body;
 
       const visitUtc = new Date(visit);
+      console.log(visit, visitUtc);
       if (visitUtc <= new Date() || visitUtc >= addDays(new Date(), 5)) {
         {
           throw generateError(

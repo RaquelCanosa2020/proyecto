@@ -7,7 +7,7 @@
         :index="index"
         :reservation="reservation"
         @sendIdVote="voteReserv"
-        @sendIdErase="eraseReserv"
+        @sendIdErase="eraseRes"
       />
     </section>
   </div>
@@ -68,7 +68,7 @@ export default {
       }
     },
 
-    async eraseReserv(eraseInfo) {
+    /*async eraseReserv(eraseInfo) {
       const id = eraseInfo.id;
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -83,6 +83,10 @@ export default {
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
+    },*/
+
+    eraseRes(eraseInfo) {
+      this.$emit("sendIdEr", eraseInfo);
     },
   },
 };

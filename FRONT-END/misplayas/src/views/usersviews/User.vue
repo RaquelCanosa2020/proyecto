@@ -2,61 +2,89 @@
   <div class="user">
     <vue-headful title="Misplayas | Perfil de usuario" />
 
-    <!--- <button @click="seeData =! seeData, getUserData()">Ver y editar datos</button>-->
-    <button @click="seePassword =! seePassword">Cambiar contraseña</button>
-    <button @click="seeReserv">Ver mis reservas</button>
-    <button @click="seeBeaches">Ver mis playas</button>
-    <button @click="seePhotos">Ver mis fotos</button>
-    <button>
-      <router-link to="/uploads">Subir fotos</router-link>
-    </button>
+    <div id="left">
+      <!--Div para gestionar datos del usuario---->
 
-    <section id="userdata" v-show="seeData">
-      <p>Id: {{userId}}</p>
-      <p>
-        <input type="text" placeholder="Nombre" v-model="newName" />
-        <input type="text" placeholder="Email" v-model="newEmail" />
-      </p>
-      <p>Perfil: {{newRole}}</p>
+      <section id="userdata">
+        <!----Sección para ver y editar datos---->
+        <h1>Datos de usuario</h1>
+        <img :src="setImage(newAvatar)" />
+        <article id="name">
+          <p>Id: {{userId}}</p>
+          <p>
+            <span>Nombre:</span>
+            <input :class="{editclass: edit}" type="text" placeholder="Nombre" v-model="newName" />
+          </p>
+          <p>
+            <span>Email:</span>
+            <input :class="{editclass: edit}" type="text" placeholder="Email" v-model="newEmail" />
+          </p>
+          <p>
+            <span>Tipo de perfil:</span>
+            {{newRole}}
+          </p>
+        </article>
 
-      <img :src="setImage(newAvatar)" />
+        <button v-show="!edit" @click="showEdit()">Editar datos</button>
 
-      <button @click="upload =! upload">Cambiar foto</button>
+        <form v-show="upload" name="subida-imagenes" type="POST" enctype="multipart/formdata">
+          <input type="file" ref="uploadedImage" />
+          <input type="submit" name="subir-imagen" value="Enviar imagen" @click="uploadImage" />
+        </form>
 
-      <form v-show="upload" name="subida-imagenes" type="POST" enctype="multipart/formdata">
-        <input type="file" ref="uploadedImage" />
-        <input type="submit" name="subir-imagen" value="Enviar imagen" @click="uploadImage" />
-      </form>
+        <button id="edit" v-show="upload" @click="updateUser()">Aceptar</button>
 
-      <button id="edit" @click="updateUser()">Aceptar cambios</button>
-      <button id="cancel" @click="seeData = false">Cancelar</button>
-    </section>
+        <button id="cancel" v-show="upload" @click="getUserData()">Cancelar</button>
+      </section>
+      <button class="large" v-show="edit" @click="seePassword =! seePassword">Cambiar contraseña</button>
 
-    <section id="password" v-show="seePassword">
-      <p>
-        <input type="password" placeholder="Contraseña actual" v-model="oldPassword" />
-        <input type="password" placeholder="Nueva contraseña" v-model="newPassword" />
+      <section id="password" v-show="seePassword">
+        <!----Sección para cmabiar contraseña---->
+        <p>
+          <input
+            class="editclass"
+            type="password"
+            placeholder="Contraseña actual"
+            v-model="oldPassword"
+          />
+          <input
+            class="editclass"
+            type="password"
+            placeholder="Nueva contraseña"
+            v-model="newPassword"
+          />
 
-        <button id="editPassword" @click="updatePassword()">Cambiar</button>
-        <button id="cancel" @click="seePassword = false, seeData = true">Cancelar</button>
-      </p>
-    </section>
+          <button id="editPassword" @click="updatePassword()">Cambiar</button>
+          <button id="cancel" @click="seePassword = false">Cancelar</button>
+        </p>
+      </section>
+    </div>
+    <div id="buttons">
+      <!----Botones con opciones---->
+      <button class="short" :class="{active: showReserv}" @click="seeReserv">Ver mis reservas</button>
+      <button class="short" :class="{active: showBeach}" @click="seeBeaches">Ver mis playas</button>
+      <button class="short" :class="{active: showPhotos}" @click="seePhotos">Ver mis fotos</button>
 
-    <section v-show="showReserv">
-      <button @click="showReserv = false, seeData=true">Volver</button>
-      <button @click="seeReserv">Refrescar</button>
-      <listreservation :reservations="reservations" />
-    </section>
+      <router-link to="/uploads">Subir fotos >></router-link>
+    </div>
+    <div id="right">
+      <section v-show="showReserv">
+        <h1>Tus reservas</h1>
+        <button @click="showReserv = false">Ocultar reservas</button>
+        <button @click="seeReserv">Borrar anuladas</button>
+        <listreservation :reservations="reservations" @sendIdEr="eraseReserv" />
+      </section>
 
-    <section v-show="showBeach">
-      <button @click="showBeach = false, seeData=true">Volver</button>
-      <userbeachcomponent :userbeaches="userbeaches" />
-    </section>
+      <section v-show="showBeach">
+        <button @click="showBeach = false">Ocultar playas</button>
+        <userbeachcomponent :userbeaches="userbeaches" />
+      </section>
 
-    <section v-show="showPhotos">
-      <button @click="showPhotos = false, seeData=true">Volver</button>
-      <userphotocomponent v-on:send="erasePhoto" :userphotos="userphotos" />
-    </section>
+      <section id="photos" v-show="showPhotos">
+        <button @click="showPhotos = false">Ocultar fotos</button>
+        <userphotocomponent v-on:send="erasePhoto" :userphotos="userphotos" />
+      </section>
+    </div>
   </div>
 </template>
 <script>
@@ -84,11 +112,11 @@ export default {
   },
   data() {
     return {
-      seeData: true,
       seePassword: false,
       showReserv: true,
       showBeach: false,
       showPhotos: false,
+      edit: false,
       vote: true,
       upload: false,
       userId: "",
@@ -107,6 +135,11 @@ export default {
     };
   },
   methods: {
+    showEdit() {
+      this.edit = true;
+      this.upload = true;
+    },
+
     //FUNCIÓN PARA SACAR LA DIRECCIÓN DE LA IMAGEN ACTUAL
     setImage(img) {
       if (img === null) {
@@ -124,6 +157,8 @@ export default {
 
     //FUNCIÓN PARA OBTENER LOS DATOS DEL USUARIO
     async getUserData() {
+      this.edit = false;
+      this.upload = false;
       this.seePassword = false;
       this.showReserv = false;
       this.showBeach = false;
@@ -152,9 +187,6 @@ export default {
     //FUNCIÓN PARA RECUPERAR IMAGEN QUE INCLUYE EL USUARIO <p>{{errorMessage}}</p>
     uploadImage() {
       this.uploadedImage = this.$refs.uploadedImage.files[0];
-
-      sweetAlertOk("foto modificada");
-      this.updateUser();
     },
 
     //FUNCIÓN PARA ACTUALIZAR DATOS DEL USUARIO
@@ -163,6 +195,7 @@ export default {
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
       console.log(id);
+      this.uploadImage();
 
       try {
         let userNewData = new FormData();
@@ -193,6 +226,7 @@ export default {
             location.reload();
           }, 2000);*/
           this.getUserData();
+          this.edit = false;
         }
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
@@ -234,8 +268,6 @@ export default {
 
     async seeReserv() {
       this.showReserv = true;
-      this.seeData = false;
-      this.seePassword = false;
       this.showBeach = false;
       this.showPhotos = false;
       const id = getId();
@@ -254,12 +286,28 @@ export default {
       }
     },
 
+    async eraseReserv(eraseInfo) {
+      const id = eraseInfo.id;
+      const token = getAuthToken();
+      axios.defaults.headers.common["Authorization"] = `${token}`;
+      //sweetAlertErase;
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/reservations/${id}`
+        );
+        this.showReserv = false;
+        this.seeReserv();
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
+      }
+    },
+
     //FUNCIÓN PARA VER PLAYAS DEL USUARIO
 
     async seeBeaches() {
       this.showBeach = true;
       this.seePassword = false;
-      this.seeData = false;
+
       this.showReserv = false;
       this.showPhotos = false;
       const id = getId();
@@ -283,7 +331,7 @@ export default {
       this.showPhotos = true;
       this.showBeach = false;
       this.seePassword = false;
-      this.seeData = false;
+
       this.showReserv = false;
       const id = getId();
       const token = getAuthToken();
@@ -322,39 +370,104 @@ export default {
 };
 </script>
 <style scoped>
-div {
+div.user {
+  background-color: #ebecf1;
+  display: flex;
+  justify-content: space-between;
   min-height: 100vh;
 }
-section#userdata {
-  background-color: #ebecf186;
+
+div#left {
+  width: 40%;
+}
+
+div#right {
+  background-image: url("../../assets/paso.jpg");
+  background-size: cover;
   width: 60%;
+}
+div#buttons {
+  display: flex;
+  flex-direction: column;
+  width: 10%;
+}
+
+section#photos {
+  background-color: #ebecf1;
+}
+
+section#password {
+  margin-top: 3rem;
+}
+
+article#name {
+  width: 50%;
   margin: auto;
 }
-
-.textarea {
-  width: 250px;
-  height: 150px;
+h1 {
+  font-size: 2rem;
+}
+p {
+  color: #353a64;
+  text-align: left;
+  font-size: 1.5rem;
 }
 
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.5);
+input {
+  border-style: none;
+  color: #59405c;
+  font-size: 1.5rem;
 }
-.modalBox {
-  background-color: #fefefe;
-  margin: 2% auto;
-  padding: 3rem;
-  width: 80%;
-  border: 1px solid #888;
+
+input::placeholder {
+  color: #353a64;
+  font-size: 1.5rem;
 }
+
+input.editclass {
+  border: 1px solid #0779e4;
+  color: #0779e4;
+  border-radius: 1em;
+  font-size: 1rem;
+  text-align: left;
+  margin: 0.5rem;
+}
+
 img {
   width: 150px;
   border-radius: 50%;
+}
+button {
+  margin: 2rem;
+}
+
+button.large {
+  border-radius: 0;
+  border-color: white;
+  border-style: solid;
+  width: 200px;
+  background-color: #59405c;
+  color: white;
+  margin-top: 3rem;
+}
+
+button.short {
+  border-radius: 0;
+  border-color: white;
+  border-style: solid;
+  width: 100px;
+  background-color: #59405c;
+  color: white;
+  margin-top: 2rem;
+}
+button.short.active {
+  background-color: #4cbbb9;
+}
+
+a {
+  margin-top: 2rem;
+  text-decoration: none;
+  font-weight: 800;
 }
 </style>
 

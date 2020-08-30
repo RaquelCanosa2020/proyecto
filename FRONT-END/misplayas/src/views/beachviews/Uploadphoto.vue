@@ -1,33 +1,41 @@
 <template>
-  <div class="upload">
-    <vue-headful title="misplayas | Subir foto" />
+  <div class="all">
+    <div class="upload">
+      <vue-headful title="misplayas | Subir foto" />
 
-    <h1>Sube fotos de tus playas</h1>
-    <label>Elige la playa:</label>
-    <select v-model="selectedBeach">
-      <option
-        v-for="beach in beaches"
-        :key="beach.id"
-        :value="beach.id"
-      >{{beach.id}}, {{beach.name}}, {{beach.municipality}}</option>
-    </select>
+      <h1>Sube fotos de tus playas</h1>
+      <label>Elige la playa:</label>
+      <select v-model="selectedBeach">
+        <option
+          v-for="beach in beaches"
+          :key="beach.id"
+          :value="beach.id"
+        >{{beach.id}}, {{beach.name}}, {{beach.municipality}}</option>
+      </select>
 
-    <input type="datetime-local" placeholder="Fecha" v-model="date" />
-    <br />
-    <input class="comment" type="textarea" placeholder="Comentario" v-model="description" />
-    <img :src="setImage(messageLink)" />
+      <input type="datetime-local" placeholder="Fecha" v-model="date" />
 
-    <form name="subida-imagenes" type="POST" enctype="multipart/formdata">
-      <input type="file" ref="uploadedImage" @change="uploadImage" />
-    </form>
-    <input type="submit" name="subir-imagen" value="Enviar imagen" @click="saveImage" />
+      <input
+        id="comment"
+        class="comment"
+        type="textarea"
+        placeholder="Comentario"
+        v-model="description"
+      />
+      <img :src="setImage(messageLink)" />
 
-    <!--- <img :src="setImage(uploadedImage)" />---->
-    <p>{{messageImage}}</p>
+      <form name="subida-imagenes" type="POST" enctype="multipart/formdata">
+        <input type="file" ref="uploadedImage" @change="uploadImage" />
+      </form>
+      <input type="submit" name="subir-imagen" value="Enviar imagen" @click="saveImage" />
 
-    <button>
-      <router-link :to="{name:'Usuario'}">Volver</router-link>
-    </button>
+      <!--- <img :src="setImage(uploadedImage)" />---->
+      <p>{{messageImage}}</p>
+
+      <button>
+        <router-link :to="{name:'Usuario'}">Volver</router-link>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -126,16 +134,33 @@ export default {
 };
 </script>
 <style scoped>
+div.all {
+  background-image: url(../../assets/sunset.jpeg);
+  background-size: cover;
+}
 div.upload {
   height: 100vh;
+  width: 40%;
+  margin: auto;
+  padding: 3rem;
+  background-color: #ebecf1b6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
 }
 
-select {
-  width: 300px;
-  height: 50px;
+select,
+input#comment {
+  width: 600px;
+  height: 60px;
+  margin-top: 2rem;
 }
 
 img {
   width: 200px;
+}
+a {
+  text-decoration: none;
 }
 </style>

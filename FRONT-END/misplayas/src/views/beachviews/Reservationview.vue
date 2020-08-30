@@ -1,65 +1,81 @@
 <template>
-  <div class="reservation">
-    <!-------⌚-INICIO RESERVA-->
-    <label>Elige la playa:</label>
-    <select v-model="selectedBeach">
-      <option
-        v-for="beach in beaches"
-        :key="beach.id"
-        :value="beach.id"
-      >{{beach.id}}, {{beach.name}}, {{beach.municipality}}, {{beach.province}}</option>
-    </select>
-
-    <!-------<p>Playa: Nº.{{$route.params.id}}, {{$route.params.name}}</p>
-    <p>Municipio: {{$route.params.municipality}}, Provincia: {{$route.params.province}}</p>--->
-
-    <!-------FECHA Y Nº DE PLAZAS A RESERVAR--->
-    <section id="dateplaces">
-      <p>Fecha:</p>
-      <input id="date" type="date" v-model="dateReservation" placeholder="fecha" />
-
-      <p>Hora (formato 24 horas):</p>
-      <select id="hour" v-model="hourReservation">
-        <option v-for="number in numbers" :key="number.id" :value="number">{{number}}</option>
+  <div class="all">
+    <div class="reservation">
+      <!-------⌚-INICIO RESERVA-->
+      <h1>RESERVA DE ESPACIO EN PLAYA</h1>
+      <label>Elige la playa:</label>
+      <select v-model="selectedBeach">
+        <option
+          v-for="beach in beaches"
+          :key="beach.id"
+          :value="beach.id"
+        >{{beach.id}}, {{beach.name}}, {{beach.municipality}}, {{beach.province}}</option>
       </select>
 
-      <p>Número de plazas:</p>
-      <select v-model="placesReservation">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </section>
-    <section id="conditions">
-      <!-------CONFIRMACIÓN DE LA RESERVA--->
-      <p>Condiciones generales de la reserva:</p>
+      <!-------<p>Playa: Nº.{{$route.params.id}}, {{$route.params.name}}</p>
+      <p>Municipio: {{$route.params.municipality}}, Provincia: {{$route.params.province}}</p>--->
 
-      <p>Número de tarjeta de crédito</p>:
+      <!-------FECHA Y Nº DE PLAZAS A RESERVAR--->
+      <section id="dateplaces">
+        <p>
+          Fecha:
+          <input id="date" type="date" v-model="dateReservation" placeholder="fecha" />
+        </p>
+
+        <p>
+          Hora (formato 24 horas):
+          <select id="hour" v-model="hourReservation">
+            <option v-for="number in numbers" :key="number.id" :value="number">{{number}}</option>
+          </select>
+        </p>
+
+        <p>
+          Número de plazas:
+          <select v-model="placesReservation">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </p>
+      </section>
+      <section id="conditions">
+        <!-------CONFIRMACIÓN DE LA RESERVA--->
+        <p>Condiciones generales de la reserva:</p>
+        <ul id="conditions">
+          <li>Selecciona fecha / hora / nº plazas para que se realice la reserva.</li>
+          <li>Se pueden reservar fechas de los 5 días siguientes desde el momento actual.</li>
+          <li>Sólo es necesario reservar dentro de los horarios y meses indicados en cada playa.</li>
+          <li>Introduce el nº de tarjeta para hacer efectivo el pago de la reserva.</li>
+          <li>Se puede anular la reserva hasta 24 horas antes de la fecha prevista.</li>
+          <li>Desde "tu espacio" puedes ver tus reservas, anular reservas y votar/dejar comentarios.</li>
+        </ul>
+      </section>
+
+      <p>Número de tarjeta de crédito:</p>
       <input id="ccNumber" type="text" v-model="ccNumber" placeholder="Nº tarjeta crédito/débito" />
 
       <p>Importe: 3 euros (impuestos incluídos)</p>
-    </section>
 
-    <ul class="ok" id="reserv">
-      <li>{{messageConfirm.info}}</li>
-      <li>{{messageConfirm.user}}</li>
-      <li>{{messageConfirm.beach}}</li>
-      <li>{{messageConfirm.visit}}</li>
-      <li>{{messageConfirm.places}}</li>
-      <li>{{messageConfirm.fee}}</li>
-      <li>{{messageConfirm.payment}}</li>
-      <li>{{messageConfirm.notice}}</li>
-    </ul>
+      <button v-show="beforeConfirm" @click="acceptReservation">Confirmar y pagar</button>
 
-    <button v-show="beforeConfirm" @click="acceptReservation">Confirmar y pagar</button>
+      <ul class="ok" id="reserv">
+        <li>{{messageConfirm.info}}</li>
+        <li>{{messageConfirm.user}}</li>
+        <li>{{messageConfirm.beach}}</li>
+        <li>{{messageConfirm.visit}}</li>
+        <li>{{messageConfirm.places}}</li>
+        <li>{{messageConfirm.fee}}</li>
+        <li>{{messageConfirm.payment}}</li>
+        <li>{{messageConfirm.notice}}</li>
+      </ul>
+      <button>
+        <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver al buscador</router-link>
+      </button>
 
-    <button>
-      <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver</router-link>
-    </button>
-
-    <!-------⌚-FIN RESERVA--->
+      <!-------⌚-FIN RESERVA--->
+    </div>
   </div>
 </template>
 
@@ -156,7 +172,9 @@ export default {
     //FUNCIÓN PARA CONSEGUIR LOS DATOS DE LAS PLAYAS (SI USUARIO NO VIENE DEL BUSCADOR)
     async getBeaches() {
       try {
-        const response = await axios.get(`http://localhost:3000/beaches`);
+        const response = await axios.post(
+          `http://localhost:3000/beaches/search`
+        );
 
         this.beaches = response.data.data;
       } catch (error) {
@@ -221,3 +239,53 @@ export default {
   },
 };
 </script>
+<style scoped>
+div.all {
+  min-height: 100 vh;
+  background-image: url(../../assets/sillas.jpg);
+  background-size: cover;
+  padding: 2rem;
+}
+div.reservation {
+  width: 50%;
+  margin: auto;
+  background-color: #ebecf1;
+  padding: 2rem;
+}
+
+p,
+label {
+  font-size: 1.5rem;
+  color: #353a64;
+}
+
+select,
+input {
+  height: 30px;
+}
+ul {
+  font-size: 1.2rem;
+
+  margin: auto;
+}
+
+ul#conditions {
+  color: #353a64;
+  padding: 2rem;
+}
+section#conditions {
+  border-color: #ffaa71;
+  border-style: solid;
+  border-radius: 2em;
+}
+ul.ok li {
+  list-style: none;
+}
+li {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+router-link {
+  text-decoration: none;
+}
+</style>

@@ -1,14 +1,12 @@
 <template>
   <div>
-    <div>
-      <p>{{global}}</p>
-      <section v-for="vote in votes" :key="vote.index">
-        <p>Fecha: {{formatDateToUser(vote.date)}}</p>
-        <p>Valoración:{{vote.value}}</p>
-        <p>Comentario: {{vote.comment}}</p>
-        <p>Usuario: {{vote.name}}</p>
-      </section>
-    </div>
+    <p id="global">{{global}}</p>
+    <section v-for="vote in votes" :key="vote.index">
+      <p>Fecha: {{formatDateToUser(vote.date)}}</p>
+      <p>Valoración:{{vote.value}}</p>
+      <p>Comentario: {{vote.comment}}</p>
+      <p>Usuario: {{vote.name}}</p>
+    </section>
   </div>
 </template>
 
@@ -39,8 +37,24 @@ export default {
 </script>
 
 <style scoped>
-section {
+p#global {
+  font-size: 1.5rem;
+  text-align: center;
   background-color: #ebecf1;
-  margin-bottom: 1rem;
+  padding: 2rem;
+}
+
+div {
+  width: 60%;
+  text-align: left;
+}
+section {
+  margin-bottom: 3rem;
+  border-style: solid;
+  border-width: 0.1rem;
+  border-color: #59405c;
+  padding: 1rem;
+  background-color: #ebecf1;
+  border-radius: 1em;
 }
 </style>

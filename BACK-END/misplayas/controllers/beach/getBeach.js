@@ -59,7 +59,7 @@ async function getBeach(req, res, next) {
       console.log("visit: ", visit);
       console.log(`hora: ${visitHour}, mes: {visitMonth}`);
       console.log(`visitDate ${visitDate}`);
-      console.log(`visitDate ${visitUser}`);
+      console.log(`visitUser ${visitUser}`);
       visitMeteo = visit + ":00";
       console.log(`visitmeteo ${visit}`);
 
@@ -112,7 +112,7 @@ async function getBeach(req, res, next) {
     free = Number(result[0].capacity) - Number(occupation[0].occupation);
 
     console.log(`aforo máximo ${Number(result[0].capacity)}, ocupación: ${Number(occupation[0].occupation)}, plazas: ${free}`)
-
+    console.log(`visitUser ${visitUser}`);
     //en front el usuario no puede acceder a las playas inactivas:
     if (result[0].active === 0) {
       free = "PLAYA INACTIVA";
@@ -126,6 +126,8 @@ async function getBeach(req, res, next) {
     const nameMeteo = nameLetters.join('_');
     let infoSkyState;
     let temperature;
+
+    let avisoMeteo;
 
     //Primero sacamos el identificador de la playa con el nombre:
     try {
@@ -154,11 +156,13 @@ async function getBeach(req, res, next) {
         response1.data.features[0].properties.days[0].variables[1].values[0]
           .value;
 
+
+
     } catch (error) {
-      throw generateError(
-        "No se pudo acceder a la información meterorológica",
-        400
-      );
+      console.log(error)
+    }
+    finally {
+      avisoMeteo = "sin datos";
     }
 
 
@@ -166,10 +170,14 @@ async function getBeach(req, res, next) {
       status: "ok",
       data: {
         info: result[0],
-        disponibilidad: `Disponibilidad fecha ${visitUser}: ${free} plazas`,
+        fecha: visitUser,
+        disponibilidad: free,
         aviso: aviso, //aviso en caso de que hora o mes no se corresponda
         estado: infoSkyState,
-        temperatura: temperature
+        temperatura: temperature,
+
+        avisoMeteo: avisoMeteo
+
 
       },
     });

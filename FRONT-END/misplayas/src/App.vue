@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <div id="nav">
+    <nav id="nav">
+      <img id="header" src="./assets/mar.jpg" />
       <router-link :to="{name:'Home'}">Home</router-link>
       <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>
       <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>
@@ -11,13 +12,11 @@
       <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
       <router-link v-show="logged" :to="{name:'Usuario'}">Tu espacio</router-link>
       <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
-    </div>
-
+    </nav>
     <section id="header">
       <p id="username" v-show="logged">Hola {{username}}</p>
       <button id="logout" v-show="logged" @click="logoutUser()">Logout</button>
     </section>
-
     <router-view
       @login="setUserName"
       @getInfo="saveInfo"
@@ -50,18 +49,20 @@ export default {
       logged: false,
       username: "",
       admin: false,
-      optionssaved: {},
       info: {},
       data: {},
     };
   },
   methods: {
+    //Guardo las opciones del buscador para pasarlas a otras páginas
     saveInfo(infoOptions) {
       this.info = infoOptions;
     },
+    //Guardo info de la playa seleccionada en buscador
     saveData(beachdata) {
       this.data = beachdata;
     },
+    //Una vez logado, se recoge el nombre del usuario para mostrarlo en el menú.
     async setUserName(userId) {
       //incluyo este ifelse, para que en la parte pública no pida el nombre del usuario,
       //para que no de error en la consola (ya que no encuentra al usuario id null)
@@ -84,6 +85,7 @@ export default {
         }
       }
     },
+
     getLoging() {
       this.logged = isLoggedIn();
     },
@@ -96,6 +98,7 @@ export default {
         this.admin = true;
       }
     },
+
     logoutUser() {
       logout();
       this.username = "";
@@ -113,13 +116,15 @@ export default {
 </script>
 
 <style>
-@import url("https://fonts.googleapis.com/css2?family=Delius&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam:wght@300&Open+Sans:wght@600display=swap");
 #app {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Open Sans, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #353a64;
+
+  background-size: cover;
   background-color: #353a64;
 }
 
@@ -134,23 +139,26 @@ section#header {
 
 #nav {
   padding: 30px 0 100px 0;
+  display: flex;
+  justify-content: flex-start;
+  background-color: #353a64;
 }
 
 #nav a {
   font-weight: bold;
-  color: #ebecf1;
-  font-size: 1.3rem;
+  color: #ffaa71;
+  font-size: 3rem;
   padding: 1rem;
+  text-decoration: none;
 }
 
 #nav a.router-link-exact-active {
-  color: #ffaa71;
+  color: #4cbbb9;
 }
 input {
   background-color: #ebecf1;
   border: 1px solid #0779e4;
   border-radius: 1em;
-
   font-size: 0.5rem;
   text-align: left;
   margin: 0.5rem;
@@ -162,7 +170,6 @@ input::placeholder {
 button {
   width: 50px;
   height: 20px;
-
   border-style: none;
   border-radius: 2em;
   color: #353a64;
@@ -180,7 +187,7 @@ button#logout {
 }
 
 p {
-  color: #ffaa71;
+  color: #353a64;
 }
 
 p#username {
@@ -197,16 +204,19 @@ p.ok {
   font-size: 1.5rem;
   color: green;
 }
+img#header {
+  width: 100px;
+}
 
 @media (min-width: 700px) {
   button {
     width: 100px;
     height: 40px;
     font-size: 1rem;
+    text-decoration: none;
   }
   input {
     font-size: 1rem;
-    margin: 1rem;
   }
   #nav a {
     font-weight: bold;

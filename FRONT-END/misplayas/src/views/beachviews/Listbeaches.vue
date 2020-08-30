@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="listbeaches">
     <vue-headful title="misplayas | Lista Playas" />
 
     <h1>Listado de playas del Administrador</h1>
@@ -15,12 +15,11 @@
       </div>
       <div>
         <p>Orden asc/desc:</p>
-        <select v-model="direction">
-          <option value="asc">Ascendente</option>
-          <option value="desc">Descendente</option>
-        </select>
+        <button class="direction" @click="direction = 'asc'">&#8679;</button>
+        <button class="direction" @click="direction = 'desc'">&#8681;</button>
       </div>
     </section>
+    <button @click="getBeaches()">Ordenar</button>
 
     <allbeachescomponent v-on:sendToggle="toggleBeach" :beaches="beaches" />
   </div>
@@ -114,6 +113,11 @@ export default {
 </script>
 
 <style scoped>
+div.listbeaches,
+h1,
+p {
+  color: whitesmoke;
+}
 section:not(#selected) {
   display: flex;
   justify-content: center;
@@ -128,6 +132,15 @@ select {
   height: 25px;
   font-size: 1rem;
   margin: 1rem;
+}
+button.direction {
+  width: 40px;
+
+  background-color: white;
+  border-radius: 0;
+  border-color: #353a64 solid;
+  border-style: solid;
+  margin-left: 0.5rem;
 }
 
 .modal {

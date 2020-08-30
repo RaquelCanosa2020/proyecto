@@ -40,7 +40,6 @@
 
       <section id="button">
         <p>
-          👍
           <button id="rating">{{beach.voteAverage}}</button>
         </p>
         <p class="link">
@@ -102,7 +101,6 @@ export default {
 <style scoped>
 div {
   margin-bottom: 1rem;
-  background-color: #353a64;
   padding: 1rem;
   border-radius: 2em;
   color: whitesmoke;
@@ -113,11 +111,12 @@ div {
 div.main {
   display: flex;
   justify-content: space-around;
+  background-color: #353a64;
 }
 
 img {
   width: 400px;
-  height: 400px;
+  height: 300px;
   border-radius: 2em;
 }
 router-link {
@@ -150,7 +149,6 @@ section#info {
   display: none;
 }
 button#free {
-  color: ;
   font-size: 2rem;
   background-color: whitesmoke;
 }
@@ -161,5 +159,6 @@ h1 {
 }
 p {
   font-size: 1.2rem;
+  color: #ebecf1;
 }
 </style>
