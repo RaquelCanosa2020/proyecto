@@ -1,14 +1,7 @@
 <template>
   <div class="all">
-    <div id="left">
-      <vue-headful title="misplayas | Buscador" />
-
-      <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
-
-      <h1>BUSCA TU PLAYA</h1>
-
-      <!--BUSCADOR INICIO----->
-
+    <vue-headful title="misplayas | Buscar" />
+    <div id="right">
       <div class="options">
         <!-----SECCIÓN ELEGIR FECHA-Y PLAZAS-->
         <section id="dateplaces">
@@ -76,35 +69,37 @@
 
         <section id="services">
           <label id="labelservices">SERVICIOS</label>
-          <label>
-            <img src="@/assets/lifesaving.png" />
-            <input type="checkbox" value="lifesaving" v-model="lifesaving" />
-          </label>
+          <article id="services">
+            <label>
+              <img src="@/assets/lifesaving.png" />
+              <input type="checkbox" value="lifesaving" v-model="lifesaving" />
+            </label>
 
-          <label>
-            <img src="@/assets/bar_restaurant.png" />
-            <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
-          </label>
+            <label>
+              <img src="@/assets/bar_restaurant.png" />
+              <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
+            </label>
 
-          <label>
-            <img src="@/assets/disabled_access.png" />
-            <input type="checkbox" value="disabled_access" v-model="disabled_access" />
-          </label>
+            <label>
+              <img src="@/assets/disabled_access.png" />
+              <input type="checkbox" value="disabled_access" v-model="disabled_access" />
+            </label>
 
-          <label>
-            <img src="@/assets/parking.png" />
-            <input type="checkbox" value="parking" v-model="parking" />
-          </label>
-          <label>
-            <img src="@/assets/toilet.png" />
-            <input type="checkbox" value="toilet" v-model="toilet" />
-          </label>
+            <label>
+              <img src="@/assets/parking.png" />
+              <input type="checkbox" value="parking" v-model="parking" />
+            </label>
+            <label>
+              <img src="@/assets/toilet.png" />
+              <input type="checkbox" value="toilet" v-model="toilet" />
+            </label>
+          </article>
         </section>
 
         <!-----ELEGIR CRITERIOS Y DIRECCIÓN DE ORDENACIÓN--->
         <div id="end">
+          <p>Ordenar por:</p>
           <section id="order">
-            <p>Ordenar por:</p>
             <select v-model="order">
               <option value></option>
               <option value="name">Nombre</option>
@@ -116,27 +111,37 @@
             <button class="direction" @click="direction = 'desc'">&#8681;</button>
           </section>
           <!---BOTONES--->
-          <section id="button">
-            <button @click="searchBeaches()">BUSCAR</button>
-            <button @click="hide">Borrar criterios</button>
-          </section>
         </div>
       </div>
+    </div>
+    <div id="left">
+      <vue-headful title="misplayas | Buscador" />
+
+      <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
+
+      <h1>BUSCA TU PLAYA</h1>
+
+      <!--BUSCADOR INICIO----->
 
       <!--------FIN BUSCADOR AVANZADO--->
 
       <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS
       ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
-      <div id="list" v-if="isLoaded">
-        <onelistcomponent :beaches="beaches" />
-      </div>
-      <div v-else>
-        <spinner />
+      <div id="main">
+        <section id="button">
+          <button id="search" @click="searchBeaches()">BUSCAR</button>
+          <button @click="hide">Borrar criterios</button>
+        </section>
+        <div id="list" v-if="isLoaded">
+          <onelistcomponent :beaches="beaches" />
+        </div>
+        <div v-else>
+          <spinner />
+        </div>
       </div>
 
       <!------🔍-FIN ID LIST-BÚSQUEDA AVANZADA---->
     </div>
-    <div id="right"></div>
   </div>
 </template>
 
@@ -484,15 +489,16 @@ export default {
 <style scoped>
 div.all {
   display: flex;
+  background-image: url(../../assets/Orilla.jpg);
+  background-size: cover;
 }
 div#right {
-  background-image: url(../../assets/steps.jpg);
-  background-size: cover;
-  width: 15%;
+  width: 25%;
+  padding-top: 2rem;
 }
 div#left {
-  width: 85%;
-  background-color: #ebecf1;
+  width: 75%;
+  background-color: #ebecf19f;
 }
 
 div.options,
@@ -502,6 +508,7 @@ div#list {
 }
 div.options {
   display: flex;
+  flex-direction: column;
   justify-content: center;
 }
 section {
@@ -516,10 +523,16 @@ section#location,
 section#services {
   background-color: #ebecf1;
 }
+article#services {
+  display: flex;
+  flex-direction: row;
+}
 
-div.options p {
+div.options p,
+div#end p {
   color: #353a64;
-  margin-right: 1rem;
+  margin-right: 1.3rem;
+  font-weight: 800;
 }
 
 input,
@@ -538,6 +551,9 @@ article,
 section {
   margin-bottom: 1rem;
 }
+div#main {
+  display: flex;
+}
 
 div#end {
   display: flex;
@@ -545,12 +561,18 @@ div#end {
   justify-content: space-around;
 }
 
-section#order,
-section#button {
+section#order {
   display: flex;
   flex-direction: row;
-  border: none;
   justify-content: space-around;
+}
+section#button {
+  border: none;
+  margin-top: 2rem;
+}
+button#search {
+  font-weight: 800;
+  margin-bottom: 2rem;
 }
 
 h1 {
@@ -583,19 +605,19 @@ img#sky {
 
 section#services img {
   width: 30px;
+  height: 30px;
 }
 
 section#services input {
-  width: 20px;
-  margin-left: 1rem;
+  width: 10px;
+  height: 10px;
+  margin-right: 2rem;
 }
 label {
   text-align: center;
   font-weight: 600;
 }
-label#labelservices {
-  margin-bottom: 1rem;
-}
+
 div#list {
   width: 75%;
   margin: auto;

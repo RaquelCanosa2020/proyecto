@@ -1,28 +1,30 @@
 <template>
   <div id="app">
-    <nav id="nav">
-      <img id="header" src="./assets/mar.jpg" />
-      <router-link :to="{name:'Home'}">Home</router-link>
-      <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>
-      <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>
-      <router-link :to="{name:'Buscador'}">Buscar</router-link>
-      <router-link v-show="logged" :to="{name:'Reserva'}">Reservar</router-link>
-
-      <router-link :to="{name:'About'}">About</router-link>
-      <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
-      <router-link v-show="logged" :to="{name:'Usuario'}">Tu espacio</router-link>
-      <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
-    </nav>
     <section id="header">
-      <p id="username" v-show="logged">Hola {{username}}</p>
-      <button id="logout" v-show="logged" @click="logoutUser()">Logout</button>
+      <nav id="nav">
+        <img id="header" src="./assets/mar.jpg" />
+        <router-link :to="{name:'Home'}">Home</router-link>
+        <router-link v-show="admin" :to="{name:'Listbeaches'}">Lista Playas</router-link>
+        <router-link v-show="admin" :to="{name:'Listusers'}">Lista Usuarios</router-link>
+        <router-link :to="{name:'Buscador'}">Buscar</router-link>
+        <router-link v-show="logged" :to="{name:'Reserva'}">Reservar</router-link>
+
+        <router-link :to="{name:'About'}">About</router-link>
+        <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
+        <router-link v-show="logged" :to="{name:'Usuario'}">Tu espacio</router-link>
+        <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
+      </nav>
+      <article id="username">
+        <p id="username" v-show="logged">Hola {{username}}</p>
+        <button id="logout" v-show="logged" @click="logoutUser()">Logout</button>
+      </article>
     </section>
     <router-view
       @login="setUserName"
       @getInfo="saveInfo"
       :info="info"
       @sendToReserve="saveData"
-      :data="data"
+      :datos="datos"
     />
     <footercustom />
   </div>
@@ -50,7 +52,7 @@ export default {
       username: "",
       admin: false,
       info: {},
-      data: {},
+      datos: {},
     };
   },
   methods: {
@@ -60,7 +62,7 @@ export default {
     },
     //Guardo info de la playa seleccionada en buscador
     saveData(beachdata) {
-      this.data = beachdata;
+      this.datos = beachdata;
     },
     //Una vez logado, se recoge el nombre del usuario para mostrarlo en el menú.
     async setUserName(userId) {
@@ -118,7 +120,7 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam:wght@300&Open+Sans:wght@600display=swap");
 #app {
-  font-family: Open Sans, Helvetica, sans-serif;
+  font-family: Be Vietnam, Open Sans, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -130,15 +132,17 @@ export default {
 
 section#header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   margin-right: 3rem;
-  margin-top: -5rem;
   font-size: 1.7rem;
   font-weight: bold;
 }
+article#username {
+  display: flex;
+}
 
 #nav {
-  padding: 30px 0 100px 0;
+  padding: 30px 0 50px 0;
   display: flex;
   justify-content: flex-start;
   background-color: #353a64;

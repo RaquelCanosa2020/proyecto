@@ -10,7 +10,7 @@
     <p>Comentario: {{reservation.comment}}</p>
 
     <button
-      :class="{hidden: new Date(reservation.visit) <= new Date()}"
+      :class="{hidden: new Date(reservation.visit) <= addOneDay(new Date())}"
       @click="eraseInfo"
     >Anular reserva</button>
 
@@ -40,6 +40,7 @@ import {
 import axios from "axios";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { addDays } from "date-fns";
 
 export default {
   name: "Reservationcomponent",
@@ -75,22 +76,10 @@ export default {
       };
 
       this.$emit("sendIdErase", eraseInfo);
+    },
 
-      /*const token = getAuthToken();
-      axios.defaults.headers.common["Authorization"] = `${token}`;
-      sweetAlertErase;
-      try {
-        const response = await axios.delete(
-          `http://localhost:3000/reservations/${id}`
-        );
-
-        sweetAlertOk(response.data.message);
-        setTimeout(() => {
-          location.reload();
-        }, 2000);
-      } catch (error) {
-        sweetAlertNotice(error.response.data.message);
-      }*/
+    addOneDay(date) {
+      return addDays(date, 1);
     },
 
     formatDateToUser(date) {

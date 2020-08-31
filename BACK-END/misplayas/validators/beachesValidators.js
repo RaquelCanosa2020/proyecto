@@ -105,6 +105,7 @@ const BeachSchema = Joi.object().keys({
     .error(generateError("El campo toilet debe ser 1(true) o 0(false)", 400)),
 });
 
+
 module.exports = {
   BeachSchema,
 };

@@ -2,7 +2,7 @@
   <div class="user">
     <vue-headful title="Misplayas | Perfil de usuario" />
 
-    <div id="left">
+    <div id="left" :class="{transit: transition === true}">
       <!--Div para gestionar datos del usuario---->
 
       <section id="userdata">
@@ -67,12 +67,14 @@
 
       <router-link to="/uploads">Subir fotos >></router-link>
     </div>
-    <div id="right">
+    <div id="right" :class="{transit: transition === true}">
       <section v-show="showReserv">
         <h1>Tus reservas</h1>
+        <p>Nº reservas: {{numberReserv}}</p>
+        <p>Nª plazas acumulado: {{numberPlaces}}</p>
         <button @click="showReserv = false">Ocultar reservas</button>
-        <button @click="seeReserv">Borrar anuladas</button>
-        <listreservation :reservations="reservations" @sendIdEr="eraseReserv" />
+
+        <listreservation :reservations="reservations" @sendIdEr="sweetAlertEraseReserv" />
       </section>
 
       <section v-show="showBeach">
@@ -81,8 +83,9 @@
       </section>
 
       <section id="photos" v-show="showPhotos">
-        <button @click="showPhotos = false">Ocultar fotos</button>
-        <userphotocomponent v-on:send="erasePhoto" :userphotos="userphotos" />
+        <button @click="hidePhotos">Ocultar fotos</button>
+
+        <userphotocomponent v-on:send="sweetAlertErasePhoto" :userphotos="userphotos" />
       </section>
     </div>
   </div>
@@ -102,6 +105,7 @@ import listreservation from "../../components/usercomponents/Listreservation";
 import userbeachcomponent from "../../components/usercomponents/Userbeachcomponent";
 import userphotocomponent from "../../components/usercomponents/Userphotocomponent";
 import spinner from "@/components/Spinner.vue";
+import Swal from "sweetalert2";
 
 export default {
   name: "User",
@@ -132,6 +136,9 @@ export default {
       reservations: [],
       userbeaches: [],
       userphotos: [],
+      transition: false,
+      numberPlaces: "",
+      numberReserv: "",
     };
   },
   methods: {
@@ -267,9 +274,6 @@ export default {
     //FUNCIÓN PARA VER RESERVAS DEL USUARIO
 
     async seeReserv() {
-      this.showReserv = true;
-      this.showBeach = false;
-      this.showPhotos = false;
       const id = getId();
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -279,24 +283,47 @@ export default {
         const response = await axios.get(
           `http://localhost:3000/beach/users/${id}/reservations`
         );
-        console.log(response.data.data);
+        this.showReserv = true;
+        this.showBeach = false;
+        this.showPhotos = false;
+        this.transition = false;
         this.reservations = response.data.data;
+        this.numberReserv = response.data.reservas;
+        this.numberPlaces = response.data.plazas;
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
+    },
+
+    sweetAlertEraseReserv(eraseInfo) {
+      Swal.fire({
+        title: "Confirma la acción",
+        text: "Confirma la eliminación de este registro",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirmado",
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          this.eraseReserv(eraseInfo);
+        }
+      });
     },
 
     async eraseReserv(eraseInfo) {
       const id = eraseInfo.id;
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
-      //sweetAlertErase;
+
       try {
         const response = await axios.delete(
           `http://localhost:3000/reservations/${id}`
         );
         this.showReserv = false;
         this.seeReserv();
+        sweetAlertOk("registro eliminado");
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
@@ -305,11 +332,6 @@ export default {
     //FUNCIÓN PARA VER PLAYAS DEL USUARIO
 
     async seeBeaches() {
-      this.showBeach = true;
-      this.seePassword = false;
-
-      this.showReserv = false;
-      this.showPhotos = false;
       const id = getId();
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -319,7 +341,11 @@ export default {
         const response = await axios.get(
           `http://localhost:3000/beach/users/${id}/beaches`
         );
-        console.log(response.data.data);
+        this.showBeach = true;
+        this.seePassword = false;
+        this.transition = false;
+        this.showReserv = false;
+        this.showPhotos = false;
         this.userbeaches = response.data.data;
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
@@ -328,11 +354,6 @@ export default {
 
     //FUNCIÓN PARA VER FOTOS DEL USUARIO
     async seePhotos() {
-      this.showPhotos = true;
-      this.showBeach = false;
-      this.seePassword = false;
-
-      this.showReserv = false;
       const id = getId();
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -342,21 +363,46 @@ export default {
         const response = await axios.get(
           `http://localhost:3000/beach/users/${id}/photos`
         );
-        console.log(response.data.data);
+        this.showPhotos = true;
+        this.showBeach = false;
+        this.transition = true;
+        this.showReserv = false;
         this.userphotos = response.data.data;
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
     },
+
+    hidePhotos() {
+      this.seePhotos;
+      this.showPhotos = false;
+      this.transition = false;
+    },
     //FUNCIÓN PARA BORRAR FOTOS DEL USUARIO
 
-    async erasePhoto(Photoid) {
-      console.log(Photoid);
+    sweetAlertErasePhoto(Photoid) {
+      Swal.fire({
+        title: "Confirma la acción",
+        text: "Confirma la eliminación de este registro",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirmado",
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          this.erasePhoto(Photoid);
+        }
+      });
+    },
 
+    async erasePhoto(Photoid) {
       try {
         const response = await axios.delete(
           `http://localhost:3000/beaches/photos/${Photoid}`
         );
+        sweetAlertOk("registro eliminado");
         this.showPhotos = false;
         this.seePhotos();
       } catch (error) {
@@ -380,11 +426,21 @@ div.user {
 div#left {
   width: 40%;
 }
+div#right.transit {
+  width: 90%;
+  background-image: none;
+  background-color: #353a64;
+}
 
 div#right {
   background-image: url("../../assets/paso.jpg");
   background-size: cover;
   width: 60%;
+  transition: width 1s;
+}
+
+div#left.transit {
+  display: none;
 }
 div#buttons {
   display: flex;
@@ -396,8 +452,13 @@ section#photos {
   background-color: #ebecf1;
 }
 
-section#password {
-  margin-top: 3rem;
+article#name p,
+article#name input {
+  text-align: center;
+}
+
+section#password p {
+  margin: 3rem auto;
 }
 
 article#name {
@@ -410,18 +471,19 @@ h1 {
 p {
   color: #353a64;
   text-align: left;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
+  text-decoration-line: underline;
 }
 
 input {
   border-style: none;
   color: #59405c;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 input::placeholder {
   color: #353a64;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
 }
 
 input.editclass {

@@ -2,7 +2,7 @@
   <div>
     <section>
       <reservationcomponent
-        v-for="(reservation,index) in reservations"
+        v-for="(reservation,index) in showedReservations"
         :key="reservation.id"
         :index="index"
         :reservation="reservation"
@@ -10,6 +10,12 @@
         @sendIdErase="eraseRes"
       />
     </section>
+    <ul id="pagination">
+      <li v-for="page in pages" :key="page">
+        <button class="pages" :class="{active: currentPage === page}" @click="goTo(page)">{{page+1}}</button>
+      </li>
+    </ul>
+    <p id="pages">Páginas {{currentPage+1}} de {{pages.length}}</p>
   </div>
 </template>
 <script>
@@ -35,9 +41,34 @@ export default {
   data() {
     return {
       reservation: {},
+      currentIndex: 0,
+      elementsPerPage: 4,
+      currentPage: 0,
     };
   },
+  computed: {
+    showedReservations() {
+      return this.reservations.slice(
+        this.currentIndex,
+        this.currentIndex + this.elementsPerPage
+      );
+    },
+    pages() {
+      let numberOfPages = Math.ceil(
+        this.reservations.length / this.elementsPerPage
+      );
+      let pageArray = [];
+      for (let i = 0; i < numberOfPages; i++) {
+        pageArray.push(i);
+      }
+      return pageArray;
+    },
+  },
   methods: {
+    goTo(page) {
+      this.currentPage = page;
+      this.currentIndex = page * this.elementsPerPage;
+    },
     async voteReserv(voteInfo) {
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
@@ -91,3 +122,24 @@ export default {
   },
 };
 </script>
+<style scoped>
+ul {
+  display: flex;
+}
+.active {
+  background-color: #4cbbb9;
+}
+ul#pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+
+button.pages {
+  background-color: white;
+  height: 20px;
+  border-radius: 0;
+  border-color: #353a64;
+  border-style: solid;
+}
+</style>

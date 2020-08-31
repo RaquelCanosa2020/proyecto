@@ -1,6 +1,9 @@
 <template>
   <div class="footer">
-    <footer id="footer">Raquel Canosa Raña. 2020 | Política de Privacidad</footer>
+    <footer id="footer">
+      Raquel Canosa Raña. 2020 |
+      <router-link :to="{name:'About'}">Política de Privacidad</router-link>
+    </footer>
   </div>
 </template>
 
@@ -15,5 +18,8 @@ footer {
   font-weight: bold;
   color: #ebecf1;
   margin-bottom: 1.5rem;
+}
+a {
+  color: white;
 }
 </style>

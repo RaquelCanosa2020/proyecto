@@ -27,7 +27,10 @@
 
       <p>
         <input id="privacy" type="checkbox" value="accept" v-model="accept" />
-        <span>Acepto la Política de Privacidad</span>
+        <span>
+          Acepto la
+          <router-link :to="{name:'About'}">Política de Privacidad</router-link>
+        </span>
       </p>
 
       <button class="register" @click="addUser()">Registrarse</button>

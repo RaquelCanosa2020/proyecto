@@ -206,7 +206,7 @@ async function newReservation(req, res, next) {
         title: "Reserva de espacio en playa.",
         content:
           `Se confirma la reserva nº${reservationNumber} realizada con los siguientes datos:
-       👣 Usuario: ${userName} (usuario nº: ${id_user}).
+       👤 Usuario: ${userName} (usuario nº: ${id_user}).
 
        🌅 Playa: ${beachName} (nº ${id_beach}).
 

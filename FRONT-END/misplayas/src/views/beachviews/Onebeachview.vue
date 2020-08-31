@@ -76,11 +76,11 @@
           </section>
           <section id="beneath">
             <p>
-              <button id="photos" @click="seePhotos">ver + fotos</button>
+              <button id="photos" @click="seePhotos">&#8681; ver + fotos &#8681;</button>
             </p>
 
             <p>
-              <button id="rating" @click="seeVotes">Ver valoraciones y comentarios</button>
+              <button id="rating" @click="seeVotes">&#8681; Ver valoraciones y comentarios &#8681;</button>
             </p>
           </section>
           <p v-show="showPhotos">{{errorMessagePhotos}}</p>
@@ -301,7 +301,12 @@ div.beach {
   background-color: #ebecf1;
 }
 div#left {
+  text-align: center;
+  padding: 2rem;
+}
+div#riht {
   text-align: left;
+  padding: 2rem;
 }
 
 div#main {
@@ -337,10 +342,12 @@ section#data {
 }
 section#date p {
   color: #056676;
+  margin: 2rem;
 }
 
 img#principal {
   width: 700px;
+  border-radius: 2em;
 }
 
 img#sky,
@@ -377,9 +384,13 @@ article section {
   border-radius: 2em;
 }
 article section#marked {
-  background-color: #056676;
+  background-color: #ebecf1;
   padding: 2rem;
   border-radius: 2em;
+  border: solid #056676 1px;
+}
+article section#marked p {
+  color: #056676;
 }
 
 ul {

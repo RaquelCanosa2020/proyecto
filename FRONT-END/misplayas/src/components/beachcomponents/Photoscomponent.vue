@@ -49,5 +49,6 @@ section {
 img {
   width: 500px;
   border-radius: 2em;
+  margin: 2rem;
 }
 </style>

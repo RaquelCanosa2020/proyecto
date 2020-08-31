@@ -83,7 +83,7 @@ export default {
     },
 
     //Para enviar los dtos a la vista, pero no me funciona, los paso en router.
-    send() {
+    /*send() {
       let beachdata = {
         id: this.beach.id,
         name: this.beach.name,
@@ -94,7 +94,7 @@ export default {
       this.$emit("sendToReserv", beachdata);
 
       this.$router.push("/reservation");
-    },
+    },*/
   },
 };
 </script>

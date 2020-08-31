@@ -20,7 +20,11 @@
     </section>
     <button @click="getUsers">Ordenar</button>
 
-    <listuserscomponent v-on:sendEdit="showData" v-on:sendErase="eraseUser" :users="users" />
+    <listuserscomponent
+      v-on:sendEdit="showData"
+      v-on:sendErase="sweetAlertEraseUser"
+      :users="users"
+    />
 
     <!---FIN ID LIST----->
 
@@ -60,7 +64,7 @@
 <script>
 import axios from "axios";
 import spinner from "@/components/Spinner.vue";
-//import Swal from "sweetalert2";
+import Swal from "sweetalert2";
 import listuserscomponent from "../../components/usercomponents/Listuserscomponent.vue";
 import {
   getAuthToken,
@@ -151,10 +155,8 @@ export default {
         );
         sweetAlertOk(response.data.message);
 
-        setTimeout(() => {
-          this.seeModal = false;
-          location.reload();
-        }, 2000);
+        this.seeModal = false;
+        this.getUsers();
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
@@ -172,22 +174,38 @@ export default {
         return process.env.VUE_APP_STATIC + img;
       }
     },
+    sweetAlertEraseUser(userId) {
+      Swal.fire({
+        title: "Confirma la acción",
+        text: "Confirma la eliminación de este registro",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Confirmado",
+        buttonsStyling: false,
+      }).then((result) => {
+        if (result.value) {
+          this.eraseUser(userId);
+        }
+      });
+    },
 
     async eraseUser(userId) {
       //sweetAlertErase();
       const token = getAuthToken();
-      axios.defaults.headers.common["Authorization"] = `${token}`;
+      axios.defaults.headers.common["Authorization"] = `${token}`; //lo incluyo en el back.
 
       /*if (userId === "1") {
         sweetAlertNotice("No se puede eliminar al Administrador");
-      } else {*/
-      try {
+      } else {*/ try {
         const response = await axios.delete(
           "http://localhost:3000/beach/users/" + userId
         );
 
         sweetAlertOk(response.data.message);
-        setTimeout(() => location.reload(), 2000);
+
+        this.getUsers();
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }

@@ -2,7 +2,7 @@
   <div>
     <input type="search" v-model="search" placeholder="Busca rápida por palabras" />
     <onebeachcomponent
-      v-for="(beach,index) in filtered"
+      v-for="(beach,index) in showedBeaches"
       :key="beach.id"
       :index="index"
       :beach="beach"
@@ -10,6 +10,12 @@
       :places="places"
       :options="options"
     />
+    <ul id="pagination">
+      <li v-for="page in pages" :key="page">
+        <button class="pages" :class="{active: currentPage === page}" @click="goTo(page)">{{page+1}}</button>
+      </li>
+    </ul>
+    <p id="pages">Páginas {{currentPage+1}} de {{pages.length}}</p>
   </div>
 </template>
 
@@ -33,6 +39,9 @@ export default {
       beach: {},
       index: null,
       search: "",
+      currentIndex: 0,
+      elementsPerPage: 4,
+      currentPage: 0,
     };
   },
   computed: {
@@ -50,6 +59,28 @@ export default {
           item.description.toLowerCase().includes(this.search.toLowerCase())
       );
     },
+    showedBeaches() {
+      return this.filtered.slice(
+        this.currentIndex,
+        this.currentIndex + this.elementsPerPage
+      );
+    },
+    pages() {
+      let numberOfPages = Math.ceil(
+        this.filtered.length / this.elementsPerPage
+      );
+      let pageArray = [];
+      for (let i = 0; i < numberOfPages; i++) {
+        pageArray.push(i);
+      }
+      return pageArray;
+    },
+  },
+  methods: {
+    goTo(page) {
+      this.currentPage = page;
+      this.currentIndex = page * this.elementsPerPage;
+    },
   },
 };
 </script>
@@ -65,5 +96,18 @@ ul {
 }
 .active {
   background-color: #4cbbb9;
+}
+ul#pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+
+button.pages {
+  background-color: white;
+  height: 20px;
+  border-radius: 0;
+  border-color: #353a64;
+  border-style: solid;
 }
 </style>

@@ -22,6 +22,7 @@ async function getUserReservations(req, res, next) {
 
     //consulta con sus reservas y sus datos, incluyendo valoración si la hubiera.
 
+
     const [result] = await connection.query(
       `
       SELECT R.id, R.date, R.visit, R.places, R.id_beach, B.name, R.total_euros, IFNULL(ratings.value, "pendiente de valorar") AS value,IFNULL(ratings.comment, "sin comentar") AS comment 
@@ -41,10 +42,24 @@ async function getUserReservations(req, res, next) {
         404
       );
     }
+    const [result1] = await connection.query(
+      `
+      SELECT COUNT(R.id) AS Nºreservas, SUM(R.places) AS Nºplazas 
+      FROM reservations R
+      WHERE R.id_user = ?
+      
+    `,
+      [id]
+    )
+
+
+
 
     res.send({
       status: "ok",
       data: result,
+      reservas: result1[0].Nºreservas,
+      plazas: result1[0].Nºplazas
     });
   } catch (error) {
     next(error);

@@ -72,7 +72,7 @@ async function uploadBeachPhotos(req, res, next) {
     res.send({
       status: "ok",
       data: {
-        "nºfoto": `Foto nº: ${newPhoto.insertId}`,
+        "nºfoto": `Se ha guardado tu foto con el nº: ${newPhoto.insertId}`,
         "nombre": savedImageFileName,
         "playa": id,
         "usuario": id_user,

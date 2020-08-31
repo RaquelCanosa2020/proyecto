@@ -165,7 +165,7 @@ export function sweetAlertOk(msg) {
 
 
 //Confirmación de borrado de registros:
-export function sweetAlertErase() {
+export function sweetAlertErase(info, action) {
     Swal.fire({
         title: "Confirma la acción",
         text: "Confirma la eliminación de este registro",
@@ -176,6 +176,7 @@ export function sweetAlertErase() {
         confirmButtonText: "Confirmado",
     }).then((result) => {
         if (result.value) {
+            action(info);
             Swal.fire("Registro eliminado");
 
 

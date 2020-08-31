@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div>
+    <div id="photos">
       <section v-for="(userphoto, index) in userphotos" :key="userphoto.id">
         <p>Foto id.: {{userphoto.id}}</p>
         <p>{{userphoto.name}}</p>
         <img :src="setImage(userphoto.link)" />
 
         <p>{{formatDateToUser(userphoto.date)}}</p>
-        <p>{{userphoto.description}}</p>
+        <p id="description">{{userphoto.description}}</p>
 
         <button @click="sendId(index)">Eliminar</button>
       </section>
@@ -49,13 +49,28 @@ export default {
 };
 </script>
 <style scoped>
+div#photos {
+  display: flex;
+  flex-wrap: wrap;
+  background-color: #353a64;
+}
 section {
-  background-color: #ebecf186;
-  width: 75%;
-  height: 200vh;
-  margin: auto;
+  margin: 3px auto;
+  padding: 2rem;
+  height: 500px;
 }
 img {
   max-width: 300px;
+}
+img:hover {
+  transform: scale(1.9);
+  background-color: cornsilk;
+}
+p {
+  color: white;
+}
+button {
+  bottom: 20%;
+  right: 40%;
 }
 </style>

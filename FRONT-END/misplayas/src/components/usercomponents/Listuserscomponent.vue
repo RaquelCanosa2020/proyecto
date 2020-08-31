@@ -2,34 +2,30 @@
   <div>
     <input type="search" v-model="search" placeholder="Busca por nombre" />
 
-    <div id="user" v-for="(user,index) in filtered" :key="user.id">
-      <p>Id: {{user.id}}</p>
-      <p>{{user.name}}</p>
-      <p>Rol: {{user.role}}</p>
-      <p>{{user.email}}</p>
-      <p>Activo: {{setActive(user.active)}}</p>
+    <div id="user" v-for="(user,index) in showedUsers" :key="user.id">
+      <p>Id: {{user.id}}, {{user.name}}</p>
+
+      <p>Rol: {{user.role}}. Activo: {{setActive(user.active)}}</p>
+      <p>Email:{{user.email}}</p>
+
       <p>Fecha de alta: {{formatDateToUser(user.registration_date)}}</p>
       <p>Nº de reservas: {{user.Nºreservas}}</p>
       <p>Nº de plazas reservadas: {{user.Nºplazas}} personas</p>
-      <p>Última reserva: {{formatDateToUser(user.ultima_reserva)}}</p>
+      <p
+        :class="{hidden: user.Nºreservas === 0}"
+      >Última reserva: {{formatDateToUser(user.ultima_reserva)}}</p>
 
       <img :src="setImage(user.image)" />
 
       <button @click="sendIdEdit(index)">Editar</button>
       <button @click="sendIdErase(index)">Borrar</button>
     </div>
-    <!---<ul id="pagination">
-      <li :class="{disabled: currentPage===0}">
-        <button @click="previous">Anterior</button>
+    <ul id="pagination">
+      <li v-for="page in pages" :key="page">
+        <button class="pages" :class="{active: currentPage === page}" @click="goTo(page)">{{page+1}}</button>
       </li>
-      <li v-for="page in pages" :key="page" :class="{active: currentPage === page}">
-        <button @click="goTo(page)">{{page+1}}</button>
-      </li>
-
-      <li :class="{disabled: currentPage=== pages.length -1}">
-        <button @click="next">Siguiente</button>
-      </li>
-    </ul>--->
+    </ul>
+    <p id="pages">Páginas {{currentPage+1}} de {{pages.length}}</p>
   </div>
 </template>
 
@@ -65,7 +61,7 @@ export default {
         this.currentIndex + this.elementsPerPage
       );
     },
-    /*pages() {
+    pages() {
       let numberOfPages = Math.ceil(
         this.filtered.length / this.elementsPerPage
       );
@@ -73,21 +69,14 @@ export default {
       for (let i = 0; i < numberOfPages; i++) {
         pageArray.push(i);
       }
-    },*/
+      return pageArray;
+    },
   },
   methods: {
-    /*previous() {
-      this.currentPage = this.currentPage - 1;
-      this.currentIndex = this.currentIndex - this.elementsPerPage;
-    },
-    next() {
-      this.currentPage = this.currentPage + 1;
-      this.currentIndex = this.currentIndex + this.elementsPerPage;
-    },
-    goTo() {
+    goTo(page) {
       this.currentPage = page;
       this.currentIndex = page * this.elementsPerPage;
-    },*/
+    },
     //CAMBIAR 1/O EN ACTIVE
 
     setActive(el) {
@@ -143,5 +132,30 @@ div#user {
 img {
   width: 150px;
   border-radius: 50%;
+}
+ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+}
+
+button.pages {
+  background-color: white;
+  height: 20px;
+  border-radius: 0;
+  border-color: #353a64;
+  border-style: solid;
+}
+
+button.pages.active {
+  background-color: #4cbbb9;
+}
+
+p#pages {
+  color: white;
+}
+
+.hidden {
+  display: none;
 }
 </style>

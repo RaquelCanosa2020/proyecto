@@ -1,5 +1,6 @@
 <template>
   <div class="all">
+    <vue-headful title="misplayas | Reserva" />
     <div class="reservation">
       <!-------⌚-INICIO RESERVA-->
       <h1>RESERVA DE ESPACIO EN PLAYA</h1>
@@ -73,6 +74,8 @@
       <button>
         <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver al buscador</router-link>
       </button>
+      <button @click="$router.go(-1)">Volver anterior</button>
+      <button v-show="after" @click="seeData">Nueva reserva</button>
 
       <!-------⌚-FIN RESERVA--->
     </div>
@@ -98,7 +101,7 @@ export default {
     onebeachcomponent,
   },
   props: {
-    //data: Object, // datos playa, intento pasar evento pero no funciona
+    // datos: Object, // datos playa, intento pasar evento pero no funciona
     info: Object, //datos opciones buscador, sí funciona desde App
   },
 
@@ -123,6 +126,7 @@ export default {
       numbers: [],
       spinner: true,
       beforeConfirm: false,
+      after: false,
     };
   },
   computed: {
@@ -163,10 +167,10 @@ export default {
       } else {
         this.selectedBeach = null;
       }
-      //this.id = this.data.id;
-      //this.name = this.data.name;
-      //this.municipality = this.data.municipality;
-      //this.province = this.data.province;
+      /* this.id = this.datos.id;
+      this.name = this.datos.name;
+      this.municipality = this.datos.municipality;
+      this.province = this.datos.province;*/
     },
 
     //FUNCIÓN PARA CONSEGUIR LOS DATOS DE LAS PLAYAS (SI USUARIO NO VIENE DEL BUSCADOR)
@@ -188,10 +192,13 @@ export default {
       if (idUser === null) {
         this.$router.push("/login"); //SI NO ESTÁ LOGEADO, LO MANDA AL LOGIN
       } else {
+        //visualizar botón de aceptar
         this.beforeConfirm = true;
         //SE GENERAN LAS HORAS
         this.getNumber();
       }
+      //borrado si hubiera info de reserva anterior
+      this.messageConfirm = "";
     },
 
     //FUNCIÓN PARA PAGAR Y CONFIRMAR LA RESERVA
@@ -226,6 +233,7 @@ export default {
           this.placesReservation = "";
           this.ccNumber = "";
           this.beforeConfirm = false;
+          this.after = true;
         }
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
@@ -285,7 +293,7 @@ li {
   margin-bottom: 1rem;
   text-align: left;
 }
-router-link {
+a {
   text-decoration: none;
 }
 </style>

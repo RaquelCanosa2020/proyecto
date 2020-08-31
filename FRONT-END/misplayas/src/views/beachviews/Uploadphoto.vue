@@ -80,7 +80,9 @@ export default {
 
     async getBeaches() {
       try {
-        const response = await axios.get(`http://localhost:3000/beaches`);
+        const response = await axios.post(
+          `http://localhost:3000/beaches/search`
+        );
 
         this.beaches = response.data.data;
       } catch (error) {
@@ -104,7 +106,13 @@ export default {
       axios.defaults.headers.common["Authorization"] = `${token}`;
       try {
         let newImageData = new FormData();
-        newImageData.append("date", this.date);
+        let datePhoto;
+        if (this.date === "") {
+          datePhoto = new Date();
+        } else {
+          datePhoto = this.date;
+        }
+        newImageData.append("date", datePhoto);
         newImageData.append("description", this.description);
         newImageData.append("image", this.uploadedImage);
 
