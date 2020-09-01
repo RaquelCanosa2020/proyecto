@@ -14,12 +14,24 @@ export default {
 </script>
 
 <style scoped>
-footer {
+.footer {
   font-weight: bold;
   color: #ebecf1;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.5rem;
 }
 a {
   color: white;
+}
+
+@media (min-width: 700px) {
+  footer {
+    font-size: 0.8rem;
+  }
+}
+@media (min-width: 1000px) {
+  footer {
+    font-size: 1rem;
+  }
 }
 </style>

@@ -59,7 +59,7 @@
 
       <p>Importe: 3 euros (impuestos incluídos)</p>
 
-      <button v-show="beforeConfirm" @click="acceptReservation">Confirmar y pagar</button>
+      <button id="pay" v-show="beforeConfirm" @click="acceptReservation">Confirmar y pagar</button>
 
       <ul class="ok" id="reserv">
         <li>{{messageConfirm.info}}</li>
@@ -71,9 +71,9 @@
         <li>{{messageConfirm.payment}}</li>
         <li>{{messageConfirm.notice}}</li>
       </ul>
-      <button>
-        <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver al buscador</router-link>
-      </button>
+
+      <router-link :to="{name:'Buscador', params:{info:this.info}}">&#8592;Volver al buscador</router-link>
+
       <button @click="$router.go(-1)">Volver anterior</button>
       <button v-show="after" @click="seeData">Nueva reserva</button>
 
@@ -293,7 +293,14 @@ li {
   margin-bottom: 1rem;
   text-align: left;
 }
+
+button,
 a {
-  text-decoration: none;
+  margin-right: 1rem;
+}
+
+button#pay {
+  background-color: #4cbbb9;
+  height: 40px;
 }
 </style>

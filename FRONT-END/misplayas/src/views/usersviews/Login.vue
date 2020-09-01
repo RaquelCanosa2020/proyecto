@@ -43,8 +43,8 @@ export default {
   },
   data() {
     return {
-      email: "",
-      password: "",
+      email: "rcanosa1@gmail.com",
+      password: "23456789",
       spinner: false,
       error: false,
       message: "",
@@ -111,27 +111,82 @@ section#right {
   margin: auto;
 }
 h1 {
-  font-size: 3rem;
+  font-size: 1.5rem;
 }
 
 p {
-  font-size: 1.5rem;
+  font-size: 0.5rem;
 }
 button.login {
-  font-size: 1.5rem;
-  width: 150px;
-  height: 40px;
+  font-size: 0.5rem;
+  width: 75px;
+  height: 10px;
 }
 section#left {
   background-image: url("../../assets/neno.jpg");
   background-size: cover;
+  background-position-x: -160px;
   width: 50%;
   height: 100vh;
 }
 
 input {
-  width: 300px;
-  height: 60px;
-  font-size: 1.5rem;
+  width: 75px;
+  height: 15px;
+  font-size: 0.5rem;
+}
+@media (min-width: 700px) {
+  section#left {
+    background-position-x: -200px;
+  }
+  input {
+    width: 150px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+  button.login {
+    font-size: 1rem;
+    width: 120px;
+    height: 20px;
+  }
+}
+
+@media (min-width: 1000px) {
+  section#left {
+    background-position-x: -200px;
+  }
+  input {
+    width: 250px;
+    height: 55px;
+    font-size: 1.2rem;
+  }
+  h1 {
+    font-size: 3.5rem;
+  }
+
+  p {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1025px) {
+  section#left {
+    background-position-x: 0;
+  }
+  input {
+    width: 300px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  button.login {
+    font-size: 1.5rem;
+    width: 150px;
+    height: 40px;
+  }
+  p {
+    font-size: 1.5rem;
+  }
 }
 </style>

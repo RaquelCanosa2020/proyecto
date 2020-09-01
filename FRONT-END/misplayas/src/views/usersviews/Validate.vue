@@ -46,7 +46,7 @@ section#up {
   margin: auto;
 }
 h1 {
-  font-size: 3rem;
+  font-size: 1rem;
 }
 
 p {
@@ -66,5 +66,15 @@ section#down {
   background-image: url(https://media.giphy.com/media/l4hLyOGRJWNSR8QQ8/giphy.gif);
   background-size: cover;
   height: 50vh;
+}
+@media (min-width: 700px) {
+  h1 {
+    font-size: 2rem;
+  }
+}
+@media (min-width: 1000px) {
+  h1 {
+    font-size: 3rem;
+  }
 }
 </style>

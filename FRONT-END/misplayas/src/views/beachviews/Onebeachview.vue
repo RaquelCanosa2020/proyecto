@@ -42,10 +42,10 @@
           </section>
 
           <article id="meteo">
-            <section :class="{hidden: !skyState && !temperature }">
+            <section id="meteo" :class="{hidden: !skyState && !temperature }">
               <img id="sky" :src="skyState" />
               <span>{{temperature}} ºC</span>
-
+              <!--Aplico hidden, ya que a veces no hay info meteo a más de 2-3 días-->
               <p id="meteo">Fuente: Meteogalicia</p>
             </section>
 
@@ -64,10 +64,10 @@
             <p>Meses de reserva obligatoria: de {{nameMonth(start_month)}} a {{nameMonth(end_month)}}</p>
           </section>
           <section id="button">
-            <button>
+            <button class="one">
               <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver</router-link>
             </button>
-            <button>
+            <button class="one">
               <router-link
                 :to="{name:'Reserva', params: {id:this.id, name: this.name,
       municipality: this.municipality, province: this.province}}"
@@ -83,8 +83,8 @@
               <button id="rating" @click="seeVotes">&#8681; Ver valoraciones y comentarios &#8681;</button>
             </p>
           </section>
-          <p v-show="showPhotos">{{errorMessagePhotos}}</p>
-          <p v-show="showRating">{{errorMessageVotes}}</p>
+          <p class="error" v-show="showPhotos">{{errorMessagePhotos}}</p>
+          <p class="error" v-show="showRating">{{errorMessageVotes}}</p>
         </div>
       </div>
       <div id="down">
@@ -134,7 +134,6 @@ export default {
   },
   data() {
     return {
-      //beach: {},
       visit: "",
       places: "",
       id: this.$route.params.id,
@@ -165,7 +164,6 @@ export default {
       errorMessageVotes: "",
       skyState: "",
       temperature: "",
-
       showRating: false,
       showPhotos: false,
       date: "",
@@ -173,6 +171,7 @@ export default {
     };
   },
   computed: {
+    //SPINNER MIENTRAS CARGA EL TIEMPO
     isLoaded() {
       return this.skyState !== "" || this.temperature !== "";
     },
@@ -203,10 +202,6 @@ export default {
 
     async showData(id /*beachInfo*/) {
       id = this.$route.params.id;
-      //this.visit = this.$route.params.visit;
-      //this.places = this.$route.params.places;
-
-      //this.id = beachInfo.id;
       this.visit = this.info.visit;
       this.places = this.info.places;
 
@@ -251,8 +246,8 @@ export default {
     //FUNCIÓN PARA VER LA IMAGEN PRINCIPAL (en las de usuarios se aplica al componente)
     setImage(img) {
       if (!img) {
-        return this.spinner; //esto lo incluyo para que no de error en consola, ya que debe tardar
-        //algo en cargar las fotos y de primeras da 404 (aunque no se llega a ver el spinner)
+        return this.spinner; //esto lo incluyo  ya que debe tardar
+        //algo en cargar las fotos (aunque no se llega a ver el spinner)
       } else {
         return process.env.VUE_APP_STATIC + img;
       }
@@ -314,6 +309,10 @@ div#main {
   justify-content: space-around;
   background-color: #ebecf1;
 }
+section#meteo,
+section#marked {
+  width: 00px;
+}
 
 h1 {
   font-size: 3rem;
@@ -346,7 +345,7 @@ section#date p {
 }
 
 img#principal {
-  width: 700px;
+  width: 400px;
   border-radius: 2em;
 }
 
@@ -406,27 +405,34 @@ li {
 section#options {
   color: #086972;
 }
-div#down {
-  background-image: url(../../assets/pared.jpg);
-  background-size: cover;
-}
+
 button#photos,
 button#rating {
   width: 300px;
 }
-button {
-  border-radius: 0;
-  border-color: white;
-  border-style: solid;
-  width: 100px;
-  background-color: #59405c;
-  color: white;
+button.one {
+  width: 120px;
+  height: 40px;
+  font-size: 1rem;
+  border-style: none;
+  border-radius: 1em;
+  border: solid #353a64 0.5px;
+  color: #353a64;
 }
 a {
   text-decoration: none;
-  color: white;
+  color: #353a64;
 }
 .hidden {
   display: none;
+}
+@media (min-width: 1000px) {
+  img#principal {
+    width: 700px;
+  }
+  section#meteo,
+  section#marked {
+    width: 200px;
+  }
 }
 </style>

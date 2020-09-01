@@ -59,6 +59,7 @@ export default {
           item.description.toLowerCase().includes(this.search.toLowerCase())
       );
     },
+    //PAGINACIÓN
     showedBeaches() {
       return this.filtered.slice(
         this.currentIndex,
@@ -85,9 +86,12 @@ export default {
 };
 </script>
 <style scoped>
+div {
+  width: 100%;
+}
 input {
-  width: 300px;
-  height: 40px;
+  width: 130px;
+  height: 20px;
   border-radius: 2em;
   margin: 0;
 }
@@ -109,5 +113,13 @@ button.pages {
   border-radius: 0;
   border-color: #353a64;
   border-style: solid;
+}
+@media (min-width: 700px) {
+  input {
+    width: 300px;
+    height: 40px;
+    border-radius: 2em;
+    margin: 0;
+  }
 }
 </style>

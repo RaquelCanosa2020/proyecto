@@ -39,6 +39,7 @@ export default {
 </script>
 <style scoped>
 div {
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
 }

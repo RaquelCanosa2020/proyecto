@@ -100,7 +100,7 @@
         <div id="end">
           <p>Ordenar por:</p>
           <section id="order">
-            <select v-model="order">
+            <select id="order" v-model="order">
               <option value></option>
               <option value="name">Nombre</option>
               <option value="municipality">Municipio</option>
@@ -149,8 +149,7 @@
 import axios from "axios";
 import spinner from "@/components/Spinner.vue";
 import onelistcomponent from "../../components/beachcomponents/Onelistcomponent.vue";
-import photoscomponent from "../../components/beachcomponents/Photoscomponent.vue";
-import ratingscomponent from "../../components/beachcomponents/Ratingscomponent.vue";
+
 import {
   getAuthToken,
   getId,
@@ -162,13 +161,10 @@ export default {
   name: "Advancedsearch",
   components: {
     onelistcomponent,
-    photoscomponent,
-    ratingscomponent,
     spinner,
   },
   props: {
     data: Object,
-    //optionssaved: Object,
   },
 
   data() {
@@ -210,16 +206,7 @@ export default {
       hour: "",
       numbers: [],
       image: "",
-      global: "",
-      votes: [],
-      photos: [],
-      errorMessagePhotos: "",
-      errorMessageVotes: "",
-      reservInfo: false,
       spinner: true,
-      beforeConfirm: false,
-      skyState: "",
-      temperature: "",
     };
   },
   computed: {
@@ -367,69 +354,6 @@ export default {
       }
     },
 
-    //FUNCIÓN PARA VER LOS DATOS DE UNA PLAYA CON/SIN DISPONIBILIDAD
-    async showData(beachId) {
-      this.visit = this.getVisit;
-
-      try {
-        const response = await axios.post(
-          `http://localhost:3000/beaches/${beachId}/show`,
-          {
-            visit: this.visit,
-          }
-        );
-
-        const beachData = response.data.data.info;
-        console.log(response.data.data);
-
-        this.beachId = beachData.id;
-        this.name = beachData.name;
-        this.municipality = beachData.municipality;
-        this.province = beachData.province;
-        this.description = beachData.description;
-        this.type = beachData.type;
-        this.capacity = beachData.capacity;
-        this.start_time = beachData.start_time;
-        this.end_time = beachData.end_time;
-        this.start_month = beachData.start_month;
-        this.end_month = beachData.end_month;
-        this.voteAverage = beachData.voteAverage;
-        this.lifesaving = setServices(beachData.lifesaving);
-        this.parking = setServices(beachData.parking);
-        this.toilet = setServices(beachData.toilet);
-        this.bar_restaurant = setServices(beachData.bar_restaurant);
-        this.disabled_access = setServices(beachData.disabled_access);
-        this.image = beachData.image;
-        this.disponibilidad = response.data.data.disponibilidad;
-        this.notice = response.data.data.aviso;
-        this.skyState = response.data.data.estado;
-        this.temperature = response.data.data.temperatura;
-      } catch (error) {
-        sweetAlertNotice(error.response.data.message);
-      }
-      this.seeVotes(beachId);
-      this.seePhotos(beachId);
-    },
-    //FUNCIÓN PARA ASIGNAR NOMBRE A LOS MESES EN LA INFO DE LA PLAYA
-    nameMonth(number) {
-      const monthNames = [
-        "enero",
-        "febrero",
-        "marzo",
-        "abril",
-        "mayo",
-        "junio",
-        "julio",
-        "agosto",
-        "septiembre",
-        "octubre",
-        "noviembre",
-        "diciembre",
-      ];
-
-      return monthNames[number - 1];
-    },
-
     //FUNCIÓN PARA CONSEGUIR MUNICIPIOS DE LAS PLAYAS EN LA BD
 
     async getMunic() {
@@ -453,32 +377,6 @@ export default {
         return process.env.VUE_APP_STATIC + img;
       }
     },
-
-    //FUNCIÓN PARA VER LOS VOTOS DE UNA PLAYA
-    async seeVotes(id) {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/beaches/${id}/votes`
-        );
-        this.votes = response.data.data;
-        this.global = response.data.rating;
-      } catch (error) {
-        console.log(error);
-        this.errorMessageVotes = error.response.data.message;
-      }
-    },
-    //FUNCIÓN PARA VER LAS FOTOS DE UNA PLAYA HECHAS POR USUARIOS
-    async seePhotos(id) {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/beaches/${id}/photos`
-        );
-        this.photos = response.data.data;
-      } catch (error) {
-        console.log(error);
-        this.errorMessagePhotos = error.response.data.message;
-      }
-    },
   },
   created() {
     this.getAdvanced();
@@ -488,16 +386,15 @@ export default {
 </script>
 <style scoped>
 div.all {
-  display: flex;
   background-image: url(../../assets/Orilla.jpg);
   background-size: cover;
 }
 div#right {
-  width: 25%;
+  width: 100%;
   padding-top: 2rem;
 }
 div#left {
-  width: 75%;
+  width: 100%;
   background-color: #ebecf19f;
 }
 
@@ -508,14 +405,13 @@ div#list {
 }
 div.options {
   display: flex;
-  flex-direction: column;
   justify-content: center;
 }
 section {
   display: flex;
   flex-direction: column;
   border: 1px solid #353a64;
-  padding: 10px;
+  padding: 4px;
   border-radius: 2em;
 }
 section#dateplaces,
@@ -526,6 +422,8 @@ section#services {
 article#services {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 div.options p,
@@ -533,14 +431,16 @@ div#end p {
   color: #353a64;
   margin-right: 1.3rem;
   font-weight: 800;
+  font-size: 0.7rem;
 }
 
 input,
 select {
-  width: 150px;
-  height: 30px;
+  width: 100px;
+  height: 20px;
   border-radius: 2em;
   margin: 0;
+  font-size: 0.6rem;
 }
 select#hour,
 select#places {
@@ -558,7 +458,7 @@ div#main {
 div#end {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: flex-end;
 }
 
 section#order {
@@ -576,13 +476,13 @@ button#search {
 }
 
 h1 {
-  font-size: 3rem;
-  padding: 2rem;
+  font-size: 2rem;
+  padding: 1rem;
 }
 
 button.direction {
-  width: 40px;
-
+  width: 25px;
+  height: 25px;
   background-color: white;
   border-radius: 0;
   border-color: #353a64 solid;
@@ -598,14 +498,9 @@ img {
   width: 80px;
 }
 
-img#sky {
-  width: 70px;
-  height: 70px;
-}
-
 section#services img {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 }
 
 section#services input {
@@ -616,6 +511,10 @@ section#services input {
 label {
   text-align: center;
   font-weight: 600;
+  font-size: 0.8rem;
+}
+p {
+  font-size: 0.5;
 }
 
 div#list {
@@ -645,5 +544,72 @@ li {
 label {
   display: flex;
   margin-top: 1rem;
+}
+@media (min-width: 700px) {
+}
+
+@media (min-width: 1000px) {
+  div.all {
+    display: flex;
+    background-image: url(../../assets/Orilla.jpg);
+    background-size: cover;
+  }
+  div#right {
+    width: 25%;
+    padding-top: 2rem;
+  }
+  div#left {
+    width: 75%;
+    background-color: #ebecf19f;
+  }
+  div.options {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  section {
+    padding: 10px;
+  }
+  div.options p,
+  div#end p {
+    color: #353a64;
+    margin-right: 1.3rem;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  input,
+  select {
+    width: 150px;
+    height: 30px;
+    font-size: 1rem;
+  }
+  select#hour,
+  select#places {
+    width: 40px;
+  }
+  h1 {
+    font-size: 3rem;
+    padding: 2rem;
+  }
+  label {
+    text-align: center;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  p {
+    font-size: 0.7;
+  }
+  section#services img {
+    width: 30px;
+    height: 30px;
+  }
+  div#end {
+    justify-content: space-around;
+  }
+  button.direction {
+    width: 40px;
+  }
 }
 </style>

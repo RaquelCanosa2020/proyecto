@@ -3,14 +3,14 @@
     <div class="main">
       <!--FOTO DE LA PLAYA--->
 
-      <img :src="setImage(beach.image)" />
+      <img :class="{hidden: beach.free }" :src="setImage(beach.image)" />
 
       <!----En caso de que se indique fecha, muestra la disponibilidad------>
 
       <section id="info">
         <h1>{{beach.name}}</h1>
         <p>Municipio: {{beach.municipality}} ({{beach.province}})</p>
-        <p>{{beach.description}}</p>
+
         <p>Capacidad: {{beach.capacity}} personas</p>
         <p :class="{hidden: !beach.free}">
           Plazas libres:
@@ -20,9 +20,6 @@
       <!--GRÁFICO PARA DESTACAR VISUALMENTE LIBRE/OCUPADO, EN CASO DE QUE INDIQUE FECHA:--->
 
       <!--BOTONES CON EVENTOS PARA LA VISTA, ENVÍAN EL ID DE LA PLAYA A VER O RESERVAR---->
-
-      <!---consigo que visit y places lleguen a este componente, pero no 
-      consigo pasarlos a la vista de onebeachview mediante evento, uso router-link----->
 
       <section id="chart">
         <div
@@ -69,42 +66,26 @@ export default {
     options: Object,
     lifesaving: Boolean,
   },
-  /*data() {
-    return {
-      
-    };
-  },
-*/
 
   methods: {
     //FUNCIÓN PARA SACAR LA DIRECCIÓN DE LA IMAGEN ACTUAL
     setImage(img) {
       return process.env.VUE_APP_STATIC + img;
     },
-
-    //Para enviar los dtos a la vista, pero no me funciona, los paso en router.
-    /*send() {
-      let beachdata = {
-        id: this.beach.id,
-        name: this.beach.name,
-        municipality: this.beach.municipality,
-        province: this.beach.province,
-      };
-
-      this.$emit("sendToReserv", beachdata);
-
-      this.$router.push("/reservation");
-    },*/
   },
 };
 </script>
 <style scoped>
+button {
+  border: solid #353a64 0.5px;
+  color: #353a64;
+}
 div {
   margin-bottom: 1rem;
   padding: 1rem;
   border-radius: 2em;
   color: whitesmoke;
-  width: 100%;
+  max-width: 100%;
   margin-right: auto;
   margin-left: auto;
 }
@@ -112,11 +93,11 @@ div.main {
   display: flex;
   justify-content: space-around;
   background-color: #353a64;
+  max-width: 100%;
 }
 
 img {
-  width: 400px;
-  height: 300px;
+  width: 30%;
   border-radius: 2em;
 }
 router-link {
@@ -125,13 +106,13 @@ router-link {
 }
 
 button#rating {
-  width: 50px;
-  height: 50px;
+  width: 50%;
+  height: 100%;
   background-color: #4cbbb9;
   border: none;
   border-radius: 20%;
   color: #353a64;
-  font-size: 1.5rem;
+  font-size: 0.8rem;
   font-weight: bold;
 }
 
@@ -143,22 +124,55 @@ section#button {
 
 section#info {
   width: 50%;
+  margin: 0 1rem;
 }
 
 .hidden {
   display: none;
 }
 button#free {
-  font-size: 2rem;
+  font-size: 1.5rem;
   background-color: whitesmoke;
 }
 
 h1 {
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   display: inline-block;
 }
 p {
-  font-size: 1.2rem;
+  font-size: 1rem;
   color: #ebecf1;
+}
+
+@media (min-width: 700px) {
+  button#free {
+    font-size: 1.8rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+  button#rating {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1000px) {
+  button#free {
+    font-size: 2rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    display: inline-block;
+  }
+  p {
+    font-size: 1.2rem;
+  }
+  button#rating {
+    font-size: 1rem;
+  }
 }
 </style>

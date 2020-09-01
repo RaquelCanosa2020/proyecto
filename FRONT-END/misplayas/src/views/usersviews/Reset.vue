@@ -73,25 +73,64 @@ section#up {
   margin: auto;
 }
 h1 {
-  font-size: 3rem;
+  font-size: 1rem;
 }
 
 p {
-  font-size: 1.5rem;
+  font-size: 0.7rem;
 }
-button.login {
-  font-size: 1.5rem;
-  width: 150px;
-  height: 40px;
+button {
+  font-size: 0.5rem;
+  width: 75px;
+  height: 10px;
 }
 input {
-  width: 300px;
-  height: 60px;
-  font-size: 1.5rem;
+  width: 100px;
+  height: 25px;
+  font-size: 0.5rem;
 }
 section#down {
   background-image: url(https://media.giphy.com/media/l4hLyOGRJWNSR8QQ8/giphy.gif);
   background-size: cover;
   height: 50vh;
+}
+@media (min-width: 700px) {
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+  button {
+    font-size: 1rem;
+    width: 120px;
+    height: 20px;
+  }
+  input {
+    width: 200px;
+    height: 50px;
+    font-size: 0.5rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+  button {
+    font-size: 1.5rem;
+    width: 150px;
+    height: 40px;
+  }
+  input {
+    width: 300px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
 }
 </style>

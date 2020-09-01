@@ -110,4 +110,12 @@ div {
   background-color: #ebecf1;
   border-radius: 1em;
 }
+p {
+  font-size: 0.7rem;
+}
+@media (min-width: 1000px) {
+  p {
+    font-size: 1rem;
+  }
+}
 </style>

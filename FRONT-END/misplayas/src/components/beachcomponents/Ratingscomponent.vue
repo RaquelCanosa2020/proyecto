@@ -39,14 +39,18 @@ export default {
 <style scoped>
 p#global {
   font-size: 1.5rem;
+  font-weight: 800;
   text-align: center;
-  background-color: #ebecf1;
+  background-color: #353a64;
   padding: 2rem;
+  border-radius: 1em;
+  color: white;
 }
 
 div {
-  width: 60%;
+  width: 75%;
   text-align: left;
+  margin: auto;
 }
 section {
   margin-bottom: 3rem;

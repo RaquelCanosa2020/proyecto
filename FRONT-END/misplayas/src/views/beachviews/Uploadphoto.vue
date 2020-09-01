@@ -160,7 +160,7 @@ div.upload {
 
 select,
 input#comment {
-  width: 600px;
+  width: 90%px;
   height: 60px;
   margin-top: 2rem;
 }

@@ -9,7 +9,6 @@
         <router-link :to="{name:'Buscador'}">Buscar</router-link>
         <router-link v-show="logged" :to="{name:'Reserva'}">Reservar</router-link>
 
-        <router-link :to="{name:'About'}">About</router-link>
         <router-link v-show="!logged" :to="{name:'Login'}">Login</router-link>
         <router-link v-show="logged" :to="{name:'Usuario'}">Tu espacio</router-link>
         <router-link v-show="!logged" :to="{name:'Registro'}">Registro</router-link>
@@ -119,30 +118,31 @@ export default {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam:wght@300&Open+Sans:wght@600display=swap");
-#app {
-  font-family: Be Vietnam, Open Sans, Helvetica, sans-serif;
+
+div#app {
+  font-family: Open Sans, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #353a64;
-
   background-size: cover;
   background-color: #353a64;
 }
 
 section#header {
-  display: flex;
-  justify-content: space-between;
-  margin-right: 3rem;
-  font-size: 1.7rem;
+  padding-top: 0.5rem;
+  margin-right: 0.5rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 article#username {
   display: flex;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 }
 
 #nav {
-  padding: 30px 0 50px 0;
+  /*padding: 30px 0 50px 0;*/
   display: flex;
   justify-content: flex-start;
   background-color: #353a64;
@@ -151,8 +151,8 @@ article#username {
 #nav a {
   font-weight: bold;
   color: #ffaa71;
-  font-size: 3rem;
-  padding: 1rem;
+  font-size: 0.5rem;
+  padding: 0.3rem;
   text-decoration: none;
 }
 
@@ -169,34 +169,38 @@ input {
 }
 input::placeholder {
   color: #4cbbb9;
+  font-size: 0.7rem;
 }
 
 button {
   width: 50px;
   height: 20px;
   border-style: none;
-  border-radius: 2em;
+  border-radius: 1em;
+  border: solid #353a64 0.5px;
   color: #353a64;
-  background-color: #ffaa71;
+
   font-size: 0.5rem;
 }
 button:hover {
   border-style: none;
+  background-color: #ffaa71;
 }
 
 button#logout {
   position: relative;
-  margin-top: 1rem;
-  margin-right: 2rem;
+  width: 40px;
+  height: 10px;
+  font-size: 0.5rem;
+}
+p#username {
+  color: #ffaa71;
+  padding-right: 1rem;
+  font-size: 0.3rem;
 }
 
 p {
   color: #353a64;
-}
-
-p#username {
-  color: #ffaa71;
-  padding-right: 1rem;
 }
 
 p.error {
@@ -209,7 +213,8 @@ p.ok {
   color: green;
 }
 img#header {
-  width: 100px;
+  width: 40px;
+  height: 20px;
 }
 
 @media (min-width: 700px) {
@@ -219,17 +224,62 @@ img#header {
     font-size: 1rem;
     text-decoration: none;
   }
+  button#logout {
+    position: relative;
+    margin-top: 1rem;
+    margin-right: 2rem;
+    font-size: 1rem;
+    width: 100px;
+    height: 40px;
+  }
   input {
     font-size: 1rem;
   }
   #nav a {
     font-weight: bold;
+    font-size: 1.2rem;
+    padding: 1rem;
+  }
 
-    font-size: 1.7rem;
+  p#username {
+    color: #ffaa71;
+    padding-right: 1rem;
+    font-size: 1.3rem;
+  }
+  p.error,
+  p.ok {
+    font-size: 1rem;
+  }
+
+  img#header {
+    width: 100px;
+    height: 70px;
+  }
+  input::placeholder {
+    color: #4cbbb9;
+    font-size: 1rem;
   }
 }
 @media (min-width: 1000px) {
   input {
+    font-size: 1rem;
+  }
+  #nav a {
+    font-size: 1.7rem;
+    padding: 1rem;
+  }
+  button {
+    width: 120px;
+    height: 40px;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+}
+@media (min-width: 1025px) {
+  section#header {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 3rem;
     font-size: 1rem;
   }
 }

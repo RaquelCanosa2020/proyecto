@@ -111,6 +111,7 @@ section#girl {
   height: 100vh;
   background-image: url(../../assets/pino.jpg);
   background-size: cover;
+  background-position-x: -160px;
   margin: 0;
   padding: 0;
 }
@@ -119,26 +120,93 @@ section#girl img {
   margin-right: 0;
 }
 h1 {
-  font-size: 3rem;
+  font-size: 1.5rem;
 }
 
 p,
 span {
-  font-size: 1.5rem;
+  font-size: 0.5rem;
 }
 
 button.register {
-  font-size: 1.5rem;
-  width: 150px;
-  height: 40px;
+  font-size: 0.5rem;
+  width: 75px;
+  height: 10px;
 }
 input {
-  width: 300px;
-  height: 60px;
-  font-size: 1.5rem;
+  width: 75px;
+  height: 15px;
+  font-size: 0.5rem;
+}
+input::placeholder {
+  color: #4cbbb9;
+  font-size: 0.5rem;
 }
 input#privacy {
-  width: 20px;
-  height: 20px;
+  width: 5px;
+  height: 5px;
+}
+@media (min-width: 700px) {
+  div.register {
+    height: 100vh;
+    display: flex;
+    justify-content: space-between;
+    background-color: #ebecf1;
+  }
+  section#girl {
+    background-position-x: -200px;
+  }
+  input {
+    width: 150px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  p,
+  span {
+    font-size: 1rem;
+  }
+  button.register {
+    font-size: 1rem;
+    width: 120px;
+    height: 20px;
+  }
+}
+
+@media (min-width: 1000px) {
+  section#girl {
+    background-position-x: -200px;
+  }
+  input {
+    width: 250px;
+    height: 55px;
+    font-size: 1.2rem;
+  }
+  h1 {
+    font-size: 3.5rem;
+  }
+
+  p,
+  span {
+    font-size: 1.2rem;
+  }
+}
+@media (min-width: 1025px) {
+  section#girl {
+    background-position-x: 0;
+  }
+  input {
+    width: 300px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+  button.register {
+    font-size: 1.5rem;
+    width: 150px;
+    height: 40px;
+  }
+  p,
+  span {
+    font-size: 1.5rem;
+  }
 }
 </style>

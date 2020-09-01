@@ -29,7 +29,6 @@
 
         <form v-show="upload" name="subida-imagenes" type="POST" enctype="multipart/formdata">
           <input type="file" ref="uploadedImage" />
-          <input type="submit" name="subir-imagen" value="Enviar imagen" @click="uploadImage" />
         </form>
 
         <button id="edit" v-show="upload" @click="updateUser()">Aceptar</button>
@@ -418,13 +417,11 @@ export default {
 <style scoped>
 div.user {
   background-color: #ebecf1;
-  display: flex;
-  justify-content: space-between;
   min-height: 100vh;
 }
 
 div#left {
-  width: 40%;
+  width: 100%;
 }
 div#right.transit {
   width: 90%;
@@ -435,7 +432,8 @@ div#right.transit {
 div#right {
   background-image: url("../../assets/paso.jpg");
   background-size: cover;
-  width: 60%;
+  width: 100%;
+  margin: 1rem;
   transition: width 1s;
 }
 
@@ -444,8 +442,7 @@ div#left.transit {
 }
 div#buttons {
   display: flex;
-  flex-direction: column;
-  width: 10%;
+  width: 100%;
 }
 
 section#photos {
@@ -466,31 +463,31 @@ article#name {
   margin: auto;
 }
 h1 {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 p {
   color: #353a64;
   text-align: left;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   text-decoration-line: underline;
 }
 
 input {
   border-style: none;
   color: #59405c;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
 }
 
 input::placeholder {
   color: #353a64;
-  font-size: 1.2rem;
+  font-size: 0.8rem;
 }
 
 input.editclass {
   border: 1px solid #0779e4;
   color: #0779e4;
   border-radius: 1em;
-  font-size: 1rem;
+  font-size: 0.8rem;
   text-align: left;
   margin: 0.5rem;
 }
@@ -500,7 +497,7 @@ img {
   border-radius: 50%;
 }
 button {
-  margin: 2rem;
+  margin: 0.5rem;
 }
 
 button.large {
@@ -530,6 +527,64 @@ a {
   margin-top: 2rem;
   text-decoration: none;
   font-weight: 800;
+}
+
+@media (min-width: 1000px) {
+  div.user {
+    background-color: #ebecf1;
+    display: flex;
+    justify-content: space-between;
+    min-height: 100vh;
+  }
+  div#buttons {
+    display: flex;
+    flex-direction: column;
+    width: 10%;
+  }
+
+  div#left {
+    width: 40%;
+  }
+  div#right.transit {
+    width: 90%;
+    background-image: none;
+    background-color: #353a64;
+  }
+
+  div#right {
+    background-image: url("../../assets/paso.jpg");
+    background-size: cover;
+    width: 60%;
+    transition: width 1s;
+  }
+
+  div#left.transit {
+    display: none;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  p,
+  input,
+  span {
+    font-size: 1.2;
+  }
+  button.short {
+    width: 75px;
+    margin-top: 2rem;
+  }
+}
+
+@media (min-width: 1025px) {
+  button.short {
+    width: 100px;
+    margin-top: 2rem;
+  }
+  p,
+  input,
+  span {
+    font-size: 1.5;
+  }
 }
 </style>
 

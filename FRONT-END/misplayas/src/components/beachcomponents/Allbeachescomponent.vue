@@ -22,7 +22,6 @@
         <img :src="setImage(beach.image)" />
       </p>
 
-      <!--- <button @click="sendIdEdit(index)">Editar</button>--->
       <button @click="sendIdToggle(index)">Cambiar estado</button>
     </div>
     <ul id="pagination">
@@ -104,11 +103,7 @@ export default {
     },
 
     //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
-    /*sendIdEdit(index) {
-      let beachId = this.beaches[index].id;
-      //console.log(beachId);
-      this.$emit("sendEdit", beachId);
-    },*/
+
     sendIdToggle(index) {
       let beachId = this.beaches[index].id;
       //console.log(beachId);
