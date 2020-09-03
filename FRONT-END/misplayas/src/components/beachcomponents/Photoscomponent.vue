@@ -2,7 +2,7 @@
   <div>
     <div>
       <section v-for="photo in photos" :key="photo.id">
-        <p>Id. {{photo.id}}</p>
+        <p>Foto nº: {{photo.id}}</p>
         <img :src="setImage(photo.link)" />
         <p>{{photo.description}}</p>
         <p>{{formatDateToUser(photo.date)}}. Usuario: {{photo.name}}</p>
@@ -42,14 +42,37 @@ div {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
 }
 section {
+  width: 50%;
   text-align: center;
   background-color: #ebecf1;
 }
 img {
-  width: 500px;
+  max-width: 150px;
   border-radius: 2em;
-  margin: 2rem;
+  margin: 1rem;
+}
+p {
+  font-size: 0.6rem;
+  padding: 0 1rem;
+}
+
+@media (min-width: 700px) {
+  img {
+    max-width: 250px;
+  }
+  p {
+    font-size: 1rem;
+  }
+  @media (min-width: 1000px) {
+    img {
+      max-width: 450px;
+    }
+    p {
+      font-size: 1.2rem;
+    }
+  }
 }
 </style>

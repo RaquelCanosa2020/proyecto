@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="listbeaches">
     <input type="search" v-model="search" placeholder="Busca rápida por palabras" />
     <onebeachcomponent
       v-for="(beach,index) in showedBeaches"
@@ -86,14 +86,16 @@ export default {
 };
 </script>
 <style scoped>
-div {
+div#listbeaches {
+  margin-top: 1rem;
   width: 100%;
 }
+
 input {
-  width: 130px;
+  width: 150px;
   height: 20px;
   border-radius: 2em;
-  margin: 0;
+  margin-bottom: 1rem;
 }
 ul {
   display: flex;
@@ -119,7 +121,6 @@ button.pages {
     width: 300px;
     height: 40px;
     border-radius: 2em;
-    margin: 0;
   }
 }
 </style>

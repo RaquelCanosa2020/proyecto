@@ -5,7 +5,7 @@
       <!-------⌚-INICIO RESERVA-->
       <h1>RESERVA DE ESPACIO EN PLAYA</h1>
       <label>Elige la playa:</label>
-      <select v-model="selectedBeach">
+      <select id="beach" v-model="selectedBeach">
         <option
           v-for="beach in beaches"
           :key="beach.id"
@@ -101,8 +101,7 @@ export default {
     onebeachcomponent,
   },
   props: {
-    // datos: Object, // datos playa, intento pasar evento pero no funciona
-    info: Object, //datos opciones buscador, sí funciona desde App
+    info: Object, //datos opciones buscador, almacenados en App
   },
 
   data() {
@@ -167,10 +166,6 @@ export default {
       } else {
         this.selectedBeach = null;
       }
-      /* this.id = this.datos.id;
-      this.name = this.datos.name;
-      this.municipality = this.datos.municipality;
-      this.province = this.datos.province;*/
     },
 
     //FUNCIÓN PARA CONSEGUIR LOS DATOS DE LAS PLAYAS (SI USUARIO NO VIENE DEL BUSCADOR)
@@ -237,7 +232,6 @@ export default {
         }
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
-        //console.log(error);
       }
     },
   },
@@ -252,55 +246,118 @@ div.all {
   min-height: 100 vh;
   background-image: url(../../assets/sillas.jpg);
   background-size: cover;
-  padding: 2rem;
 }
 div.reservation {
-  width: 50%;
+  width: 80%;
   margin: auto;
   background-color: #ebecf1;
-  padding: 2rem;
+  padding: 1rem;
 }
-
+h1 {
+  font-size: 0.8rem;
+}
 p,
 label {
-  font-size: 1.5rem;
+  font-size: 0.7rem;
   color: #353a64;
 }
-
 select,
 input {
-  height: 30px;
+  height: 15px;
+}
+select#beach {
+  width: 150px;
 }
 ul {
-  font-size: 1.2rem;
-
+  font-size: 0.6rem;
   margin: auto;
-}
-
-ul#conditions {
-  color: #353a64;
-  padding: 2rem;
-}
-section#conditions {
-  border-color: #ffaa71;
-  border-style: solid;
-  border-radius: 2em;
-}
-ul.ok li {
   list-style: none;
 }
+ul.ok {
+  background-color: #ffaa71;
+}
 li {
-  margin-bottom: 1rem;
   text-align: left;
 }
-
-button,
-a {
-  margin-right: 1rem;
-}
-
 button#pay {
   background-color: #4cbbb9;
-  height: 40px;
+  height: 20px;
+}
+a {
+  font-size: 0.6rem;
+}
+
+@media (min-width: 700px) {
+  h1 {
+    font-size: 1rem;
+  }
+  p,
+  label {
+    font-size: 0.8rem;
+  }
+  select,
+  input {
+    height: 30px;
+  }
+  ul {
+    font-size: 0.8rem;
+    margin: auto;
+  }
+  button,
+  button#pay {
+    background-color: #4cbbb9;
+    height: 30px;
+    font-size: 0.6rem;
+  }
+}
+
+@media (min-width: 1000px) {
+  div.reservation {
+    width: 60%;
+    padding: 2rem;
+  }
+  h1 {
+    font-size: 2rem;
+  }
+  p,
+  label {
+    font-size: 1.5rem;
+  }
+
+  select,
+  input {
+    height: 30px;
+  }
+  ul {
+    font-size: 1.2rem;
+  }
+
+  ul#conditions {
+    color: #353a64;
+    padding: 2rem;
+  }
+  section#conditions {
+    border-color: #ffaa71;
+    border-style: solid;
+    border-radius: 2em;
+  }
+  ul.ok li {
+    list-style: none;
+  }
+  li {
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  button,
+  a {
+    margin-right: 1rem;
+    font-size: 1rem;
+  }
+
+  button#pay {
+    height: 40px;
+    font-size: 1rem;
+  }
 }
 </style>

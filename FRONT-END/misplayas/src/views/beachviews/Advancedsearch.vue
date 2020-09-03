@@ -1,23 +1,28 @@
 <template>
   <div class="all">
-    <vue-headful title="misplayas | Buscar" />
-    <div id="right">
+    <div id="left">
+      <vue-headful title="misplayas | Buscar" />
+
+      <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
+
+      <h1>BUSCA TU PLAYA</h1>
+
       <div class="options">
         <!-----SECCIÓN ELEGIR FECHA-Y PLAZAS-->
+        <h5>Disponibilidad</h5>
         <section id="dateplaces">
-          <label>DISPONIBILIDAD</label>
-          <p>
-            Fecha
+          <article>
+            <p>Fecha</p>
             <input id="date" type="date" v-model="date" placeholder="fecha" />
-          </p>
-          <p>
-            0-24h
+          </article>
+          <article>
+            <p>0-24h</p>
             <select id="hour" v-model="hour">
               <option v-for="number in numbers" :key="number.id" :value="number">{{number}}</option>
             </select>
-          </p>
-          <p>
-            Plazas
+          </article>
+          <article>
+            <p>Plazas</p>
             <select id="places" v-model="places">
               <option value></option>
               <option value="1">1</option>
@@ -26,23 +31,23 @@
               <option value="4">4</option>
               <option value="5">5</option>
             </select>
-          </p>
+          </article>
         </section>
 
         <!-----SECCIÓN ELEGIR TIPO Y LOCALIZACIÓN PLAYA--->
+        <h5>Localización</h5>
         <section id="location">
-          <label>UBICACIÓN</label>
-          <p>
-            Tipo de playa
+          <article>
+            <p>Tipo de playa</p>
             <select id="type" v-model="type">
               <option value></option>
               <option value="Urbana">Urbana</option>
               <option value="Semiurbana">Semiurbana</option>
               <option value="Aislada">Aislada</option>
             </select>
-          </p>
-          <p>
-            Provincia
+          </article>
+          <article>
+            <p>Provincia</p>
             <select id="province" v-model="province">
               <option value></option>
               <option value="A Coruña">A Coruña</option>
@@ -50,9 +55,9 @@
               <option value="Ourense">Ourense</option>
               <option value="Pontevedra">Pontevedra</option>
             </select>
-          </p>
-          <p>
-            Municipio
+          </article>
+          <article>
+            <p>Municipio</p>
             <select id="municipality" v-model="municipality">
               <option value></option>
               <option
@@ -62,86 +67,74 @@
                 :value="muni.municipality"
               >{{muni.municipality}}</option>
             </select>
-          </p>
-        </section>
-
-        <!-----SECCIÓN ELEGIR POR SERVICIOS--->
-
-        <section id="services">
-          <label id="labelservices">SERVICIOS</label>
-          <article id="services">
-            <label>
-              <img src="@/assets/lifesaving.png" />
-              <input type="checkbox" value="lifesaving" v-model="lifesaving" />
-            </label>
-
-            <label>
-              <img src="@/assets/bar_restaurant.png" />
-              <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
-            </label>
-
-            <label>
-              <img src="@/assets/disabled_access.png" />
-              <input type="checkbox" value="disabled_access" v-model="disabled_access" />
-            </label>
-
-            <label>
-              <img src="@/assets/parking.png" />
-              <input type="checkbox" value="parking" v-model="parking" />
-            </label>
-            <label>
-              <img src="@/assets/toilet.png" />
-              <input type="checkbox" value="toilet" v-model="toilet" />
-            </label>
           </article>
         </section>
 
-        <!-----ELEGIR CRITERIOS Y DIRECCIÓN DE ORDENACIÓN--->
-        <div id="end">
-          <p>Ordenar por:</p>
-          <section id="order">
-            <select id="order" v-model="order">
-              <option value></option>
-              <option value="name">Nombre</option>
-              <option value="municipality">Municipio</option>
-              <option value="province">Provincia</option>
-              <option value="voteAverage">Valoración usuarios</option>
-            </select>
-            <button class="direction" @click="direction = 'asc'">&#8679;</button>
-            <button class="direction" @click="direction = 'desc'">&#8681;</button>
-          </section>
-          <!---BOTONES--->
-        </div>
-      </div>
-    </div>
-    <div id="left">
-      <vue-headful title="misplayas | Buscador" />
+        <!-----SECCIÓN ELEGIR POR SERVICIOS--->
+        <h5>Servicios</h5>
+        <section id="services">
+          <label>
+            <img src="@/assets/anillo-de-vida.png" />
+            <input type="checkbox" value="lifesaving" v-model="lifesaving" />
+          </label>
 
-      <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
+          <label>
+            <img src="@/assets/comer.png" />
+            <input type="checkbox" value="bar_restaurant" v-model="bar_restaurant" />
+          </label>
 
-      <h1>BUSCA TU PLAYA</h1>
+          <label>
+            <img src="@/assets/sillaruedas.png" />
+            <input type="checkbox" value="disabled_access" v-model="disabled_access" />
+          </label>
 
-      <!--BUSCADOR INICIO----->
-
-      <!--------FIN BUSCADOR AVANZADO--->
-
-      <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS
-      ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
-      <div id="main">
-        <section id="button">
-          <button id="search" @click="searchBeaches()">BUSCAR</button>
-          <button @click="hide">Borrar criterios</button>
+          <label>
+            <img src="@/assets/estacionamiento.png" />
+            <input type="checkbox" value="parking" v-model="parking" />
+          </label>
+          <label>
+            <img src="@/assets/embolo.png" />
+            <input type="checkbox" value="toilet" v-model="toilet" />
+          </label>
         </section>
-        <div id="list" v-if="isLoaded">
-          <onelistcomponent :beaches="beaches" />
-        </div>
-        <div v-else>
-          <spinner />
-        </div>
       </div>
+      <!-----ELEGIR CRITERIOS Y DIRECCIÓN DE ORDENACIÓN--->
 
-      <!------🔍-FIN ID LIST-BÚSQUEDA AVANZADA---->
+      <h5>Ordenar por:</h5>
+      <section id="order">
+        <select id="order" v-model="order">
+          <option value></option>
+          <option value="name">Nombre</option>
+          <option value="municipality">Municipio</option>
+          <option value="province">Provincia</option>
+          <option value="voteAverage">Valoración usuarios</option>
+        </select>
+
+        <!---BOTONES ASCENDENTE/DESCENDENTE--->
+        <button class="direction" @click="direction = 'asc'">&#8679;</button>
+        <button class="direction" @click="direction = 'desc'">&#8681;</button>
+      </section>
+
+      <section id="button">
+        <button id="search" @click="searchBeaches()">BUSCAR</button>
+        <button id="erase" @click="hide">Borrar criterios</button>
+      </section>
     </div>
+
+    <!--------FIN BUSCADOR AVANZADO--->
+
+    <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS
+    ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
+    <div id="main">
+      <div id="list" v-if="isLoaded">
+        <onelistcomponent :beaches="beaches" />
+      </div>
+      <div v-else>
+        <spinner />
+      </div>
+    </div>
+
+    <!------🔍-FIN ID LIST-BÚSQUEDA AVANZADA---->
   </div>
 </template>
 
@@ -385,231 +378,248 @@ export default {
 };
 </script>
 <style scoped>
+html {
+  margin: 0;
+  padding: 0;
+}
 div.all {
   background-image: url(../../assets/Orilla.jpg);
   background-size: cover;
 }
-div#right {
-  width: 100%;
-  padding-top: 2rem;
-}
 div#left {
-  width: 100%;
-  background-color: #ebecf19f;
-}
-
-div.options,
-div#list {
-  width: 80%;
-  margin: auto;
+  margin-left: 1rem;
 }
 div.options {
-  display: flex;
-  justify-content: center;
-}
-section {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #353a64;
-  padding: 4px;
   border-radius: 2em;
-}
-section#dateplaces,
-section#location,
-section#services {
-  background-color: #ebecf1;
-}
-article#services {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
+  padding: 10px 0;
 }
 
-div.options p,
-div#end p {
-  color: #353a64;
-  margin-right: 1.3rem;
-  font-weight: 800;
-  font-size: 0.7rem;
+label img {
+  width: 10%;
 }
 
-input,
-select {
-  width: 100px;
-  height: 20px;
-  border-radius: 2em;
-  margin: 0;
+label input {
+  width: 3%;
+}
+h1 {
+  font-size: 1.6rem;
+  padding-top: 0.3rem;
+}
+h5 {
+  margin: 0rem;
+}
+
+p {
   font-size: 0.6rem;
+  margin: 0;
 }
+
+section#dateplaces,
+section#location {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  border: 0.5px solid #353a64;
+  border-radius: 2em;
+  padding: 10px 0;
+}
+
+section#button {
+  margin-top: 1rem;
+}
+input#date {
+  width: 100px;
+  font-size: 0.6rem;
+  margin: 0;
+}
+
 select#hour,
 select#places {
   width: 40px;
+  height: 15px;
+  font-size: 0.6rem;
+  border-radius: 1em;
+  margin: 0;
 }
 
-article,
-section {
-  margin-bottom: 1rem;
-}
-div#main {
-  display: flex;
-}
-
-div#end {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-}
-
-section#order {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-}
-section#button {
-  border: none;
-  margin-top: 2rem;
-}
-button#search {
-  font-weight: 800;
-  margin-bottom: 2rem;
-}
-
-h1 {
-  font-size: 2rem;
-  padding: 1rem;
+select#type,
+select#province,
+select#municipality,
+select#order {
+  width: 90px;
+  height: 15px;
+  font-size: 0.6rem;
+  border-radius: 1em;
+  margin: 0.5;
 }
 
 button.direction {
-  width: 25px;
-  height: 25px;
-  background-color: white;
-  border-radius: 0;
-  border-color: #353a64 solid;
-  border-style: solid;
-  margin-left: 0.5rem;
+  width: 30px;
+  height: 15px;
 }
 
-.hidden {
-  display: none;
+button#search {
+  width: 80px;
+  background-color: #4cbbb9;
 }
-
-img {
+button#erase {
   width: 80px;
 }
 
-section#services img {
-  width: 20px;
-  height: 20px;
-}
-
-section#services input {
-  width: 10px;
-  height: 10px;
-  margin-right: 2rem;
-}
-label {
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.8rem;
-}
-p {
-  font-size: 0.5;
-}
-
-div#list {
-  width: 75%;
-  margin: auto;
-}
-
-ul {
-  background-color: #ebecf1;
-  list-style: none;
-  width: 50%;
-  margin: auto;
-}
-section#data > ul {
-  display: flex;
-  justify-content: space-around;
-}
-
-section#data > img {
-  width: 1000px;
-  margin: auto;
-}
-
-li {
-  margin-bottom: 1rem;
-}
-label {
-  display: flex;
-  margin-top: 1rem;
-}
 @media (min-width: 700px) {
-}
-
-@media (min-width: 1000px) {
-  div.all {
-    display: flex;
-    background-image: url(../../assets/Orilla.jpg);
-    background-size: cover;
-  }
-  div#right {
-    width: 25%;
-    padding-top: 2rem;
-  }
-  div#left {
-    width: 75%;
-    background-color: #ebecf19f;
-  }
   div.options {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  section {
+    background-color: #ebecf1;
     padding: 10px;
   }
-  div.options p,
-  div#end p {
-    color: #353a64;
-    margin-right: 1.3rem;
-    font-weight: 800;
-    font-size: 1rem;
+  label img {
+    width: 30px;
+    height: 30px;
   }
 
-  input,
+  label input {
+    width: 10px;
+  }
+
+  section#services {
+    display: flex;
+    width: 200px;
+  }
+  label {
+    width: 50px;
+    text-align: left;
+  }
+  section#dateplaces,
+  section#location {
+    flex-wrap: nowrap;
+  }
+  h5 {
+    font-size: 1rem;
+    padding-top: 1rem;
+  }
+  p {
+    font-size: 0.8rem;
+  }
+  input#date,
   select {
+    margin-right: 0.5rem;
+  }
+  label {
+    display: flex;
+  }
+  input#date {
     width: 150px;
-    height: 30px;
     font-size: 1rem;
   }
   select#hour,
   select#places {
-    width: 40px;
-  }
-  h1 {
-    font-size: 3rem;
-    padding: 2rem;
-  }
-  label {
-    text-align: center;
-    font-weight: 600;
+    width: 60px;
+    height: 20px;
     font-size: 1rem;
   }
-
-  p {
-    font-size: 0.7;
-  }
-  section#services img {
-    width: 30px;
-    height: 30px;
-  }
-  div#end {
-    justify-content: space-around;
+  select#type,
+  select#province,
+  select#municipality,
+  select#order {
+    width: 200px;
+    height: 20px;
+    font-size: 1rem;
   }
   button.direction {
     width: 40px;
+    height: 20px;
+  }
+  button {
+    width: 140px;
+  }
+  @media (min-width: 1000px) {
+    label img {
+      width: 40px;
+      height: 40px;
+    }
+
+    label input {
+      width: 20px;
+    }
+
+    section#services {
+      width: 300px;
+    }
+    label {
+      width: 80px;
+    }
+
+    h5 {
+      font-size: 1.2rem;
+      padding-top: 1rem;
+    }
+    p {
+      font-size: 1rem;
+    }
+    input#date,
+    select {
+      margin-right: 0.5rem;
+    }
+
+    input#date {
+      width: 180px;
+      font-size: 1.2rem;
+    }
+    select#hour,
+    select#places {
+      width: 80px;
+      height: 25px;
+      font-size: 1.2rem;
+    }
+    select#type,
+    select#province,
+    select#municipality,
+    select#order {
+      width: 300px;
+      height: 25px;
+      font-size: 1.2rem;
+    }
+    button.direction {
+      width: 50px;
+      height: 30px;
+    }
+    button#search,
+    button#erase {
+      width: 140px;
+    }
+    @media (min-width: 1500px) {
+      section#dateplaces,
+      section#location {
+        flex-direction: column;
+      }
+      div.all {
+        display: flex;
+      }
+      div#main {
+        width: 70%;
+      }
+      div#left {
+        width: 25%;
+      }
+      h1 {
+        font-size: 3rem;
+      }
+      h5 {
+        font-size: 1.4rem;
+        padding-top: 2rem;
+      }
+      p {
+        font-size: 1.3rem;
+      }
+      select#order {
+        width: 200px;
+        height: 25px;
+        font-size: 1.2rem;
+      }
+      button {
+        font-size: 1.2rem;
+        width: 140px;
+      }
+    }
   }
 }
 </style>

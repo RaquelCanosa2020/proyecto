@@ -118,31 +118,36 @@ h1,
 p {
   color: whitesmoke;
 }
+
+h1 {
+  font-size: 1rem;
+}
+
+p {
+  font-size: 0.8rem;
+}
 section:not(#selected) {
   display: flex;
   justify-content: center;
 }
 
-img {
-  width: 100px;
-}
-
 select {
-  width: 200px;
-  height: 25px;
-  font-size: 1rem;
-  margin: 1rem;
+  width: 100px;
+  height: 20px;
+  font-size: 0.8rem;
 }
 button.direction {
   width: 40px;
-
   background-color: white;
   border-radius: 0;
   border-color: #353a64 solid;
   border-style: solid;
   margin-left: 0.5rem;
+  margin-top: 0;
 }
-
+button {
+  margin-top: 1rem;
+}
 .modal {
   position: fixed;
   top: 0;
@@ -158,5 +163,31 @@ button.direction {
   padding: 3rem;
   width: 80%;
   border: 1px solid #888;
+}
+
+@media (min-width: 700px) {
+  h1 {
+    font-size: 2rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+  select {
+    width: 200px;
+    height: 40px;
+    font-size: 0.8rem;
+  }
+  button.direction {
+    width: 40px;
+    background-color: white;
+    border-radius: 0;
+    border-color: #353a64 solid;
+    border-style: solid;
+    margin-left: 0.5rem;
+    margin-top: 0;
+  }
+  button {
+    margin-top: 1rem;
+  }
 }
 </style>

@@ -9,10 +9,22 @@
     <section id="down">
       <h3>
         Utiliza nuestra web para encontrar las mejores playas de Galicia.
-        REGÍSTRATE para poder reservar tu plaza.
+        <span>
+          <router-link to="/Register">REGÍSTRATE</router-link>
+        </span> para poder reservar tu plaza.
       </h3>
-      <h3>Si ya te has registrado, HAZ LOGIN para empezar. Utiliza el buscador y selecciona playas según tus opciones.</h3>
-      <h3>Desde la sección TU ESPACIO podrás gestionar tus datos, tus reservas, subir fotos...</h3>
+      <h3>
+        Si ya te has registrado,haz
+        <span>
+          <router-link to="/login">LOGIN</router-link>
+        </span> para empezar. Utiliza el buscador y selecciona playas según tus opciones.
+      </h3>
+      <h3>
+        Desde la sección
+        <span>
+          <router-link to="/login">TU ESPACIO</router-link>
+        </span> podrás gestionar tus datos, tus reservas, subir fotos...
+      </h3>
     </section>
   </div>
 </template>
@@ -54,6 +66,9 @@ h3 {
   width: 70%;
   height: 10%;
   margin: 1rem;
+}
+a {
+  color: white;
 }
 
 @media (min-width: 700px) {

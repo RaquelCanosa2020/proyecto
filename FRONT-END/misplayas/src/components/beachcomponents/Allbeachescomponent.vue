@@ -120,11 +120,13 @@ div#beach {
   padding: 2rem;
 }
 img {
-  width: 500px;
+  width: 80%;
 }
-
+p {
+  font-size: 0.8rem;
+}
 p.name {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 ul {
   display: flex;
@@ -146,5 +148,19 @@ button.pages.active {
 
 p#pages {
   color: white;
+}
+@media (min-width: 700px) {
+  img {
+    width: 80%;
+  }
+  p {
+    font-size: 1rem;
+  }
+  p.name {
+    font-size: 1.5rem;
+  }
+  button.pages {
+    height: 20px;
+  }
 }
 </style>

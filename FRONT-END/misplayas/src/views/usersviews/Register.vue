@@ -161,6 +161,13 @@ input#privacy {
     height: 35px;
     font-size: 1rem;
   }
+  input::placeholder {
+    font-size: 1rem;
+  }
+  input#privacy {
+    width: 10px;
+    height: 10px;
+  }
   p,
   span {
     font-size: 1rem;
@@ -180,6 +187,14 @@ input#privacy {
     width: 250px;
     height: 55px;
     font-size: 1.2rem;
+  }
+
+  input::placeholder {
+    font-size: 1.2rem;
+  }
+  input#privacy {
+    width: 13px;
+    height: 13px;
   }
   h1 {
     font-size: 3.5rem;

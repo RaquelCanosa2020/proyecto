@@ -5,103 +5,116 @@
 
     <div id="all" v-if="isLoaded">
       <h1>{{name}}</h1>
-      <div id="main">
-        <div id="left">
-          <img id="principal" :src="setImage(image)" />
 
-          <p>Servicios:</p>
+      <img id="principal" :src="setImage(image)" />
+      <section id="services">
+        <p>Servicios:</p>
 
-          <ul>
-            <li>
-              <img src="@/assets/lifesaving.png" />
-              {{lifesaving}}
-            </li>
-            <li>
-              <img id="parking" src="@/assets/parking.png" />
-              {{parking}}
-            </li>
-            <li>
-              <img id="toilet" src="@/assets/toilet.png" />
-              {{toilet}}
-            </li>
-            <li>
-              <img src="@/assets/bar_restaurant.png" />
-              {{bar_restaurant}}
-            </li>
-            <li>
-              <img src="@/assets/disabled_access.png" />
-              {{disabled_access}}
-            </li>
-          </ul>
-        </div>
+        <ul>
+          <li>
+            <img src="@/assets/anillo-de-vida.png" />
+            {{lifesaving}}
+          </li>
+          <li>
+            <img id="parking" src="@/assets/estacionamiento.png" />
+            {{parking}}
+          </li>
+          <li>
+            <img id="toilet" src="@/assets/embolo.png" />
+            {{toilet}}
+          </li>
+          <li>
+            <img src="@/assets/comer.png" />
+            {{bar_restaurant}}
+          </li>
+          <li>
+            <img src="@/assets/sillaruedas.png" />
+            {{disabled_access}}
+          </li>
+        </ul>
+      </section>
 
-        <div id="right">
-          <section id="date">
-            <p>Fecha seleccionada: {{date}}</p>
-            <p>{{notice}}</p>
-          </section>
+      <section id="date">
+        <p>Fecha seleccionada: {{date}}</p>
+        <p>{{notice}}</p>
+      </section>
+      <section id="voteAverage">
+        <p>Valoración usuarios:</p>
+        <button id="voteAverage">{{voteAverage}}</button>
+      </section>
 
-          <article id="meteo">
-            <section id="meteo" :class="{hidden: !skyState && !temperature }">
-              <img id="sky" :src="skyState" />
-              <span>{{temperature}} ºC</span>
-              <!--Aplico hidden, ya que a veces no hay info meteo a más de 2-3 días-->
-              <p id="meteo">Fuente: Meteogalicia</p>
-            </section>
+      <section id="meteo" :class="{hidden: !skyState && !temperature }">
+        <img id="sky" :src="skyState" />
+        <span>{{temperature}} ºC</span>
+        <!--Aplico hidden, ya que a veces no hay info meteo a más de 2-3 días-->
+        <p id="meteo">Fuente: Meteogalicia</p>
+      </section>
 
-            <section id="marked">
-              <p>Plazas disponibles:</p>
-              <p id="marked">{{disponibilidad}}</p>
-            </section>
-          </article>
+      <section id="marked">
+        <span></span>
+        <p id="marked">{{disponibilidad}}</p>
+        <p>Plazas disponibles:</p>
+      </section>
 
-          <section id="data">
-            <p>Id: {{$route.params.id}}, Municipio: {{municipality}}, Provincia: {{province}}</p>
-            <p>Tipo: {{type}}</p>
-            <p>Descripción: {{description}}</p>
-            <p>Capacidad: {{capacity}} personas</p>
-            <p>Horario: de {{start_time}} a {{end_time}}</p>
-            <p>Meses de reserva obligatoria: de {{nameMonth(start_month)}} a {{nameMonth(end_month)}}</p>
-          </section>
-          <section id="button">
-            <button class="one">
-              <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver</router-link>
-            </button>
-            <button class="one">
-              <router-link
-                :to="{name:'Reserva', params: {id:this.id, name: this.name,
-      municipality: this.municipality, province: this.province}}"
-              >Reservar</router-link>
-            </button>
-          </section>
-          <section id="beneath">
-            <p>
-              <button id="photos" @click="seePhotos">&#8681; ver + fotos &#8681;</button>
-            </p>
+      <section id="data">
+        <p>Id: {{$route.params.id}}, Municipio: {{municipality}}, Provincia: {{province}}</p>
+        <p>- Tipo: {{type}}</p>
 
-            <p>
-              <button id="rating" @click="seeVotes">&#8681; Ver valoraciones y comentarios &#8681;</button>
-            </p>
-          </section>
+        <p>- Descripción: {{description}}</p>
+        <p>
+          <img class="icon" src="../../assets/grupo.png" />
+          Capacidad: {{capacity}} personas
+        </p>
+        <p>
+          <img class="icon" src="../../assets/reloj.png" />
+          Horario: de {{start_time}} a {{end_time}}
+        </p>
+        <p>
+          <img class="icon" src="../../assets/calendario.png" />
+          Meses de reserva obligatoria: de {{nameMonth(start_month)}} a {{nameMonth(end_month)}}
+        </p>
+      </section>
+      <section id="button">
+        <button class="one">
+          <router-link :to="{name:'Buscador', params:{info:this.info}}">Volver</router-link>
+        </button>
+        <button class="one">
+          <router-link
+            :to="{name:'Reserva', params: {id:this.id, name: this.name,
+                municipality: this.municipality, province: this.province}}"
+          >Reservar</router-link>
+        </button>
+      </section>
+      <section id="beneath">
+        <article id="buttons">
+          <p>
+            <button id="photos" @click="seePhotos">&#8681; ver + fotos &#8681;</button>
+          </p>
+
+          <p>
+            <button id="rating" @click="seeVotes">&#8681; Ver valoraciones y comentarios &#8681;</button>
+          </p>
+        </article>
+        <article id="none">
           <p class="error" v-show="showPhotos">{{errorMessagePhotos}}</p>
           <p class="error" v-show="showRating">{{errorMessageVotes}}</p>
-        </div>
-      </div>
-      <div id="down">
-        <!-------📸-SECCIÓN DE FOTOS DE LA PLAYA HECHAS POR USUARIOS--->
-        <section v-show="showPhotos" id="photos">
-          <!--IMPORTAMOS COMPONENTE DE FOTOS--->
-          <photoscomponent :photos="photos" />
-        </section>
+        </article>
+      </section>
 
-        <!-------👍-SECCIÓN DE RATING Y OPINIONES--->
-        <section v-show="showRating" id="rating">
-          <!--IMPORTAMOS COMPONENTE DE RATINGS--->
+      <!-------📸-SECCIÓN DE FOTOS DE LA PLAYA HECHAS POR USUARIOS--->
+      <section v-show="showPhotos" id="photos">
+        <!--IMPORTAMOS COMPONENTE DE FOTOS--->
+        <photoscomponent :photos="photos" />
+      </section>
 
-          <ratingscomponent :global="global" :votes="votes" />
-        </section>
-      </div>
+      <!-------👍-SECCIÓN DE RATING Y OPINIONES--->
+      <section v-show="showRating" id="rating">
+        <!--IMPORTAMOS COMPONENTE DE RATINGS--->
+
+        <ratingscomponent :global="global" :votes="votes" />
+      </section>
     </div>
+
     <div v-else>
       <spinner />
     </div>
@@ -257,6 +270,7 @@ export default {
     async seeVotes() {
       this.showPhotos = false;
       this.showRating = true;
+      window.scrollBy(0, 500);
 
       try {
         const response = await axios.get(
@@ -273,6 +287,7 @@ export default {
     async seePhotos() {
       this.showRating = false;
       this.showPhotos = true;
+      window.scrollBy(0, 500);
 
       try {
         const response = await axios.get(
@@ -295,144 +310,301 @@ export default {
 div.beach {
   background-color: #ebecf1;
 }
-div#left {
-  text-align: center;
-  padding: 2rem;
-}
-div#riht {
-  text-align: left;
-  padding: 2rem;
-}
-
-div#main {
-  display: flex;
-  justify-content: space-around;
-  background-color: #ebecf1;
-}
-section#meteo,
-section#marked {
-  width: 00px;
+div#all {
+  padding: 0.5rem;
+  display: grid;
+  grid-gap: 0.5rem;
+  grid-template-columns: 2.5fr 1fr;
+  grid-template-rows: 50px 70px 70px 50px 50px 150px;
+  grid-template-areas:
+    "h1 voteAverage"
+    "photo meteo"
+    "photo marked"
+    "date button"
+    "services services"
+    "data data"
+    "beneath beneath"
+    "list list";
+  place-items: center center;
 }
 
 h1 {
-  font-size: 3rem;
-}
-p {
-  color: #353a64;
+  grid-area: h1;
   font-size: 1.2rem;
-}
-p#meteo {
-  color: #ebecf1;
-  font-size: 1rem;
-}
-span,
-p#marked {
-  color: #ebecf1;
-  font-weight: 800;
-  font-size: 1.5rem;
-}
-section#beneath {
-  display: flex;
-  justify-content: space-between;
-}
-section#data {
-  text-align: left;
-  margin-top: 4rem;
-}
-section#date p {
-  color: #056676;
-  margin: 2rem;
 }
 
 img#principal {
-  width: 400px;
+  grid-area: photo;
+  max-width: 200px;
   border-radius: 2em;
 }
-
-img#sky,
-img#wind {
-  width: 70px;
-  height: 70px;
+li {
+  margin-right: 0.5rem;
 }
-
-img#toilet {
-  height: 65px;
-  position: relative;
-  top: -2px;
-}
-
-img#parking {
-  border-radius: 0.7em;
-}
-
-li > img,
-p > img {
-  width: 60px;
-}
-
-article {
-  width: 75%;
-  margin: auto;
-  display: flex;
-  justify-content: space-around;
-}
-
-article section {
-  background-color: #353a64;
-  padding: 2rem;
-  border-radius: 2em;
-}
-article section#marked {
-  background-color: #ebecf1;
-  padding: 2rem;
-  border-radius: 2em;
-  border: solid #056676 1px;
-}
-article section#marked p {
-  color: #056676;
+li img,
+img.icon {
+  width: 20px;
 }
 
 ul {
-  display: flex;
   list-style: none;
-  width: 50%;
-  background-color: #ebecf1;
+  display: flex;
+  font-size: 0.7rem;
 }
-
-li {
-  margin: 1rem 2rem;
-}
-section#options {
-  color: #086972;
-}
-
-button#photos,
-button#rating {
-  width: 300px;
-}
-button.one {
-  width: 120px;
-  height: 40px;
-  font-size: 1rem;
-  border-style: none;
-  border-radius: 1em;
-  border: solid #353a64 0.5px;
+button#voteAverage {
+  background-color: #4cbbb9;
   color: #353a64;
+  font-weight: 900;
+  font-size: 1rem;
+  width: 60px;
+}
+section#meteo,
+section#marked {
+  grid-area: meteo;
+  background-color: #ebecf1;
+  margin-right: 1rem;
+  border-radius: 2em;
+}
+
+section#data p {
+  text-align: left;
+}
+
+p {
+  font-size: 0.7rem;
+}
+p#meteo,
+section#marked p,
+section#voteAverage p {
+  font-size: 0.4rem;
+}
+
+section#marked {
+  grid-area: marked;
+}
+section#voteAverage {
+  grid-area: voteAverage;
+}
+span,
+section#marked p#marked {
+  font-size: 0.7rem;
+  margin: 0;
+}
+
+section#date {
+  grid-area: date;
+}
+
+section#data {
+  grid-area: data;
+  padding-left: 1rem;
+}
+
+section#button {
+  grid-area: button;
 }
 a {
   text-decoration: none;
-  color: #353a64;
 }
-.hidden {
-  display: none;
+
+section#services {
+  grid-area: services;
+  display: flex;
+  padding-bottom: 1rem;
+}
+
+section#beneath {
+  grid-area: beneath;
+}
+
+article#buttons {
+  display: flex;
+  justify-content: center;
+}
+button#photos,
+button#rating {
+  width: 100px;
+}
+section#photos,
+section#rating {
+  grid-area: list;
+}
+@media (min-width: 700px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+  div#all {
+    grid-template-rows: 50px 170px 200px 80px 50px 250px;
+  }
+  img#principal {
+    max-width: 550px;
+  }
+  p {
+    font-size: 1rem;
+  }
+  li {
+    margin-right: 1rem;
+  }
+  li img,
+  img.icon {
+    width: 30px;
+  }
+
+  ul {
+    font-size: 1rem;
+  }
+  p#meteo,
+  section#marked p,
+  section#voteAverage p {
+    font-size: 0.7rem;
+  }
+  span,
+  section#marked p#marked {
+    font-size: 1.5rem;
+  }
+  img#sky {
+    width: 70px;
+    height: 70px;
+  }
+  button#photos,
+  button#rating {
+    width: 180px;
+  }
 }
 @media (min-width: 1000px) {
-  img#principal {
-    width: 700px;
+  h1 {
+    font-size: 2.2rem;
   }
-  section#meteo,
+  div#all {
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: 70px 300px 300px 100px 80px 350px;
+  }
+  img#principal {
+    max-width: 700px;
+  }
+  p {
+    font-size: 1.2rem;
+  }
+  li {
+    margin-right: 1.2rem;
+  }
+  li img,
+  img.icon {
+    width: 40px;
+  }
+
+  ul {
+    font-size: 1.2rem;
+  }
+  p#meteo,
+  section#marked p,
+  section#voteAverage p {
+    font-size: 1rem;
+  }
+  span,
+  section#marked p#marked {
+    font-size: 2rem;
+  }
+
+  button#photos,
+  button#rating {
+    width: 180px;
+  }
+  section#meteo {
+    border: 5px solid #4cbbb9;
+  }
   section#marked {
+    border: 5px solid #353a64;
+    align-self: flex-start;
+  }
+  button#voteAverage {
+    font-size: 2rem;
+    width: 120px;
+    padding: 0.2rem;
+  }
+}
+@media (min-width: 1300px) {
+  div#all {
+    padding: 2rem 5rem;
+  }
+  h1 {
+    font-size: 3rem;
+    padding-top: 2rem;
+  }
+  div.beach {
+    background-image: url(../../assets/playa.jpg);
+    background-size: cover;
+  }
+  div#all {
+    background-color: #ebecf1b2;
+    margin: 2rem 8rem;
+    padding: 4rem 4rem;
+    grid-template-columns: 4fr 1fr;
+    grid-template-rows: 100px 350px 400px 100px 100px 400px;
+  }
+  img#principal {
+    max-width: 900px;
+  }
+  button {
     width: 200px;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+  button#voteAverage {
+    background-color: #4cbbb9;
+    color: #353a64;
+    font-weight: 900;
+    font-size: 2rem;
+    width: 120px;
+    padding: 0.2rem;
+  }
+  p {
+    font-size: 1.4rem;
+  }
+  li {
+    margin-right: 1.4rem;
+  }
+  li img,
+  img.icon {
+    width: 45px;
+  }
+
+  ul {
+    font-size: 1.4rem;
+  }
+  p#meteo,
+  section#marked p,
+  section#voteAverage p {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+  span,
+  section#marked p#marked {
+    font-size: 2rem;
+  }
+
+  button#photos,
+  button#rating {
+    width: 450px;
+  }
+  span,
+  section#marked p#marked {
+    font-size: 2rem;
+  }
+  p#meteo,
+  section#marked p,
+  section#voteAverage p {
+    font-size: 1rem;
+  }
+
+  section#meteo {
+    border: 5px solid #4cbbb9;
+  }
+  section#marked {
+    border: 5px solid #353a64;
+  }
+  img.icon {
+    width: 50px;
   }
 }
 </style>
