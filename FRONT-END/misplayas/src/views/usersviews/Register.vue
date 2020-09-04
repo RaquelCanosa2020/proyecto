@@ -29,7 +29,7 @@
         <input id="privacy" type="checkbox" value="accept" v-model="accept" />
         <span>
           Acepto la
-          <router-link :to="{name:'About'}">Política de Privacidad</router-link>
+          <router-link :to="{name:'Privacidad'}">Política de Privacidad</router-link>
         </span>
       </p>
 

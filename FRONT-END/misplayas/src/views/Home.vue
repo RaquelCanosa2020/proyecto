@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <vue-headful title="misplayas | Home" />
+    <vue-headful title="Galiplaya | Home" />
 
     <section id="up">
       <h1>Galiplaya</h1>
@@ -63,12 +63,11 @@ h2 {
 h3 {
   font-size: 0.5rem;
   background-color: #ffaa71c5;
-  width: 70%;
-  height: 10%;
   margin: 1rem;
+  padding: 1rem;
 }
 a {
-  color: white;
+  color: rebeccapurple;
 }
 
 @media (min-width: 700px) {
@@ -91,16 +90,13 @@ a {
   h3 {
     font-size: 1rem;
     background-color: #ffaa71c5;
-    width: 30%;
-    height: 30%;
     margin: 1rem;
-    padding: 1rem;
   }
 }
 
 @media (min-width: 1000px) {
   h3 {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     height: 20%;
   }
 }

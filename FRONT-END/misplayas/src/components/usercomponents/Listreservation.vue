@@ -2,7 +2,7 @@
   <div>
     <section>
       <reservationcomponent
-        v-for="(reservation,index) in showedReservations"
+        v-for="(reservation,index) in reservations"
         :key="reservation.id"
         :index="index"
         :reservation="reservation"
@@ -10,12 +10,6 @@
         @sendIdErase="eraseRes"
       />
     </section>
-    <ul id="pagination">
-      <li v-for="page in pages" :key="page">
-        <button class="pages" :class="{active: currentPage === page}" @click="goTo(page)">{{page+1}}</button>
-      </li>
-    </ul>
-    <p id="pages">Páginas {{currentPage+1}} de {{pages.length}}</p>
   </div>
 </template>
 <script>
@@ -41,38 +35,13 @@ export default {
   data() {
     return {
       reservation: {},
-      currentIndex: 0,
-      elementsPerPage: 4,
-      currentPage: 0,
     };
   },
-  computed: {
-    showedReservations() {
-      return this.reservations.slice(
-        this.currentIndex,
-        this.currentIndex + this.elementsPerPage
-      );
-    },
-    pages() {
-      let numberOfPages = Math.ceil(
-        this.reservations.length / this.elementsPerPage
-      );
-      let pageArray = [];
-      for (let i = 0; i < numberOfPages; i++) {
-        pageArray.push(i);
-      }
-      return pageArray;
-    },
-  },
+
   methods: {
-    goTo(page) {
-      this.currentPage = page;
-      this.currentIndex = page * this.elementsPerPage;
-    },
     async voteReserv(voteInfo) {
       const token = getAuthToken();
       axios.defaults.headers.common["Authorization"] = `${token}`;
-
       try {
         console.log("antes");
         let comment;
@@ -89,7 +58,6 @@ export default {
           }
         );
         console.log("después");
-
         sweetAlertOk(response.data.message);
         this.reservations[voteInfo.index].value = voteInfo.value;
         this.reservations[voteInfo.index].comment = comment;
@@ -98,23 +66,6 @@ export default {
         sweetAlertNotice(error.response.data.message);
       }
     },
-
-    /*async eraseReserv(eraseInfo) {
-      const id = eraseInfo.id;
-      const token = getAuthToken();
-      axios.defaults.headers.common["Authorization"] = `${token}`;
-      //sweetAlertErase;
-      try {
-        const response = await axios.delete(
-          `http://localhost:3000/reservations/${id}`
-        );
-
-        sweetAlertOk(response.data.message);
-        this.reservations[eraseInfo.index] = "";
-      } catch (error) {
-        sweetAlertNotice(error.response.data.message);
-      }
-    },*/
 
     eraseRes(eraseInfo) {
       this.$emit("sendIdEr", eraseInfo);

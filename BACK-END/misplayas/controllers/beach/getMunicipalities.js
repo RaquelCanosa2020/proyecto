@@ -11,7 +11,8 @@ async function getMunicipalities(req, res, next) {
         const [result] = await connection.query(
             `
       SELECT DISTINCT beaches.municipality, beaches.province
-      FROM beaches`
+      FROM beaches
+      WHERE beaches.active = 1`
 
         );
 

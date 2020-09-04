@@ -1,7 +1,6 @@
 <template>
   <div class="beach">
-    <vue-headful title="misplayas | Playa" />
-    <!---<onebeachcomponent @send="showData" />--->
+    <vue-headful title="Galiplaya | Playa" />
 
     <div id="all" v-if="isLoaded">
       <h1>{{name}}</h1>
@@ -213,7 +212,7 @@ export default {
 
     //FUNCIÓN PARA CONSEGUIR LA INFO DE LA PLAYA
 
-    async showData(id /*beachInfo*/) {
+    async showData(id) {
       id = this.$route.params.id;
       this.visit = this.info.visit;
       this.places = this.info.places;
@@ -256,11 +255,10 @@ export default {
         sweetAlertNotice(error.response.data.message);
       }
     },
-    //FUNCIÓN PARA VER LA IMAGEN PRINCIPAL (en las de usuarios se aplica al componente)
+    //FUNCIÓN PARA VER LA IMAGEN PRINCIPAL
     setImage(img) {
       if (!img) {
-        return this.spinner; //esto lo incluyo  ya que debe tardar
-        //algo en cargar las fotos (aunque no se llega a ver el spinner)
+        return this.spinner;
       } else {
         return process.env.VUE_APP_STATIC + img;
       }
@@ -349,21 +347,30 @@ img.icon {
 ul {
   list-style: none;
   display: flex;
-  font-size: 0.7rem;
+  font-size: 0.5rem;
 }
 button#voteAverage {
   background-color: #4cbbb9;
   color: #353a64;
   font-weight: 900;
-  font-size: 1rem;
+  font-size: 0.8rem;
   width: 60px;
 }
-section#meteo,
+section#meteo {
+  grid-area: meteo;
+  background-color: #0779e4;
+  margin-right: 1rem;
+  border-radius: 1em;
+}
+section#meteo span {
+  color: white;
+}
+
 section#marked {
   grid-area: meteo;
-  background-color: #ebecf1;
   margin-right: 1rem;
-  border-radius: 2em;
+  border-radius: 1em;
+  border: solid #353a64 1px;
 }
 
 section#data p {
@@ -371,7 +378,7 @@ section#data p {
 }
 
 p {
-  font-size: 0.7rem;
+  font-size: 0.5rem;
 }
 p#meteo,
 section#marked p,
@@ -437,7 +444,7 @@ section#rating {
     grid-template-rows: 50px 170px 200px 80px 50px 250px;
   }
   img#principal {
-    max-width: 550px;
+    max-width: 450px;
   }
   p {
     font-size: 1rem;
@@ -501,6 +508,10 @@ section#rating {
   section#voteAverage p {
     font-size: 1rem;
   }
+  p#meteo {
+    color: white;
+    font-size: 0.8rem;
+  }
   span,
   section#marked p#marked {
     font-size: 2rem;
@@ -511,7 +522,7 @@ section#rating {
     width: 180px;
   }
   section#meteo {
-    border: 5px solid #4cbbb9;
+    border: none;
   }
   section#marked {
     border: 5px solid #353a64;
@@ -538,12 +549,12 @@ section#rating {
   div#all {
     background-color: #ebecf1b2;
     margin: 2rem 8rem;
-    padding: 4rem 4rem;
+    padding: 2rem 4rem;
     grid-template-columns: 4fr 1fr;
-    grid-template-rows: 100px 350px 400px 100px 100px 400px;
+    grid-template-rows: 100px 200px 200px 100px 100px 400px;
   }
   img#principal {
-    max-width: 900px;
+    max-width: 500px;
   }
   button {
     width: 200px;
@@ -597,9 +608,6 @@ section#rating {
     font-size: 1rem;
   }
 
-  section#meteo {
-    border: 5px solid #4cbbb9;
-  }
   section#marked {
     border: 5px solid #353a64;
   }

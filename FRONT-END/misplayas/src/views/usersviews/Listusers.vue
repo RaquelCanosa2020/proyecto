@@ -28,7 +28,7 @@
 
     <!---FIN ID LIST----->
 
-    <!----MODAL PARA ACTUALIZAR CLIENTE-->
+    <!----MODAL PARA ACTUALIZAR USUARIO-->
     <div v-show="seeModal" class="modal">
       <div class="modalBox">
         <h3>Editar datos</h3>
@@ -93,6 +93,7 @@ export default {
     };
   },
   computed: {
+    //PAGINACIÓN
     showedUsers() {
       return this.filtered.slice(
         this.currentIndex,
@@ -109,6 +110,7 @@ export default {
   },
 
   methods: {
+    //FUNCIÓN PARA LISTAR LOS USUARIOS
     //FUNCIÓN PARA LISTAR LOS CLIENTES
     async getUsers() {
       const token = getAuthToken();

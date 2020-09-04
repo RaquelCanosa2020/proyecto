@@ -90,6 +90,14 @@ const routes = [
     }
   },
   {
+    path: '/privacy',
+    name: 'Privacidad',
+    component: () => import('../views/Privacy.vue'),
+    meta: {
+      allowAnon: true
+    }
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('../views/usersviews/Login.vue'),

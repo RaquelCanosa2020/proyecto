@@ -10,7 +10,9 @@
 
       <p>Fecha de alta: {{formatDateToUser(user.registration_date)}}</p>
       <p>Nº de reservas: {{user.Nºreservas}}</p>
-      <p>Nº de plazas reservadas: {{user.Nºplazas}} personas</p>
+      <p
+        :class="{hidden: user.Nºreservas === 0}"
+      >Nº de plazas reservadas: {{user.Nºplazas}} personas</p>
       <p
         :class="{hidden: user.Nºreservas === 0}"
       >Última reserva: {{formatDateToUser(user.ultima_reserva)}}</p>
@@ -98,13 +100,13 @@ export default {
 
     //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
     sendIdEdit(index) {
-      let userData = this.users[index];
-
+      let userData = this.showedUsers[index];
+      console.log(userData.id);
       this.$emit("sendEdit", userData);
     },
     sendIdErase(index) {
-      let userId = this.users[index].id;
-
+      let userId = this.showedUsers[index].id;
+      console.log(userId);
       this.$emit("sendErase", userId);
     },
 
@@ -126,7 +128,8 @@ export default {
 div#user {
   background-color: #ebecf1;
   width: 60%;
-  margin: auto;
+  margin: 0.5rem auto;
+  padding: 1rem 0;
 }
 
 img {

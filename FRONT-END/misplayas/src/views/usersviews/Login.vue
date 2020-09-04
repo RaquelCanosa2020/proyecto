@@ -44,7 +44,7 @@ export default {
   data() {
     return {
       email: "rcanosa1@gmail.com",
-      password: "23456789",
+      password: "12345678",
       spinner: false,
       error: false,
       message: "",
@@ -68,8 +68,6 @@ export default {
 
           this.$router.go(-1);
           //this.$router.push("/user");
-
-          //this.window.history.back();
         } catch (error) {
           this.error = true;
           this.spinner = false;
@@ -79,7 +77,6 @@ export default {
       }
     },
     //FUNCIÓN PARA ENVIAR EMAIL CÓDIGO DE RECUPERACIÓN DE CONSTRASEÑA
-    //app.post("/beach/users/recover-password", recoverUserPassword);
 
     async sendRecoverPassword() {
       try {

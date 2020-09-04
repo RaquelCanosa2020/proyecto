@@ -1,7 +1,8 @@
 <template>
   <div>
+    <!--COMPONENTE PARA LISTAR PLAYAS EN LISTADO DE ADMINISTRACIÓN--->
     <input type="search" v-model="search" placeholder="Busca por nombre" />
-    <!--pendiente orden---->
+
     <div id="beach" v-for="(beach,index) in showedBeaches" :key="beach.id">
       <p class="name">{{beach.id}}. {{beach.name}}</p>
       <p>Municipio: {{beach.municipality}}. Provincia: {{beach.province}}</p>

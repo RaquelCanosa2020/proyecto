@@ -1,8 +1,7 @@
 <template>
   <div class="all">
+    <vue-headful title="Galiplaya | Buscar" />
     <div id="left">
-      <vue-headful title="misplayas | Buscar" />
-
       <!-----🔍-INICIO PANTALLA BÚSQUEDA AVANZADA----->
 
       <h1>BUSCA TU PLAYA</h1>
@@ -123,8 +122,8 @@
 
     <!--------FIN BUSCADOR AVANZADO--->
 
-    <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS
-    ENVIAMOS DOS EVENTOS, UNO PARA COMENZAR UNA RESERVA Y OTRO PARA VER UNA PLAYA---->
+    <!---IMPORTAMOS EL COMPONENTE PARA LISTAR LAS PLAYAS--->
+
     <div id="main">
       <div id="list" v-if="isLoaded">
         <onelistcomponent :beaches="beaches" />
@@ -134,7 +133,7 @@
       </div>
     </div>
 
-    <!------🔍-FIN ID LIST-BÚSQUEDA AVANZADA---->
+    <!------🔍-FIN ID LIST-BÚSQUEDA ---->
   </div>
 </template>
 
@@ -167,9 +166,7 @@ export default {
       order: "",
       direction: "",
       visit: "",
-      visitReservation: "",
       places: "",
-      placesReservation: "",
       beachId: null,
       name: "",
       municipality: "",
@@ -178,12 +175,6 @@ export default {
       capacity: "",
       free: "",
       disponibilidad: "",
-      notice: "",
-      start_time: "",
-      end_time: "",
-      start_month: "",
-      end_month: "",
-      voteAverage: "",
       lifesaving: false,
       bar_restaurant: false,
       disabled_access: false,
@@ -191,11 +182,7 @@ export default {
       toilet: false,
       disponibilidad: "",
       image: "",
-      ccNumber: "",
-      messageConfirm: {},
       date: "",
-      dateReservation: "",
-      hourReservation: "",
       hour: "",
       numbers: [],
       image: "",
@@ -203,7 +190,6 @@ export default {
     };
   },
   computed: {
-    //
     //FUNCIÓN PARA CONSEGUIR VISIT A PARTIR DE FECHA Y HORA QUE INTRODUZCA EL USUARIO
     getVisit() {
       let datehour = "";
@@ -221,6 +207,8 @@ export default {
       console.log(datehour);
       return datehour;
     },
+
+    //FUNCIÓN QUE MUESTRA SPINNER MIENTRAS NO SE CARGAN TODAS LAS PLAYAS
     isLoaded() {
       return this.beaches !== null;
     },
@@ -230,7 +218,7 @@ export default {
     //FUNCIÓN PARA GENERAR LAS HORAS EN EL BUSCADOR
     getNumber() {
       let arrayNumber = [""];
-      for (let number = 0; number <= 24; number++) {
+      for (let number = 6; number <= 23; number++) {
         if (number < 10) {
           number = "0" + number;
         } else {
@@ -347,25 +335,10 @@ export default {
       }
     },
 
-    //FUNCIÓN PARA CONSEGUIR MUNICIPIOS DE LAS PLAYAS EN LA BD
-
-    async getMunic() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/beaches/municipalities"
-        );
-        this.beachesMun = response.data.info;
-        console.log(response.data);
-      } catch (error) {
-        sweetAlertNotice(error.response.data.message);
-      }
-    },
-
     //FUNCIÓN PARA VER LA IMAGEN PRINCIPAL (en las de usuarios se aplica al componente)
     setImage(img) {
       if (!img) {
-        return this.spinner; //esto lo incluyo para que no de error en consola, ya que debe tardar
-        //algo en cargar las fotos y de primeras da 404 (aunque no se llega a ver el spinner)
+        return this.spinner; //mientras no carga imágenes
       } else {
         return process.env.VUE_APP_STATIC + img;
       }
@@ -373,7 +346,6 @@ export default {
   },
   created() {
     this.getAdvanced();
-    //this.searchBeaches();
   },
 };
 </script>
@@ -465,6 +437,9 @@ button#search {
 button#erase {
   width: 80px;
 }
+.hidden {
+  display: none;
+}
 
 @media (min-width: 700px) {
   div.options {
@@ -533,8 +508,8 @@ button#erase {
   }
   @media (min-width: 1000px) {
     label img {
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
     }
 
     label input {
@@ -586,7 +561,7 @@ button#erase {
     button#erase {
       width: 140px;
     }
-    @media (min-width: 1500px) {
+    @media (min-width: 1300px) {
       section#dateplaces,
       section#location {
         flex-direction: column;

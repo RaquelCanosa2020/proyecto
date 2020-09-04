@@ -1,9 +1,13 @@
 <template>
+  <!--COMPONENTE DE INFO DE CADA PLAYA INDIVIDYAL PARA EL BUSCADOR-->
   <div class="onebeach">
     <h1>{{beach.name}}</h1>
-    <!--FOTO DE LA PLAYA--->
+    <!--INFORMACIÓN GRÁFICA--->
     <div id="graphics">
+      <!--FOTO--->
       <img :src="setImage(beach.image)" :class="{wide: !beach.free}" />
+
+      <!--GRÁFICO PARA DESTACAR VISUALMENTE LIBRE/OCUPADO, EN CASO DE QUE INDIQUE FECHA:--->
       <div
         class="chart"
         :class="{hidden: !beach.free }"
@@ -25,7 +29,7 @@
             <router-link :to="{name:'Playa', params: {id:beach.id}}">+ info</router-link>
           </button>
         </p>
-        <!---<button @click="send">Reservar</button>----->
+
         <p class="link">
           <button class="link">
             <router-link
@@ -37,20 +41,16 @@
       </section>
     </div>
 
-    <!----En caso de que se indique fecha, muestra la disponibilidad------>
-
     <section id="info">
       <p>Municipio: {{beach.municipality}} ({{beach.province}})</p>
 
       <p>Capacidad: {{beach.capacity}} personas</p>
+      <!----En caso de que se indique fecha, muestra la disponibilidad------>
       <p :class="{hidden: !beach.free}">
         Plazas libres:
         <button id="free">{{beach.free}}</button>
       </p>
     </section>
-    <!--GRÁFICO PARA DESTACAR VISUALMENTE LIBRE/OCUPADO, EN CASO DE QUE INDIQUE FECHA:--->
-
-    <!--BOTONES CON EVENTOS PARA LA VISTA, ENVÍAN EL ID DE LA PLAYA A VER O RESERVAR---->
   </div>
 </template>
 
@@ -60,10 +60,6 @@ export default {
   name: "Onebeachcomponent",
   props: {
     beach: Object,
-    visit: String,
-    places: String,
-    options: Object,
-    lifesaving: Boolean,
   },
 
   methods: {

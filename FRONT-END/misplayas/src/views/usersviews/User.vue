@@ -1,28 +1,26 @@
 <template>
   <div class="user">
-    <vue-headful title="Misplayas | Perfil de usuario" />
+    <vue-headful title="Galiplaya | Perfil de usuario" />
 
     <div id="left" :class="{transit: transition === true}">
       <!--Div para gestionar datos del usuario---->
 
       <section id="userdata">
         <!----Sección para ver y editar datos---->
+
         <h1>Datos de usuario</h1>
-        <img :src="setImage(newAvatar)" />
         <article id="name">
-          <p>Id: {{userId}}</p>
-          <p>
-            <span>Nombre:</span>
-            <input :class="{editclass: edit}" type="text" placeholder="Nombre" v-model="newName" />
-          </p>
-          <p>
-            <span>Email:</span>
-            <input :class="{editclass: edit}" type="text" placeholder="Email" v-model="newEmail" />
-          </p>
-          <p>
-            <span>Tipo de perfil:</span>
-            {{newRole}}
-          </p>
+          <img :src="setImage(newAvatar)" />
+
+          <p id="id">Usuario nº {{userId}}</p>
+
+          <p>Nombre:</p>
+          <input :class="{editclass: edit}" type="text" placeholder="Nombre" v-model="newName" />
+
+          <p>Email:</p>
+          <input :class="{editclass: edit}" type="text" placeholder="Email" v-model="newEmail" />
+
+          <p>Tipo de perfil: {{newRole}}</p>
         </article>
 
         <button v-show="!edit" @click="showEdit()">Editar datos</button>
@@ -64,7 +62,9 @@
       <button class="short" :class="{active: showBeach}" @click="seeBeaches">Ver mis playas</button>
       <button class="short" :class="{active: showPhotos}" @click="seePhotos">Ver mis fotos</button>
 
-      <router-link to="/uploads">Subir fotos >></router-link>
+      <router-link to="/uploads">
+        <img class="icono" src="../../assets/camera.png" />Subir fotos >>
+      </router-link>
     </div>
     <div id="right" :class="{transit: transition === true}">
       <section v-show="showReserv">
@@ -120,7 +120,6 @@ export default {
       showBeach: false,
       showPhotos: false,
       edit: false,
-      vote: true,
       upload: false,
       userId: "",
       newName: "",
@@ -141,6 +140,7 @@ export default {
     };
   },
   methods: {
+    //FUNCIÓN PARA MOSTRAR OPCIONES DE EDICIÓN DE USUARIO
     showEdit() {
       this.edit = true;
       this.upload = true;
@@ -223,14 +223,9 @@ export default {
         if (this.newEmail !== response.data.previousEmail) {
           logout();
           this.$router.push("/login");
-          /*setTimeout(() => {
-            location.reload();
-          }, 2000);*/
         } else {
           //si no se ha cambiado, sólo recargamos la página
-          /*setTimeout(() => {
-            location.reload();
-          }, 2000);*/
+
           this.getUserData();
           this.edit = false;
         }
@@ -261,9 +256,7 @@ export default {
         this.newPassword = "";
         logout();
         this.$router.push("/login");
-        /*setTimeout(() => {
-          location.reload();
-        }, 1000);*/
+
         this.getUserData();
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
@@ -440,6 +433,7 @@ div#right {
 div#left.transit {
   display: none;
 }
+
 div#buttons {
   display: flex;
   width: 100%;
@@ -448,10 +442,26 @@ div#buttons {
 section#photos {
   background-color: #ebecf1;
 }
+article#name {
+  border: solid #353a64 1px;
+  border-radius: 2em;
+  padding: 2rem;
+}
 
 article#name p,
+article#name span {
+  text-align: left;
+  color: #0779e4;
+}
 article#name input {
+  text-align: left;
+  color: #353a64;
+}
+
+article#name p#id {
   text-align: center;
+  font-size: 1rem;
+  text-decoration: underline;
 }
 
 section#password p {
@@ -463,13 +473,13 @@ article#name {
   margin: auto;
 }
 h1 {
+  padding-top: 1rem;
   font-size: 1.5rem;
 }
 p {
   color: #353a64;
   text-align: left;
   font-size: 0.8rem;
-  text-decoration-line: underline;
 }
 
 input {
@@ -496,8 +506,13 @@ img {
   width: 150px;
   border-radius: 50%;
 }
+img.icono {
+  width: 40px;
+}
 button {
   margin: 0.5rem;
+  font-size: 0.7rem;
+  width: 100px;
 }
 
 button.large {
@@ -514,7 +529,7 @@ button.short {
   border-radius: 0;
   border-color: white;
   border-style: solid;
-  width: 100px;
+  height: 40px;
   background-color: #59405c;
   color: white;
   margin-top: 2rem;
@@ -528,8 +543,25 @@ a {
   text-decoration: none;
   font-weight: 800;
 }
+@media (min-width: 700px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  p,
+  input,
+  input.editclass {
+    font-size: 1rem;
+  }
+  button {
+    font-size: 1rem;
+    width: 120px;
+  }
+  button.short {
+    height: 50px;
+  }
+}
 
-@media (min-width: 1000px) {
+@media (min-width: 1025px) {
   div.user {
     background-color: #ebecf1;
     display: flex;
@@ -561,29 +593,22 @@ a {
   div#left.transit {
     display: none;
   }
-  h1 {
-    font-size: 2rem;
+  article#name p#id {
+    font-size: 1.5rem;
   }
-  p,
-  input,
-  span {
-    font-size: 1.2;
-  }
-  button.short {
-    width: 75px;
-    margin-top: 2rem;
-  }
-}
 
-@media (min-width: 1025px) {
-  button.short {
-    width: 100px;
-    margin-top: 2rem;
-  }
   p,
   input,
-  span {
-    font-size: 1.5;
+  input.editclass {
+    font-size: 1.2rem;
+  }
+  button {
+    font-size: 1.2rem;
+    width: 140px;
+    height: 50px;
+  }
+  button.short {
+    height: 50px;
   }
 }
 </style>

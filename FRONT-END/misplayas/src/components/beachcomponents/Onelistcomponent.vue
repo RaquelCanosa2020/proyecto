@@ -1,14 +1,12 @@
 <template>
   <div id="listbeaches">
     <input type="search" v-model="search" placeholder="Busca rápida por palabras" />
+    <!--Importamos componente de playa individual---->
     <onebeachcomponent
       v-for="(beach,index) in showedBeaches"
       :key="beach.id"
       :index="index"
       :beach="beach"
-      :visit="visit"
-      :places="places"
-      :options="options"
     />
     <ul id="pagination">
       <li v-for="page in pages" :key="page">
@@ -29,10 +27,6 @@ export default {
   },
   props: {
     beaches: Array,
-    visit: String,
-    places: String,
-    options: Object,
-    lifesaving: Boolean,
   },
   data() {
     return {

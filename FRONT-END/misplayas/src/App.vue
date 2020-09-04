@@ -120,7 +120,7 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam:wght@300&Open+Sans:wght@600display=swap");
 
 div#app {
-  font-family: Open Sans, Helvetica, sans-serif;
+  font-family: Be Vietnam, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

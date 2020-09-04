@@ -52,7 +52,6 @@ section {
   margin: 2rem auto;
   border-color: #59405c;
   padding: 1rem;
-
   border-radius: 1em;
 }
 button#rating {
@@ -60,7 +59,24 @@ button#rating {
   border: none;
   border-radius: 20%;
   color: #353a64;
-  font-size: 1rem;
+  font-size: 0.3rem;
   font-weight: bold;
+}
+h1 {
+  font-size: 1rem;
+}
+p,
+a {
+  font-size: 0.7rem;
+}
+
+@media (min-width: 700px) {
+  button#rating,
+  a {
+    font-size: 1rem;
+  }
+  p {
+    font-size: 1rem;
+  }
 }
 </style>

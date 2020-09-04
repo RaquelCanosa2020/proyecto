@@ -9,11 +9,13 @@
     <p>Valoración: {{reservation.value}}</p>
     <p>Comentario: {{reservation.comment}}</p>
 
+    <!---Sólo aparece el botón de anular hasta 24 h antes de la reserva--->
     <button
       :class="{hidden: new Date(reservation.visit) <= addOneDay(new Date())}"
       @click="eraseInfo"
     >Anular reserva</button>
 
+    <!---Sólo aparece el botón de votar una vez superada la fecha de reserva--->
     <section
       :class="{hidden: reservation.value !== 'pendiente de valorar'|| new Date() < new Date(reservation.visit)}"
     >
@@ -57,6 +59,7 @@ export default {
   },
 
   methods: {
+    //FUNCIÓN QUE ENVÍA LA INFORMACIÓN DE LA VOTACIÓN A LA LISTA
     voteReserv() {
       let voteInfo = {
         id: this.reservation.id,
@@ -68,7 +71,7 @@ export default {
 
       this.vote = false;
     },
-
+    //FUNCIÓN QUE ENVÍA LA INFORMACIÓN PARA BIRRAR
     eraseInfo() {
       let eraseInfo = {
         id: this.reservation.id,

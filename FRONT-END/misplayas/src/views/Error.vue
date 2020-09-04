@@ -14,15 +14,23 @@ export default {
 </script>
 
 <style scoped>
-div.about {
+div.error {
   height: 100vh;
-  width: 100vw;
-  color: #222831;
+  background-image: url("");
+  background-size: cover;
 }
 p {
-  font-size: 8rem;
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  background-color: #353a64;
 }
 img {
-  width: 80%;
+  width: 85%;
+}
+@media (min-width: 700px) {
+  p {
+    font-size: 4rem;
+  }
 }
 </style>

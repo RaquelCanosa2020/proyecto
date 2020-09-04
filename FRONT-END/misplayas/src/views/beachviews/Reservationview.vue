@@ -1,6 +1,6 @@
 <template>
   <div class="all">
-    <vue-headful title="misplayas | Reserva" />
+    <vue-headful title="Galiplaya | Reserva" />
     <div class="reservation">
       <!-------⌚-INICIO RESERVA-->
       <h1>RESERVA DE ESPACIO EN PLAYA</h1>
@@ -12,9 +12,6 @@
           :value="beach.id"
         >{{beach.id}}, {{beach.name}}, {{beach.municipality}}, {{beach.province}}</option>
       </select>
-
-      <!-------<p>Playa: Nº.{{$route.params.id}}, {{$route.params.name}}</p>
-      <p>Municipio: {{$route.params.municipality}}, Provincia: {{$route.params.province}}</p>--->
 
       <!-------FECHA Y Nº DE PLAZAS A RESERVAR--->
       <section id="dateplaces">
@@ -264,6 +261,7 @@ label {
 select,
 input {
   height: 15px;
+  font-size: 0.6rem;
 }
 select#beach {
   width: 150px;
@@ -298,6 +296,7 @@ a {
   select,
   input {
     height: 30px;
+    font-size: 0.8rem;
   }
   ul {
     font-size: 0.8rem;

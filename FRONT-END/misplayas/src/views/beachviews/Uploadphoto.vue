@@ -1,7 +1,7 @@
 <template>
   <div class="all">
     <div class="upload">
-      <vue-headful title="misplayas | Subir foto" />
+      <vue-headful title="Galiplaya | Subir foto" />
 
       <h1>Sube fotos de tus playas</h1>
       <label>Elige la playa:</label>
@@ -29,7 +29,6 @@
       </form>
       <input type="submit" name="subir-imagen" value="Enviar imagen" @click="saveImage" />
 
-      <!--- <img :src="setImage(uploadedImage)" />---->
       <p>{{messageImage}}</p>
 
       <button>
@@ -69,8 +68,7 @@ export default {
     //FUNCIÓN PARA VER IMAGEN
     setImage(img) {
       if (!img) {
-        return this.spinner; //esto lo incluyo para que no de error en consola, ya que debe tardar
-        //algo en cargar las fotos y de primeras da 404 (aunque no se llega a ver el spinner)
+        return this.spinner;
       } else {
         return process.env.VUE_APP_STATIC + img;
       }
@@ -119,13 +117,12 @@ export default {
         const response = await axios.post(
           `http://localhost:3000/beaches/${id}/photos`,
 
-          //{ name: this.newName, email: this.newEmail, avatar: this.newAvatar },
           newImageData,
           { header: { "Content-Type": "multipart/form-data" } }
         );
 
         this.see = true;
-        console.log(response.data.data);
+
         this.messageImage = response.data.data.nºfoto;
         this.messageLink = response.data.data.nombre;
         console.log(this.messageLink);
@@ -157,18 +154,39 @@ div.upload {
   justify-content: flex-start;
   align-items: center;
 }
+h1 {
+  font-size: 1rem;
+}
 
+label,
 select,
 input#comment {
   width: 90%px;
-  height: 60px;
+  height: 30px;
   margin-top: 2rem;
+  font-size: 0.8;
 }
 
 img {
   width: 200px;
 }
+p {
+  font-size: 0.6rem;
+}
 a {
   text-decoration: none;
+}
+@media (min-width: 700px) {
+  h1 {
+    font-size: 1.2rem;
+  }
+  p {
+    font-size: 1rem;
+  }
+}
+@media (min-width: 1000px) {
+  h1 {
+    font-size: 1.5rem;
+  }
 }
 </style>

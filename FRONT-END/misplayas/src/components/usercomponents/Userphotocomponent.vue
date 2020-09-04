@@ -60,7 +60,7 @@ section {
   height: 500px;
 }
 img {
-  max-width: 300px;
+  max-width: 200px;
 }
 img:hover {
   transform: scale(1.9);
@@ -68,9 +68,18 @@ img:hover {
 }
 p {
   color: white;
+  font-size: 0.8rem;
 }
 button {
   bottom: 20%;
   right: 40%;
+}
+@media (min-width: 700px) {
+  img {
+    max-width: 300px;
+  }
+  p {
+    font-size: 1rem;
+  }
 }
 </style>
