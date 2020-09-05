@@ -16,8 +16,6 @@ export default {
 <style scoped>
 div.error {
   height: 100vh;
-  background-image: url("");
-  background-size: cover;
 }
 p {
   font-size: 2rem;

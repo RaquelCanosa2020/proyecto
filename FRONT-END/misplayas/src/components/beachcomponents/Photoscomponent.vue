@@ -45,12 +45,12 @@ div {
   justify-content: center;
 }
 section {
-  width: 50%;
+  width: 70%;
   text-align: center;
   background-color: #ebecf1;
 }
 img {
-  max-width: 150px;
+  max-width: 90%;
   border-radius: 2em;
   margin: 1rem;
 }

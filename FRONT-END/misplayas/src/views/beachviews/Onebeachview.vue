@@ -435,6 +435,7 @@ button#rating {
 section#photos,
 section#rating {
   grid-area: list;
+  width: 100%;
 }
 @media (min-width: 700px) {
   h1 {
