@@ -5,7 +5,15 @@
     <div id="all" v-if="isLoaded">
       <h1>{{name}}</h1>
 
-      <img id="principal" :src="setImage(image)" />
+      <section id="imgAndLink">
+        <img id="principal" :src="setImage(image)" />
+
+        <article id="link">
+          <img class="icon" src="../../assets/ubicacion.png" />
+          <a id="link" :href="urlMaps">Ver en googleMaps</a>
+        </article>
+      </section>
+
       <section id="services">
         <p>Servicios:</p>
 
@@ -180,6 +188,7 @@ export default {
       showPhotos: false,
       date: "",
       avisoMeteo: "",
+      urlMaps: "",
     };
   },
   computed: {
@@ -251,16 +260,38 @@ export default {
         this.notice = response.data.data.aviso;
         this.skyState = response.data.data.estado;
         this.temperature = response.data.data.temperatura;
+        this.setUrlMaps(id);
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }
     },
     //FUNCIÓN PARA VER LA IMAGEN PRINCIPAL
     setImage(img) {
-      if (!img) {
+      if (img === null) {
+        {
+          let generic = "yellow.jpg";
+          return process.env.VUE_APP_STATIC + generic;
+        }
+      } else if (!img) {
         return this.spinner;
       } else {
         return process.env.VUE_APP_STATIC + img;
+      }
+    },
+
+    async setUrlMaps(id) {
+      id = this.$route.params.id;
+      console.log(id);
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/beaches/${id}/coord`
+        );
+        const coordinates = response.data.data;
+
+        const googleUrl = "https://www.google.es/maps/place/";
+        this.urlMaps = googleUrl + coordinates;
+      } catch (error) {
+        sweetAlertNotice(error.response.data.message);
       }
     },
 
@@ -331,8 +362,15 @@ h1 {
   font-size: 1.2rem;
 }
 
-img#principal {
+section#imgAndLink {
   grid-area: photo;
+}
+article#link {
+  display: flex;
+  justify-content: center;
+}
+
+img#principal {
   max-width: 200px;
   border-radius: 2em;
 }
@@ -414,6 +452,13 @@ a {
   text-decoration: none;
 }
 
+a#link {
+  font-size: 0.5rem;
+  text-decoration: underline;
+  text-align: center;
+  display: block;
+}
+
 section#services {
   grid-area: services;
   display: flex;
@@ -478,6 +523,9 @@ section#rating {
   button#rating {
     width: 180px;
   }
+  a#link {
+    font-size: 0.8rem;
+  }
 }
 @media (min-width: 1000px) {
   h1 {
@@ -533,6 +581,9 @@ section#rating {
     font-size: 2rem;
     width: 120px;
     padding: 0.2rem;
+  }
+  a#link {
+    font-size: 1.3rem;
   }
 }
 @media (min-width: 1300px) {

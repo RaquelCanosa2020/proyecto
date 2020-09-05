@@ -30,6 +30,7 @@ const deleteBeachPhoto = require("./controllers/beach/deleteBeachPhoto");
 const setBeachStatus = require("./controllers/beach/setBeachStatus");
 const getMunicipalities = require("./controllers/beach/getMunicipalities")
 const getMeteo = require("./controllers/beach/meteo")
+const getCoord = require("./controllers/beach/getCoord")
 
 //Reservations controllers:
 
@@ -143,6 +144,9 @@ app.delete("/beaches/:id", isUser, isAdmin, beachExists, setBeachStatus);
 
 //endpoint de prueba:
 app.get("/beach/meteo", getMeteo);
+
+//endpoint para conseguir coordenadas de la playa (para link a google maps en front):
+app.get("/beaches/:id/coord", getCoord);
 
 /** ⌚ENDPOINTS DE RESERVAS⌚*/
 

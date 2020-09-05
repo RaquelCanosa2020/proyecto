@@ -65,7 +65,16 @@ export default {
   methods: {
     //FUNCIÓN PARA SACAR LA DIRECCIÓN DE LA IMAGEN ACTUAL
     setImage(img) {
-      return process.env.VUE_APP_STATIC + img;
+      if (img === null) {
+        {
+          let generic = "yellow.jpg";
+          return process.env.VUE_APP_STATIC + generic;
+        }
+      } else if (!img) {
+        return this.spinner;
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
     },
   },
 };

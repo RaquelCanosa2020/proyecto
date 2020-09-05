@@ -40,7 +40,8 @@ async function main() {
     await connection.query("DROP TABLE IF EXISTS ratings");
     await connection.query("DROP TABLE IF EXISTS payments");
     await connection.query("DROP TABLE IF EXISTS reservations");
-    //await connection.query("DROP TABLE IF EXISTS beaches");
+    await connection.query("DROP TABLE IF EXISTS beaches");
+    await connection.query("DROP TABLE IF EXISTS location");
     await connection.query("DROP TABLE IF EXISTS users");
 
     // Crear las tablas de nuevo
@@ -64,7 +65,7 @@ async function main() {
       );
     `);
 
-    /*await connection.query(`
+    await connection.query(`
       CREATE TABLE beaches (
         id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
         creation_date DATETIME NOT NULL,
@@ -87,7 +88,16 @@ async function main() {
         active BOOLEAN DEFAULT TRUE,
         lastUpdate DATETIME NOT NULL
       );
-    `);*/
+    `);
+
+    await connection.query(`
+      CREATE TABLE location (
+        id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+        element VARCHAR(50) NOT NULL,
+        coordX VARCHAR(50),
+        coordY VARCHAR(50)
+      );
+    `);
 
     await connection.query(`
       CREATE TABLE reservations (
@@ -163,8 +173,8 @@ async function main() {
       `
       );
     }
-    //tarda un par de minutos:
-    /*console.log("Metiendo datos de prueba en beaches");
+    //tarda unos minutos:
+    console.log("Metiendo datos de prueba en beaches");
 
     const playas = [
       "Arealonga",
@@ -172,6 +182,7 @@ async function main() {
       "Baldaio",
       "Ares",
       "A Lanzada",
+
     ];
 
     for (const playa of playas) {
@@ -190,7 +201,7 @@ async function main() {
       const end_time = sample([21, 22]);
       const start_month = sample([5, 6]);
       const end_month = sample([9, 10]);
-      const capacity = sample([200, 300, 20]);
+      const capacity = sample([200, 300, 400]);
 
       await connection.query(
         `INSERT INTO beaches(creation_date, name, type, municipality, province, description, start_time, end_time,
@@ -216,7 +227,19 @@ async function main() {
           replace(data.Acceso_dis)
         ]
       );
-    }*/
+      //Cargo las coordenadas para poner un link a google maps en la playa
+      await connection.query(
+        `INSERT INTO location(element, coordX, coordY)
+          VALUES(?, ?, ?)
+        `,
+        [
+          data.Nombre,
+          data.Coordena_3,
+          data.Coordena_2,
+
+        ]
+      );
+    }
 
     console.log("Metiendo datos de prueba en reservations y en ratings");
     //incluyo las dos tablas a la vez para que me cuadren las fechas (fecha de valoración

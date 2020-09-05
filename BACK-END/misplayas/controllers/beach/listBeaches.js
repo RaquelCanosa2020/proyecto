@@ -1,4 +1,5 @@
 const { getConnection } = require("../../db");
+const { generateError } = require("../../helpers");
 
 async function listBeaches(req, res, next) {
   let connection;
@@ -61,7 +62,10 @@ async function listBeaches(req, res, next) {
       data: result,
     });
   } catch (error) {
-    next(error);
+    throw generateError(
+      "No se pudo cargar el listado de playas",
+      400
+    );
   } finally {
     if (connection) connection.release();
   }

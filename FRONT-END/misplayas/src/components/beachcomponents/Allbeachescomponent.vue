@@ -45,7 +45,7 @@ export default {
     return {
       search: "",
       currentIndex: 0,
-      elementsPerPage: 4,
+      elementsPerPage: 3,
       currentPage: 0,
     };
   },
@@ -92,7 +92,16 @@ export default {
     },
     //FUNCIÓN PARA VER LAS IMÁGENES EN LA PLAYA (en el listado se aplica al componente)
     setImage(img) {
-      return process.env.VUE_APP_STATIC + img;
+      if (img === null) {
+        {
+          let generic = "yellow.jpg";
+          return process.env.VUE_APP_STATIC + generic;
+        }
+      } else if (!img) {
+        return this.spinner;
+      } else {
+        return process.env.VUE_APP_STATIC + img;
+      }
     },
     //FUNCION PARA SABER ESTADO DE LA PLAYA
     getStatus(value) {
@@ -106,8 +115,7 @@ export default {
     //FUNCIÓN QUE EMITE EVENTO PARA ID A LA VISTA
 
     sendIdToggle(index) {
-      let beachId = this.beaches[index].id;
-      //console.log(beachId);
+      let beachId = this.showedBeaches[index].id;
       this.$emit("sendToggle", beachId);
     },
   },

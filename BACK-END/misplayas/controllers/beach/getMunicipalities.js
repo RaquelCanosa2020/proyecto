@@ -1,5 +1,5 @@
 const { getConnection } = require("../../db");
-
+const { generateError } = require("../../helpers");
 
 async function getMunicipalities(req, res, next) {
     let connection;
@@ -24,7 +24,10 @@ async function getMunicipalities(req, res, next) {
             },
         });
     } catch (error) {
-        next(error);
+        throw generateError(
+            "No se pudo cargar la información de municipios",
+            400
+        );
     } finally {
         if (connection) connection.release();
     }

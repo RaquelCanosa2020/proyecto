@@ -43,8 +43,8 @@ export default {
   },
   data() {
     return {
-      email: "rcanosa1@gmail.com",
-      password: "12345678",
+      email: "",
+      password: "",
       spinner: false,
       error: false,
       message: "",

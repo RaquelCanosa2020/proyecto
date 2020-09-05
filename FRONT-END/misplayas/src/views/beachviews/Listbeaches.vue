@@ -99,8 +99,7 @@ export default {
         );
         alert(response.data.message);
 
-        this.beaches = response.data.data;
-        location.reload();
+        this.getBeaches();
       } catch (error) {
         sweetAlertNotice(error.response.data.message);
       }

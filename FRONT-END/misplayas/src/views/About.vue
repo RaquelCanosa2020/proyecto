@@ -52,6 +52,11 @@
             >faker.js</a>
             ,
           </li>
+          <li>
+            Link a mapas de:
+            <a href="https://www.google.com/maps">Google Maps</a>
+            ,
+          </li>
         </ul>
       </section>
 
