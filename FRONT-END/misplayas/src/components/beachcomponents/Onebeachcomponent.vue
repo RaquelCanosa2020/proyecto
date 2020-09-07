@@ -15,12 +15,14 @@
       >
         <pie-chart
           :legend="true"
+          :colors="['#353a64','#ce4841']"
           :class="{hidden: !beach.free }"
           :data="[['Libre',beach.free],
         ['Ocupado',(beach.capacity-beach.free)]]"
         ></pie-chart>
       </div>
       <section id="button">
+        <p>Valoración usuarios:</p>
         <p>
           <button id="rating">{{beach.voteAverage}}</button>
         </p>
@@ -42,9 +44,8 @@
     </div>
 
     <section id="info">
-      <p>Municipio: {{beach.municipality}} ({{beach.province}})</p>
+      <p>Municipio: {{beach.municipality}} ({{beach.province}}). Capacidad: {{beach.capacity}} personas</p>
 
-      <p>Capacidad: {{beach.capacity}} personas</p>
       <!----En caso de que se indique fecha, muestra la disponibilidad------>
       <p :class="{hidden: !beach.free}">
         Plazas libres:
@@ -81,12 +82,13 @@ export default {
 </script>
 <style scoped>
 div.onebeach {
-  background-color: #353a64;
-  border-radius: 2em;
+  background-color: #ebecf1;
+
+  margin-bottom: 1rem;
 }
 section#info {
   text-align: left;
-  margin-left: 10rem;
+  margin-left: 1rem;
 }
 img {
   width: 150px;
@@ -95,12 +97,14 @@ img {
 
 h1 {
   font-size: 1.2rem;
-  color: white;
-  padding-top: 1rem;
+  text-align: left;
+  color: #202441;
+  margin: 1rem;
 }
 p {
   font-size: 0.7rem;
-  color: white;
+  font-weight: 800;
+  color: #202441;
 }
 div#graphics {
   display: flex;
@@ -125,6 +129,9 @@ div.chart {
 }
 section#info {
   padding-bottom: 1rem;
+}
+a {
+  text-decoration: none;
 }
 
 @media (min-width: 700px) {
@@ -174,10 +181,15 @@ section#info {
       width: 600px;
     }
     h1 {
-      font-size: 2rem;
+      font-size: 2.5rem;
+      padding: 1rem;
     }
     p {
       font-size: 1.3rem;
+      padding: 1rem;
+    }
+    img {
+      padding: 1rem;
     }
     button#rating {
       font-size: 2rem;

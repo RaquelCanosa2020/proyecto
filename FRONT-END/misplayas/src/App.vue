@@ -118,7 +118,9 @@ export default {
 
 <style>
 @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam:wght@300&Open+Sans:wght@600display=swap");
-
+html {
+  height: 100vh;
+}
 div#app {
   font-family: Be Vietnam, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -150,7 +152,7 @@ article#username {
 
 #nav a {
   font-weight: bold;
-  color: #ffaa71;
+  color: #ea9a96;
   font-size: 0.5rem;
   padding: 0.3rem;
   text-decoration: none;
@@ -159,7 +161,8 @@ article#username {
 #nav a.router-link-exact-active {
   color: #4cbbb9;
 }
-input {
+input,
+select {
   background-color: #ebecf1;
   border: 1px solid #0779e4;
   border-radius: 1em;
@@ -184,17 +187,17 @@ button {
 }
 button:hover {
   border-style: none;
-  background-color: #ffaa71;
+  background-color: #ea9a96;
 }
 
 button#logout {
   position: relative;
   width: 40px;
   height: 10px;
-  font-size: 0.5rem;
+  font-size: 0.4rem;
 }
 p#username {
-  color: #ffaa71;
+  color: #ea9a96;
   padding-right: 1rem;
   font-size: 0.3rem;
 }
@@ -242,7 +245,6 @@ img#header {
   }
 
   p#username {
-    color: #ffaa71;
     padding-right: 1rem;
     font-size: 1.3rem;
   }

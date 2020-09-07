@@ -256,7 +256,7 @@ h1 {
 p,
 label {
   font-size: 0.7rem;
-  color: #353a64;
+  color: #202441;
 }
 select,
 input {
@@ -272,7 +272,7 @@ ul {
   list-style: none;
 }
 ul.ok {
-  background-color: #ffaa71;
+  background-color: #ea9a96;
 }
 li {
   text-align: left;
@@ -336,7 +336,7 @@ a {
     padding: 2rem;
   }
   section#conditions {
-    border-color: #ffaa71;
+    border-color: #ea9a96;
     border-style: solid;
     border-radius: 2em;
   }

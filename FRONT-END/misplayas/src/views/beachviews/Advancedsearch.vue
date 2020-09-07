@@ -359,7 +359,8 @@ div.all {
   background-size: cover;
 }
 div#left {
-  margin-left: 1rem;
+  background-color: #ebecf1af;
+  padding: 0.8rem;
 }
 div.options {
   border-radius: 2em;
@@ -394,6 +395,10 @@ section#location {
   border: 0.5px solid #353a64;
   border-radius: 2em;
   padding: 10px 0;
+}
+
+section#services {
+  margin-top: 1rem;
 }
 
 section#button {
@@ -443,7 +448,6 @@ button#erase {
 
 @media (min-width: 700px) {
   div.options {
-    background-color: #ebecf1;
     padding: 10px;
   }
   label img {
@@ -457,7 +461,9 @@ button#erase {
 
   section#services {
     display: flex;
-    width: 200px;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 1rem;
   }
   label {
     width: 50px;
@@ -503,7 +509,8 @@ button#erase {
     width: 40px;
     height: 20px;
   }
-  button {
+
+  button#erase {
     width: 140px;
   }
   @media (min-width: 1000px) {
@@ -516,9 +523,6 @@ button#erase {
       width: 20px;
     }
 
-    section#services {
-      width: 300px;
-    }
     label {
       width: 80px;
     }
@@ -568,15 +572,19 @@ button#erase {
       }
       div.all {
         display: flex;
+        justify-content: flex-start;
       }
       div#main {
         width: 70%;
+        margin-left: 30%;
       }
       div#left {
         width: 25%;
+        margin-left: 1rem;
+        position: fixed;
       }
       h1 {
-        font-size: 3rem;
+        font-size: 2rem;
       }
       h5 {
         font-size: 1.4rem;
@@ -593,6 +601,9 @@ button#erase {
       button {
         font-size: 1.2rem;
         width: 140px;
+      }
+      button#erase {
+        width: 150px;
       }
     }
   }

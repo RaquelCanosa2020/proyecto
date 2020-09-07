@@ -81,8 +81,11 @@ export default {
 </script>
 <style scoped>
 div#listbeaches {
-  margin-top: 1rem;
+  margin: 1rem;
   width: 100%;
+}
+p {
+  color: white;
 }
 
 input {
