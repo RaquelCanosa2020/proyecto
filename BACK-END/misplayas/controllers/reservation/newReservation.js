@@ -229,19 +229,19 @@ async function newReservation(req, res, next) {
       status: "ok",
       message: {
         info: `Se confirma la reserva nº${reservationNumber} realizada con los siguientes datos:`,
-        user: `👣 Usuario: ${userName} (usuario nº: ${id_user})`,
+        user: `Usuario: ${userName} (usuario nº: ${id_user})`,
 
-        beach: `🌅 Playa: ${beachName} (nº ${id_beach})`,
+        beach: `Playa: ${beachName} (nº ${id_beach})`,
 
-        visit: `📅 Fecha y hora: ${dateToUser} `,
+        visit: `Fecha y hora: ${dateToUser} `,
 
-        places: `👥 Plazas: ${places} personas`,
+        places: `Plazas: ${places} personas`,
 
-        fee: "💶 Fianza de 3 euros (pagado)",
+        fee: "Fianza de 3 euros (pagado)",
 
         payment: `Reserva confirmada y pagada el ${nowDateUser}`,
 
-        notice: "📨 Se ha enviado correo de confirmación."
+        notice: "Se ha enviado correo de confirmación."
       }
 
 

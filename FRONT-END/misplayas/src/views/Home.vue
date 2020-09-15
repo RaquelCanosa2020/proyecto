@@ -148,6 +148,7 @@ p {
 
 img {
   width: 10px;
+  margin-right: 1rem;
 }
 a {
   color: rebeccapurple;

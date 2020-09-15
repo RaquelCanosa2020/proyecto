@@ -238,20 +238,32 @@ section#order {
 select {
   width: 200px;
   height: 25px;
-  font-size: 1rem;
   margin: 1rem;
 }
 button.direction {
   width: 40px;
-
   background-color: white;
   border-radius: 0;
   border-color: #353a64 solid;
   border-style: solid;
   margin-left: 0.5rem;
 }
+h1 {
+  font-size: 1rem;
+}
 h3 {
   color: black;
+}
+p {
+  color: white;
+}
+p,
+option,
+button {
+  font-size: 0.8rem;
+}
+button {
+  width: 100px;
 }
 
 .modal {
@@ -269,5 +281,32 @@ h3 {
   padding: 3rem;
   width: 80%;
   border: 1px solid #888;
+}
+@media (min-width: 700px) {
+  h1 {
+    font-size: 2rem;
+  }
+  p,
+  option,
+  select button {
+    font-size: 1.1rem;
+  }
+  button {
+    width: 100px;
+  }
+}
+@media (min-width: 1000px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  p,
+  option,
+  select,
+  button {
+    font-size: 1.2rem;
+  }
+  button {
+    width: 100px;
+  }
 }
 </style>

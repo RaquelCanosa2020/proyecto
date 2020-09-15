@@ -31,6 +31,7 @@ const editUserSchema = Joi.object().keys({
     .email()
     .error(generateError("El campo email debe contener un email válido", 400)),
   name: Joi.string()
+    .min(0)
     .max(100)
     .error(
       generateError(

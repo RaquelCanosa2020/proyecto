@@ -66,13 +66,16 @@ p {
   p {
     font-size: 1rem;
   }
-  @media (min-width: 1000px) {
-    img {
-      max-width: 450px;
-    }
-    p {
-      font-size: 1.2rem;
-    }
+}
+@media (min-width: 1000px) {
+  img {
+    max-width: 450px;
+  }
+  p {
+    font-size: 1.3rem;
+  }
+  section {
+    width: 30%;
   }
 }
 </style>

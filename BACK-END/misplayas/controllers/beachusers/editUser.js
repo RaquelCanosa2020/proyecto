@@ -19,6 +19,8 @@ async function editUser(req, res, next) {
     const { id } = req.params;
     const { email, name } = req.body;
 
+
+
     // Comprobar que el id de usuario que queremos cambiar es
     // el mismo que firma la petición o bien es admin
     if (req.auth.id !== Number(id) && req.auth.role !== "admin") {

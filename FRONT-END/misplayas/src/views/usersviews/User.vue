@@ -63,14 +63,22 @@
       <button class="short" :class="{active: showPhotos}" @click="seePhotos">Ver mis fotos</button>
 
       <router-link to="/uploads">
-        <img class="icono" src="../../assets/camera.png" />Subir fotos >>
+        <img class="icono" id="camera" src="../../assets/camera.png" />Subir fotos >>
       </router-link>
     </div>
     <div id="right" :class="{transit: transition === true}">
       <section v-show="showReserv">
-        <h1>Tus reservas</h1>
-        <p>Nº reservas: {{numberReserv}}</p>
-        <p>Nª plazas acumulado: {{numberPlaces}}</p>
+        <h1>
+          <img class="icono" src="../../assets/storyboard.png" /> Tus reservas
+        </h1>
+        <p>
+          Nº reservas:
+          <span>{{numberReserv}}</span>
+        </p>
+        <p>
+          Nª plazas acumulado:
+          <span>{{numberPlaces}}</span>
+        </p>
         <button @click="showReserv = false">Ocultar reservas</button>
 
         <listreservation :reservations="reservations" @sendIdEr="sweetAlertEraseReserv" />
@@ -201,6 +209,9 @@ export default {
       axios.defaults.headers.common["Authorization"] = `${token}`;
       console.log(id);
       this.uploadImage();
+      if (this.newName === "") {
+        this.newName = "Anónimo";
+      }
 
       try {
         let userNewData = new FormData();
@@ -479,12 +490,19 @@ p {
   color: #353a64;
   text-align: left;
   font-size: 0.8rem;
+  margin: 0;
+}
+span {
+  color: brown;
+  font-size: 1rem;
+  font-weight: 800;
 }
 
 input {
   border-style: none;
   color: #59405c;
   font-size: 0.8rem;
+  margin-bottom: 1rem;
 }
 
 input::placeholder {
@@ -507,6 +525,10 @@ img {
 }
 img.icono {
   width: 40px;
+  border-radius: 0;
+}
+img#camera {
+  margin-right: 1rem;
 }
 button {
   margin: 0.5rem;
@@ -548,8 +570,12 @@ a {
   }
   p,
   input,
-  input.editclass {
+  input.editclass,
+  input::placeholder {
     font-size: 1rem;
+  }
+  span {
+    font-size: 1.2rem;
   }
   button {
     font-size: 1rem;
@@ -600,6 +626,9 @@ a {
   input,
   input.editclass {
     font-size: 1.2rem;
+  }
+  span {
+    font-size: 1.4rem;
   }
   button {
     font-size: 1.2rem;

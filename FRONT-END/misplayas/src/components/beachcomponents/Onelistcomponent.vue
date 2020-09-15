@@ -86,6 +86,7 @@ div#listbeaches {
 }
 p {
   color: white;
+  font-size: 0.6rem;
 }
 
 input {

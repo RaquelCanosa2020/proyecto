@@ -5,17 +5,30 @@
     <div id="user" v-for="(user,index) in showedUsers" :key="user.id">
       <p>Id: {{user.id}}, {{user.name}}</p>
 
-      <p>Rol: {{user.role}}. Activo: {{setActive(user.active)}}</p>
-      <p>Email:{{user.email}}</p>
+      <p>Rol: {{user.role}}. {{setActive(user.active)}}</p>
+      <table>
+        <tr>
+          <td class="title">Email:</td>
+          <td>{{user.email}}</td>
+        </tr>
 
-      <p>Fecha de alta: {{formatDateToUser(user.registration_date)}}</p>
-      <p>Nº de reservas: {{user.Nºreservas}}</p>
-      <p
-        :class="{hidden: user.Nºreservas === 0}"
-      >Nº de plazas reservadas: {{user.Nºplazas}} personas</p>
-      <p
-        :class="{hidden: user.Nºreservas === 0}"
-      >Última reserva: {{formatDateToUser(user.ultima_reserva)}}</p>
+        <tr>
+          <td class="title">Fecha de alta:</td>
+          <td>{{formatDateToUser(user.registration_date)}}</td>
+        </tr>
+        <tr>
+          <td class="title">Nº de reservas:</td>
+          <td>{{user.Nºreservas}}</td>
+        </tr>
+        <tr :class="{hidden: user.Nºreservas === 0}">
+          <td class="title">Nº de plazas reservadas:</td>
+          <td>{{user.Nºplazas}} personas</td>
+        </tr>
+        <tr :class="{hidden: user.Nºreservas === 0}">
+          <td class="title">Última reserva:</td>
+          <td>{{formatDateToUser(user.ultima_reserva)}}</td>
+        </tr>
+      </table>
 
       <img :src="setImage(user.image)" />
 
@@ -83,9 +96,9 @@ export default {
 
     setActive(el) {
       if (el === 1) {
-        return "Sí";
+        return "ACTIVO";
       } else {
-        return "No";
+        return "NO ACTIVO";
       }
     },
     //FUNCIÓN PARA VER LAS IMÁGENES EN LA PLAYA (en el listado se aplica al componente)
@@ -127,7 +140,7 @@ export default {
 <style scoped>
 div#user {
   background-color: #ebecf1;
-  width: 60%;
+  width: 100%;
   margin: 0.5rem auto;
   padding: 1rem 0;
 }
@@ -140,6 +153,9 @@ ul {
   display: flex;
   justify-content: center;
   list-style: none;
+}
+button {
+  margin-right: 1rem;
 }
 
 button.pages {
@@ -160,5 +176,41 @@ p#pages {
 
 .hidden {
   display: none;
+}
+p {
+  font-size: 1rem;
+  font-weight: 800;
+}
+table {
+  width: 60%;
+  margin: 1rem auto;
+}
+td {
+  font-size: 0.8rem;
+  color: #353a64;
+  text-align: left;
+}
+td.title {
+  font-weight: 800;
+}
+@media (min-width: 700px) {
+  div#user {
+    width: 70%;
+  }
+  p {
+    font-size: 1.2rem;
+  }
+  td {
+    font-size: 1rem;
+  }
+}
+@media (min-width: 1000px) {
+  p {
+    font-size: 1.4rem;
+  }
+  td {
+    font-size: 1.2rem;
+    height: 40px;
+  }
 }
 </style>

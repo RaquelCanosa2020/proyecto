@@ -29,10 +29,10 @@
             <a class="icons" href="https://www.flaticon.es/" title="Flaticon">www.flaticon.es</a>
           </li>
           <li>
-            Información de playas (ubicación, descripción y servicios):
+            Información de playas (ubicación, descripción, servicios y coordenadas geográficas):
             <a
               href="https://opendata.arcgis.com/"
-            >API guía playas del Miteco</a>
+            >API guía playas del MAPAMA (extinto)</a>
           </li>
           <li>
             Información meteorológica de playas: API MeteoSIX (
@@ -150,22 +150,22 @@ img#thanks {
     padding-bottom: 1.5rem;
   }
   section#thanks {
-    width: 100%;
+    width: 60%;
   }
   h1 {
-    font-size: 2rem;
+    font-size: 2.5rem;
   }
   h2 {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
   h3 {
-    font-size: 1.2rem;
+    font-size: 1.5rem;
   }
 
   p,
   li,
   a {
-    font-size: 1rem;
+    font-size: 1.2rem;
   }
   a.linkedin,
   a.mail {

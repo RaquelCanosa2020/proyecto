@@ -203,7 +203,7 @@ p#username {
 }
 
 p {
-  color: #353a64;
+  color: #2a2e52;
 }
 
 p.error {

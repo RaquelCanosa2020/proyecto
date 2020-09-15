@@ -29,7 +29,7 @@
 
         <p>
           Número de plazas:
-          <select v-model="placesReservation">
+          <select id="places" v-model="placesReservation">
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -58,13 +58,28 @@
 
       <button id="pay" v-show="beforeConfirm" @click="acceptReservation">Confirmar y pagar</button>
 
-      <ul class="ok" id="reserv">
+      <ul class="ok" id="reserv" v-if="messageConfirm !== ''">
         <li>{{messageConfirm.info}}</li>
-        <li>{{messageConfirm.user}}</li>
-        <li>{{messageConfirm.beach}}</li>
-        <li>{{messageConfirm.visit}}</li>
-        <li>{{messageConfirm.places}}</li>
-        <li>{{messageConfirm.fee}}</li>
+        <li>
+          <img src="../../assets/usuario.png" />
+          {{messageConfirm.user}}
+        </li>
+        <li>
+          <img src="../../assets/beach.png" />
+          {{messageConfirm.beach}}
+        </li>
+        <li>
+          <img src="../../assets/reloj.png" />
+          {{messageConfirm.visit}}
+        </li>
+        <li>
+          <img src="../../assets/grupo.png" />
+          {{messageConfirm.places}}
+        </li>
+        <li>
+          <img src="../../assets/money.png" />
+          {{messageConfirm.fee}}
+        </li>
         <li>{{messageConfirm.payment}}</li>
         <li>{{messageConfirm.notice}}</li>
       </ul>
@@ -114,7 +129,7 @@ export default {
       municipality: "",
       province: "",
       ccNumber: "4539054178358254",
-      messageConfirm: {},
+      messageConfirm: "",
       date: "",
       dateReservation: "",
       hourReservation: "",
@@ -216,7 +231,8 @@ export default {
               cc_number: this.ccNumber,
             }
           );
-
+          window.scrollBy(0, 1000);
+          sweetAlertOk("Fecha Reservada");
           this.messageConfirm = response.data.message;
 
           //UNA VEZ ACEPTADA, VACIAMOS LOS CAMPOS
@@ -269,10 +285,9 @@ select#beach {
 ul {
   font-size: 0.6rem;
   margin: auto;
-  list-style: none;
 }
 ul.ok {
-  background-color: #ea9a96;
+  margin-bottom: 1rem;
 }
 li {
   text-align: left;
@@ -283,6 +298,9 @@ button#pay {
 }
 a {
   font-size: 0.6rem;
+}
+img {
+  width: 30px;
 }
 
 @media (min-width: 700px) {
@@ -327,12 +345,21 @@ a {
   input {
     height: 30px;
   }
-  ul {
+  ul,
+  input,
+  select {
     font-size: 1.2rem;
+  }
+  select#beach {
+    width: 300px;
+  }
+  select#hour,
+  select#places {
+    width: 100px;
   }
 
   ul#conditions {
-    color: #353a64;
+    color: #232642;
     padding: 2rem;
   }
   section#conditions {
@@ -357,6 +384,25 @@ a {
   button#pay {
     height: 40px;
     font-size: 1rem;
+  }
+}
+@media (min-width: 1300px) {
+  button#pay {
+    height: 40px;
+    width: 300px;
+    font-size: 1.3rem;
+  }
+  button,
+  a {
+    height: 40px;
+    margin-right: 1rem;
+    font-size: 1.3rem;
+    width: 300px;
+  }
+  ul,
+  input,
+  select {
+    font-size: 1.4rem;
   }
 }
 </style>

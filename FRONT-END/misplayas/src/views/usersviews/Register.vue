@@ -49,9 +49,9 @@ export default {
   data() {
     return {
       name: "Anónimo",
-      email: "",
-      password1: "",
-      password2: "",
+      email: "galiplaya011@gmail.com",
+      password1: "12345678",
+      password2: "12345678",
       accept: false,
     };
   },

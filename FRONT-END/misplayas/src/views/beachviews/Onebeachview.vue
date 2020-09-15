@@ -10,7 +10,10 @@
         >Id: {{$route.params.id}}, Municipio: {{municipality}}, Provincia: {{province}}</p>
       </section>
       <section id="date">
-        <p id="date">{{date}}</p>
+        <p id="date">
+          Información para el
+          <strong>{{date}}</strong>:
+        </p>
         <p>{{notice}}</p>
       </section>
 
@@ -66,8 +69,7 @@
 
       <section id="data">
         <article>
-          <p>- Tipo: {{type}}</p>
-          <p>- Descripción: {{description}}</p>
+          <p>Tipo: {{type}}. {{description}}</p>
         </article>
         <article>
           <p>
@@ -343,316 +345,6 @@ export default {
 div.beach {
   background-color: #ebecf1;
 }
-/*div#all {
-  padding: 0.5rem;
-  display: grid;
-  grid-gap: 0.5rem;
-  grid-template-columns: 2.5fr 1fr;
-  grid-template-rows: 100px 80px 50px 50px 50px 150px;
-  grid-template-areas:
-    "header voteAverage"
-    "graphic meteo"
-    "graphic marked"
-    "date marked"
-    "services button"
-    "data data"
-    "beneath beneath"
-    "list list";
-  place-items: center center;
-}
-section#header {
-  grid-area: header;
-}
-h1 {
-  font-size: 1rem;
-  padding: 0;
-  margin: 0;
-}
-section#imgAndLink {
-  grid-area: photo;
-}
-article#link {
-  display: flex;
-  justify-content: center;
-}
-img#principal {
-  max-width: 200px;
-  border-radius: 2em;
-}
-li {
-  margin-right: 0.5rem;
-}
-li img,
-img.icon {
-  width: 20px;
-}
-ul {
-  list-style: none;
-  display: flex;
-  font-size: 0.5rem;
-}
-button#voteAverage {
-  background-color: #4cbbb9;
-  color: #353a64;
-  font-weight: 900;
-  font-size: 0.8rem;
-  width: 60px;
-}
-section#meteo {
-  grid-area: meteo;
-  background-color: #0779e4;
-  border-radius: 1em;
-}
-section#meteo span {
-  color: white;
-}
-section#marked {
-  grid-area: meteo;
-  margin-right: 1rem;
-  border-radius: 1em;
-  border: solid #353a64 1px;
-}
-section#data p {
-  text-align: left;
-}
-p {
-  font-size: 0.5rem;
-}
-p#meteo,
-section#marked p,
-section#voteAverage p {
-  font-size: 0.4rem;
-}
-section#marked {
-  grid-area: marked;
-}
-section#voteAverage {
-  grid-area: voteAverage;
-}
-span,
-section#marked p#marked {
-  font-size: 0.7rem;
-  margin: 0;
-}
-section#date {
-  grid-area: date;
-}
-section#data {
-  grid-area: data;
-  padding-left: 1rem;
-}
-section#button {
-  grid-area: button;
-}
-a {
-  text-decoration: none;
-}
-a#link {
-  font-size: 0.5rem;
-  text-decoration: underline;
-  text-align: center;
-  display: block;
-}
-section#services {
-  grid-area: services;
-  display: flex;
-  padding-bottom: 1rem;
-}
-section#beneath {
-  grid-area: beneath;
-}
-article#buttons {
-  display: flex;
-  justify-content: center;
-}
-button#photos,
-button#rating {
-  width: 100px;
-}
-section#photos,
-section#rating {
-  grid-area: list;
-  width: 100%;
-}
-@media (min-width: 700px) {
-  h1 {
-    font-size: 1.8rem;
-  }
-  div#all {
-    grid-template-rows: 50px 170px 200px 80px 50px 250px;
-  }
-  img#principal {
-    max-width: 450px;
-  }
-  p {
-    font-size: 1rem;
-  }
-  li {
-    margin-right: 1rem;
-  }
-  li img,
-  img.icon {
-    width: 30px;
-  }
-  ul {
-    font-size: 1rem;
-  }
-  p#meteo,
-  section#marked p,
-  section#voteAverage p {
-    font-size: 0.7rem;
-  }
-  span,
-  section#marked p#marked {
-    font-size: 1.5rem;
-  }
-  img#sky {
-    width: 70px;
-    height: 70px;
-  }
-  button#photos,
-  button#rating {
-    width: 180px;
-  }
-  a#link {
-    font-size: 0.8rem;
-  }
-}
-@media (min-width: 1000px) {
-  h1 {
-    font-size: 2.2rem;
-  }
-  div#all {
-    grid-template-columns: 4fr 1fr;
-    grid-template-rows: 70px 300px 300px 100px 80px 350px;
-  }
-  img#principal {
-    max-width: 700px;
-  }
-  p {
-    font-size: 1.2rem;
-  }
-  li {
-    margin-right: 1.2rem;
-  }
-  li img,
-  img.icon {
-    width: 40px;
-  }
-  ul {
-    font-size: 1.2rem;
-  }
-  p#meteo,
-  section#marked p,
-  section#voteAverage p {
-    font-size: 1rem;
-  }
-  p#meteo {
-    color: white;
-    font-size: 0.8rem;
-  }
-  span,
-  section#marked p#marked {
-    font-size: 2rem;
-  }
-  button#photos,
-  button#rating {
-    width: 180px;
-  }
-  section#meteo {
-    border: none;
-  }
-  section#marked {
-    border: 5px solid #353a64;
-    align-self: flex-start;
-  }
-  button#voteAverage {
-    font-size: 2rem;
-    width: 120px;
-    padding: 0.2rem;
-  }
-  a#link {
-    font-size: 1.3rem;
-  }
-}
-@media (min-width: 1300px) {
-  div#all {
-    padding: 2rem 5rem;
-  }
-  h1 {
-    font-size: 3rem;
-    padding-top: 2rem;
-  }
-  div.beach {
-    background-image: url(../../assets/playa.jpg);
-    background-size: cover;
-  }
-  div#all {
-    background-color: #ebecf1b2;
-    margin: 2rem 8rem;
-    padding: 2rem 4rem;
-    grid-template-columns: 4fr 1fr;
-    grid-template-rows: 100px 200px 200px 100px 100px 400px;
-  }
-  img#principal {
-    max-width: 500px;
-  }
-  button {
-    width: 200px;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-  }
-  button#voteAverage {
-    background-color: #4cbbb9;
-    color: #353a64;
-    font-weight: 900;
-    font-size: 2rem;
-    width: 120px;
-    padding: 0.2rem;
-  }
-  p {
-    font-size: 1.4rem;
-  }
-  li {
-    margin-right: 1.4rem;
-  }
-  li img,
-  img.icon {
-    width: 45px;
-  }
-  ul {
-    font-size: 1.4rem;
-  }
-  p#meteo,
-  section#marked p,
-  section#voteAverage p {
-    font-size: 1rem;
-    padding: 1rem;
-  }
-  span,
-  section#marked p#marked {
-    font-size: 2rem;
-  }
-  button#photos,
-  button#rating {
-    width: 450px;
-  }
-  span,
-  section#marked p#marked {
-    font-size: 2rem;
-  }
-  p#meteo,
-  section#marked p,
-  section#voteAverage p {
-    font-size: 1rem;
-  }
-  section#marked {
-    border: 5px solid #353a64;
-  }
-  img.icon {
-    width: 50px;
-  }
-}*/
 
 img#principal {
   width: 100%;
@@ -662,6 +354,7 @@ img#principal {
 img.icon,
 li img {
   width: 15px;
+  margin-right: 1rem;
 }
 
 p,
@@ -673,6 +366,10 @@ a {
 p#meteo,
 section#voteAverage p {
   font-size: 0.5rem;
+}
+p#meteo,
+span {
+  color: white;
 }
 
 ul {
@@ -687,12 +384,13 @@ article#buttons {
   justify-content: space-around;
 }
 section#meteo {
-  border: solid blue 1px;
+  background-color: blue;
   border-radius: 1em;
   padding: 0.5rem;
 }
+
 section#marked {
-  border: solid green 1px;
+  border: solid blue 1px;
   border-radius: 1em;
   padding: 0.5rem;
 }
@@ -714,6 +412,7 @@ button#photos,
 button#rating {
   width: 100px;
 }
+
 @media (min-width: 700px) {
   div#on {
     position: absolute;
@@ -722,8 +421,10 @@ button#rating {
   }
   section#meteo,
   section#marked {
-    background-color: rgba(255, 255, 255, 0.788);
     margin-right: 5px;
+  }
+  section#services {
+    margin-top: 2rem;
   }
   img#principal {
     width: 80%;
@@ -756,13 +457,19 @@ button#rating {
     width: 300px;
   }
   @media (min-width: 1000px) {
+    section#header {
+      flex-direction: column;
+    }
     section#graph {
       width: 80%;
+    }
+    ul {
+      margin-top: 2rem;
     }
     div#on {
       flex-direction: column;
       position: absolute;
-      top: 350px;
+      top: 450px;
       right: 100px;
     }
     img.icon,
@@ -805,18 +512,15 @@ button#rating {
       border: solid blue 2px;
     }
     section#marked {
-      border: solid green 2px;
+      border: solid blue 2px;
     }
     img#sky {
       width: 60px;
     }
   }
-  @media (min-width: 1300px) {
+  @media (min-width: 1650px) {
     div#all {
       padding: 2rem;
-    }
-    section#header {
-      flex-direction: column;
     }
 
     li {
@@ -827,7 +531,7 @@ button#rating {
       width: 40px;
     }
     div#on {
-      top: 330px;
+      top: 430px;
       right: 400px;
     }
     h1 {
@@ -853,6 +557,7 @@ button#rating {
     button.one {
       width: 150px;
       font-size: 1.4rem;
+      margin-right: 1rem;
     }
     button#photos,
     button#rating {
@@ -862,7 +567,7 @@ button#rating {
 
     section#voteAverage {
       position: absolute;
-      top: 650px;
+      top: 750px;
       right: 410px;
     }
     section#data,
@@ -873,8 +578,7 @@ button#rating {
     }
 
     article#link {
-      text-align: left;
-      margin-left: 10rem;
+      margin-left: 25rem;
     }
     img#principal {
       width: 50%;

@@ -2,7 +2,10 @@
   <div>
     <div>
       <section v-for="userbeach in userbeaches" :key="userbeach.id">
-        <h1>Playa id.: {{userbeach.id}}, {{userbeach.name}}, {{userbeach.municipality}}, {{userbeach.province}}</h1>
+        <h1>
+          <img src="../../assets/beach.png" />
+          Playa id.: {{userbeach.id}}, {{userbeach.name}}, {{userbeach.municipality}}, {{userbeach.province}}
+        </h1>
         <p>Nº Visitas: {{userbeach.numberOfReservations}} veces</p>
         <p>Tu última visita: {{formatDateToUser(userbeach.lastVisit)}}</p>
         <p>
@@ -63,20 +66,30 @@ button#rating {
   font-weight: bold;
 }
 h1 {
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 p,
 a {
-  font-size: 0.7rem;
+  font-size: 0.8rem;
+}
+img {
+  width: 30px;
+  margin-right: 1rem;
 }
 
 @media (min-width: 700px) {
+  h1 {
+    font-size: 1.3rem;
+  }
   button#rating,
   a {
     font-size: 1rem;
   }
   p {
-    font-size: 1rem;
+    font-size: 1.1rem;
+  }
+  img {
+    width: 40px;
   }
 }
 </style>

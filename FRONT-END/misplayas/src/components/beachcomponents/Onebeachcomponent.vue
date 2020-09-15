@@ -23,9 +23,18 @@
       </div>
       <section id="button">
         <p>Valoración usuarios:</p>
-        <p>
-          <button id="rating">{{beach.voteAverage}}</button>
-        </p>
+        <ul>
+          <li>{{beach.voteAverage}}</li>
+          <li
+            class="sun"
+            :class="{sun3: number<beach.voteAverage, 
+          sun2: number>beach.voteAverage&&number<=beach.voteAverage+0.5,
+          sun1: number>beach.voteAverage&&number>beach.voteAverage+0.5}"
+            v-for="number in [1,2,3,4,5]"
+            :key="number.id"
+          >{{number}}</li>
+        </ul>
+
         <p class="link">
           <button class="link">
             <router-link :to="{name:'Playa', params: {id:beach.id}}">+ info</router-link>
@@ -96,13 +105,13 @@ img {
 }
 
 h1 {
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   text-align: left;
   color: #202441;
   margin: 1rem;
 }
 p {
-  font-size: 0.7rem;
+  font-size: 0.5rem;
   font-weight: 800;
   color: #202441;
 }
@@ -112,13 +121,13 @@ div#graphics {
 }
 button#rating {
   background-color: rgb(0, 217, 255);
-  font-size: 1rem;
+  font-size: 0.6rem;
   font-weight: 700;
 }
 button.link,
 button#free {
   width: 60px;
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   color: #353a64;
 }
 div.chart {
@@ -132,6 +141,35 @@ section#info {
 }
 a {
   text-decoration: none;
+}
+ul {
+  display: flex;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+li {
+  font-size: 0.5rem;
+  margin-right: 0.5rem;
+  font-weight: 800;
+  color: rgb(148, 108, 7);
+}
+li.sun {
+  background-size: cover;
+  width: 10px;
+  height: 10px;
+  font-size: 0;
+  margin: 0;
+}
+li.sun1 {
+  background-image: url(../../assets/sun1.png);
+}
+li.sun2 {
+  background-image: url(../../assets/sun2.png);
+}
+li.sun3 {
+  background-image: url(../../assets/sun3.png);
 }
 
 @media (min-width: 700px) {
@@ -165,6 +203,13 @@ a {
   button#free {
     width: 80px;
     font-size: 1rem;
+  }
+  li {
+    font-size: 0.7rem;
+  }
+  li.sun {
+    width: 20px;
+    height: 20px;
   }
   @media (min-width: 1000px) {
     div.chart {
@@ -200,6 +245,13 @@ a {
       height: 40px;
       font-size: 1.2rem;
     }
+    li {
+      font-size: 1.7rem;
+    }
+    li.sun {
+      width: 30px;
+      height: 30px;
+    }
     @media (min-width: 1500px) {
       h1 {
         font-size: 2.5rem;
@@ -215,6 +267,13 @@ a {
         width: 120px;
         height: 50px;
         font-size: 1.5rem;
+      }
+      li {
+        font-size: 2rem;
+      }
+      li.sun {
+        width: 40px;
+        height: 40px;
       }
     }
   }

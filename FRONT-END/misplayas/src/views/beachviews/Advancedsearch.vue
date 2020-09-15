@@ -357,6 +357,7 @@ html {
 div.all {
   background-image: url(../../assets/Orilla.jpg);
   background-size: cover;
+  min-height: 100vh;
 }
 div#left {
   background-color: #ebecf1af;
@@ -582,13 +583,15 @@ button#erase {
         width: 25%;
         margin-left: 1rem;
         position: fixed;
+        max-height: 80vh;
       }
       h1 {
         font-size: 2rem;
+        margin: 0;
       }
       h5 {
         font-size: 1.4rem;
-        padding-top: 2rem;
+        padding-top: 1rem;
       }
       p {
         font-size: 1.3rem;

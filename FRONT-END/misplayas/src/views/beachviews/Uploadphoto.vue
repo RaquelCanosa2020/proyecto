@@ -186,7 +186,14 @@ a {
 }
 @media (min-width: 1000px) {
   h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
+  }
+  p {
+    font-size: 1.2rem;
+  }
+  input,
+  select {
+    font-size: 1.2rem;
   }
 }
 </style>
