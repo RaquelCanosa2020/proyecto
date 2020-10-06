@@ -27,7 +27,7 @@
           <li>{{beach.voteAverage}}</li>
           <li
             class="sun"
-            :class="{sun3: number<beach.voteAverage, 
+            :class="{sun3: number<=beach.voteAverage, 
           sun2: number>beach.voteAverage&&number<=beach.voteAverage+0.5,
           sun1: number>beach.voteAverage&&number>beach.voteAverage+0.5}"
             v-for="number in [1,2,3,4,5]"

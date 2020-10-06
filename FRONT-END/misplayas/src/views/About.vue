@@ -25,8 +25,10 @@
             <a
               href="https://www.flaticon.es/autores/xnimrodx"
               title="xnimrodx"
-            >xnimrodx</a> de
-            <a class="icons" href="https://www.flaticon.es/" title="Flaticon">www.flaticon.es</a>
+            >xnimrodx</a>
+            y
+            <a href="http://www.freepik.com/" title="Freepik">Freepik</a> de
+            <a class="icons" href="https://www.flaticon.es/" title="Flaticon">flaticon.es</a>
           </li>
           <li>
             Información de playas (ubicación, descripción, servicios y coordenadas geográficas):
@@ -169,11 +171,11 @@ img#thanks {
   }
   a.linkedin,
   a.mail {
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
     margin: 0.2 0.6rem;
     font-size: 0;
-    background-size: 20px 20px;
+    background-size: 40px 40px;
   }
 }
 </style>

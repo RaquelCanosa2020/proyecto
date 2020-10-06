@@ -120,5 +120,8 @@ button.pages {
     height: 40px;
     border-radius: 2em;
   }
+  p {
+    font-size: 1.1rem;
+  }
 }
 </style>
